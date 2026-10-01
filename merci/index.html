@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Demande reçue — Technic Compo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:ital,wght@1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F7F5EF;--surf:#FFFFFF;--ink:#12151A;--ink-2:#4E545C;--ink-3:#8B9099;
+  --line:#E7E3D8;--cy:#00AEEF;--mg:#EC008C;--yl:#FFD400;}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);font-family:'Instrument Sans',system-ui,sans-serif}
+.cmjn{display:flex;height:3px}.cmjn i{flex:1}
+.cmjn .c{background:var(--cy)}.cmjn .m{background:var(--mg)}
+.cmjn .y{background:var(--yl)}.cmjn .k{background:var(--ink)}
+.wrap{max-width:520px;margin:0 auto;padding:56px 20px 60px}
+.logo{width:44px;height:44px;border-radius:11px;background:var(--ink);color:var(--paper);
+  display:grid;place-items:center;font-weight:700;font-size:15px}
+h1{font-size:30px;font-weight:700;letter-spacing:-.03em;margin:22px 0 0}
+.sig{font-family:'Playfair Display',serif;font-style:italic;font-weight:500;
+  background:linear-gradient(95deg,var(--cy),var(--mg));-webkit-background-clip:text;background-clip:text;color:transparent}
+p{color:var(--ink-2);font-size:15.5px;line-height:1.65}
+.card{background:var(--surf);border:1px solid var(--line);border-radius:18px;padding:20px;margin-top:26px}
+.card b{display:block;font-size:14px;margin-bottom:6px}
+.card p{margin:0;font-size:14px}
+a.btn{display:block;text-align:center;margin-top:26px;background:var(--ink);color:var(--paper);
+  text-decoration:none;border-radius:12px;padding:14px;font-weight:600;font-size:15px}
+a.wa{display:block;text-align:center;margin-top:12px;color:var(--ink-2);font-size:13.5px;text-decoration:none;
+  border-bottom:1px solid var(--line);width:fit-content;margin-left:auto;margin-right:auto;padding-bottom:2px}
+.end{margin-top:34px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-3);line-height:1.9}
+
+/* ---- Typographie unifiée avec l'accueil ---- */
+h1,h2,h3,.h2,.hero h1,.logo-n,.tcname,.gate-t,.pn,.ttl,.cfg-ttl,.lbadge,.tclogo,.logo,.gate-logo,.badge,
+.sec-title,.dt,.est-t{font-family:'Unbounded',sans-serif;letter-spacing:-.03em}
+.tag,.kicker,.lab,.lt,.logo-s,.tcsub,.mono,.n,.inp.n,.pp,.price,.rtot,.numfield{font-family:'JetBrains Mono',ui-monospace,monospace}
+.sig{font-family:'Playfair Display',serif}
+
+/* ---- Menu de retour, identique sur toutes les pages ---- */
+.tcnav{position:relative;z-index:60;background:var(--nv-bg);border-bottom:1px solid var(--nv-line);
+  display:flex;align-items:center;gap:14px;padding:0 14px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none}
+.tcnav::-webkit-scrollbar{display:none}
+.tcnav a{flex:none;text-decoration:none;font-family:'Instrument Sans',system-ui,sans-serif;
+  font-size:12.5px;font-weight:500;color:var(--nv-mut);padding:12px 0;white-space:nowrap}
+.tcnav a:hover{color:var(--nv-ink)}
+.tcnav a.home{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--nv-ink);
+  padding-right:14px;margin-right:2px;border-right:1px solid var(--nv-line)}
+.tcnav .bdg{width:24px;height:24px;border-radius:7px;background:var(--nv-ink);color:var(--nv-bg);
+  display:grid;place-items:center;font-family:'Unbounded',sans-serif;font-size:9.5px;font-weight:700}
+.tcnav a.on{color:var(--nv-ink);font-weight:600}
+</style>
+</head>
+<body>
+<nav class="tcnav" style="--nv-bg:#F7F5EF;--nv-line:#E7E3D8;--nv-ink:#12151A;--nv-mut:#6E747C">
+  <a class="home" href="/"><span class="bdg">TC</span> technic-compo.tn</a>
+  <a href="/medical/">Médical</a>
+  <a href="/medical/?espace=img">Imagerie</a>
+  <a href="/medical/?espace=labo">Laboratoires</a>
+  <a href="/societes/">Sociétés</a>
+  <a href="/scandar/">Scandar</a>
+  <a href="/scandar/commander/">Scandar Hôtel</a>
+  <a href="/tarifs/">Tarifs</a>
+  <a href="/partenaires/">Partenaires</a>
+</nav>
+
+<style>
+/* ====== CALAGE PRESSE — transition de page ====== */
+.tcload{position:fixed;inset:0;z-index:9999;background:var(--lo-bg);display:flex;align-items:center;
+  justify-content:center;transition:opacity .5s ease,visibility .5s}
+.tcload.done{opacity:0;visibility:hidden;pointer-events:none}
+.tcload .lpass{position:absolute;inset:0;transform:translateX(-102%);mix-blend-mode:var(--lo-blend);pointer-events:none}
+.tcload .lpass.c{background:var(--lo-a);animation:tclpass .5s cubic-bezier(.6,0,.3,1) .05s forwards}
+.tcload .lpass.m{background:var(--lo-b);animation:tclpass .5s cubic-bezier(.6,0,.3,1) .19s forwards}
+.tcload .lpass.y{background:var(--lo-c);animation:tclpass .5s cubic-bezier(.6,0,.3,1) .33s forwards}
+.tcload .lpass.k{background:var(--lo-ink);animation:tclpass .5s cubic-bezier(.6,0,.3,1) .47s forwards;mix-blend-mode:normal}
+@keyframes tclpass{0%{transform:translateX(-102%)}100%{transform:translateX(102%)}}
+.tcload .lcore{position:relative;text-align:center;z-index:2}
+.tcload .lbadge{position:relative;width:58px;height:58px;margin:0 auto 16px;background:var(--lo-ink);
+  color:var(--lo-bg);border-radius:16px;display:flex;align-items:center;justify-content:center;
+  font-family:'Instrument Sans',system-ui,sans-serif;font-weight:700;font-size:18px;letter-spacing:-.02em;overflow:hidden}
+.tcload .lbadge::after{content:'';position:absolute;bottom:0;left:0;right:0;height:6px;
+  background:linear-gradient(90deg,var(--lo-a) 33%,var(--lo-b) 33% 66%,var(--lo-c) 66%)}
+.tcload .lt{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.7rem;font-weight:600;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--lo-mut)}
+.tcload .ld{display:flex;gap:8px;justify-content:center;margin-top:14px}
+.tcload .ld i{width:10px;height:10px;border-radius:2px;opacity:0;animation:tcldot .3s forwards}
+.tcload .ld i:nth-child(1){background:var(--lo-a);animation-delay:.12s}
+.tcload .ld i:nth-child(2){background:var(--lo-b);animation-delay:.26s}
+.tcload .ld i:nth-child(3){background:var(--lo-c);animation-delay:.40s}
+.tcload .ld i:nth-child(4){background:var(--lo-ink);animation-delay:.54s}
+@keyframes tcldot{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.tcload{display:none}}
+</style>
+<div class="tcload" id="tcload" aria-hidden="true"
+     style="--lo-bg:#F7F5EF;--lo-ink:#12151A;--lo-mut:#8B9099;--lo-a:#00AEEF;--lo-b:#EC008C;--lo-c:#FFD400;--lo-blend:multiply">
+  <span class="lpass c"></span><span class="lpass m"></span><span class="lpass y"></span><span class="lpass k"></span>
+  <div class="lcore">
+    <div class="lbadge">TC</div>
+    <div class="lt">Demande reçue</div>
+    <div class="ld"><i></i><i></i><i></i><i></i></div>
+  </div>
+</div>
+<noscript><style>.tcload{display:none}</style></noscript>
+<script>
+(function(){
+  var l=document.getElementById('tcload'); if(!l) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){ l.style.display='none'; return; }
+  setTimeout(function(){ l.classList.add('done'); }, 950);
+  setTimeout(function(){ l.style.display='none'; }, 1500);
+})();
+</script>
+
+<div class="cmjn"><i class="c"></i><i class="m"></i><i class="y"></i><i class="k"></i></div>
+<div class="wrap">
+  <div class="logo">TC</div>
+  <h1>Demande reçue<span class="sig">.</span></h1>
+  <p>Merci. Votre demande est arrivée à l'imprimerie. Nous revenons vers vous sous 2 heures ouvrées,
+     par téléphone ou par mail.</p>
+
+  <div class="card">
+    <b>Ce qui se passe ensuite</b>
+    <p>Nous vérifions les quantités et le format, nous vous adressons un devis écrit à votre nom,
+       puis un bon à tirer avant toute impression. Rien n'est lancé sans votre accord.</p>
+  </div>
+
+  <a class="btn" href="/">Revenir à l'accueil</a>
+  <a class="wa" href="https://wa.me/21624678721">Une précision à ajouter ? Écrivez-nous sur WhatsApp</a>
+
+  <div class="end">
+    TECHNIC COMPO SARL — Coin Sidi Abdeljalil et Bkira, Bab Jedid, Tunis 1008<br>
+    24 678 721 · 21 730 367 — hello@technic-compo.tn<br>
+    MF 1968566V/A/M/000
+  </div>
+</div>
+</body>
+</html>

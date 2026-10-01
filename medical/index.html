@@ -1,0 +1,2006 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Technic Compo • Commande d'imprimés</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root{
+    --ink:#003087; --paper:#FAFAF7; --line:#E7E7DE; --k:#171717;
+    --c:#00AEEF; --m:#EC008C; --y:#FFD400;
+  }
+  body { font-family:'Instrument Sans',system-ui,sans-serif; background:var(--paper); color:var(--k); }
+  body::before{ content:""; position:fixed; inset:0; pointer-events:none; opacity:.35; z-index:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.02 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  .heading { font-family:'Unbounded',system-ui,sans-serif; font-weight:600; letter-spacing:-0.02em; }
+  .mono { font-family:'JetBrains Mono',monospace; font-variant-numeric:tabular-nums; }
+
+  /* Repérage CMYK (signature imprimeur) */
+  .cmyk{ display:inline-flex; gap:5px; align-items:center }
+  .cmyk i{ width:7px;height:7px;border-radius:50%;display:block }
+  .cmyk i:nth-child(1){background:var(--c)} .cmyk i:nth-child(2){background:var(--m)}
+  .cmyk i:nth-child(3){background:var(--y)} .cmyk i:nth-child(4){background:var(--k)}
+
+  /* Aperçu papier proportions réelles + traits de coupe */
+  .paper-wrap{ position:relative; width:64px; height:64px; display:flex; align-items:center; justify-content:center; flex-shrink:0 }
+  .paper{ position:relative; background:#fff; border:1.5px solid #B9BFCE; box-shadow:0 1px 0 #00000010, 3px 4px 0 -1px #E2E4EC; }
+  .paper .crop{ position:absolute; width:7px; height:7px; pointer-events:none }
+  .paper .crop{ width:6px; height:6px }
+  .paper .crop.tl{ top:-7px; left:-7px; border-right:1.5px solid #9AA3B8; border-bottom:1.5px solid #9AA3B8 }
+  .paper .crop.tr{ top:-7px; right:-7px; border-left:1.5px solid #9AA3B8; border-bottom:1.5px solid #9AA3B8 }
+  .paper .crop.bl{ bottom:-7px; left:-7px; border-right:1.5px solid #9AA3B8; border-top:1.5px solid #9AA3B8 }
+  .paper .crop.br{ bottom:-7px; right:-7px; border-left:1.5px solid #9AA3B8; border-top:1.5px solid #9AA3B8 }
+  .rule{ position:absolute; left:12%; right:12%; height:1.5px; background:#C6CEE6; border-radius:1px }
+  .rule.ink{ background:#8FA3D6 }
+  .hdrband{ position:absolute; top:8%; left:12%; right:12%; height:14%; background:var(--ink); opacity:.9; border-radius:1px }
+  .flap{ position:absolute; inset:0; overflow:hidden; border-radius:1px }
+  .flap::before{ content:""; position:absolute; top:0; left:0; right:0; height:62%;
+    background:#EEF1F7; clip-path:polygon(0 0,100% 0,50% 100%); border-bottom:1px solid #B9BFCE }
+  .flap::after{ content:""; position:absolute; left:14%; right:14%; bottom:18%; height:1.5px; background:#C6CEE6 }
+  .tab{ position:absolute; top:-5px; left:8%; width:40%; height:7px; background:#fff; border:1.5px solid #B9BFCE; border-bottom:none; border-radius:3px 3px 0 0 }
+
+  .app-card { transition:transform .14s ease, border-color .14s ease, box-shadow .14s ease; }
+  .app-card:active { transform:scale(0.985); }
+  .app-card:hover { border-color:#B9C4E4; box-shadow:0 10px 26px -14px rgba(0,48,135,.30); }
+
+  .sheet { transform:translateY(100%); transition:transform .3s cubic-bezier(.32,.72,.33,1); }
+  .sheet.open { transform:translateY(0); }
+  .overlay { opacity:0; pointer-events:none; transition:opacity .25s ease; }
+  .overlay.open { opacity:1; pointer-events:auto; }
+
+  #toast { transform:translate(-50%,-150%); transition:transform .3s cubic-bezier(.32,.72,.33,1); }
+  #toast.show { transform:translate(-50%,0); }
+
+  .check-pop { animation:pop .45s cubic-bezier(.18,1.4,.4,1) both; }
+  @keyframes pop { 0%{transform:scale(0)} 100%{transform:scale(1)} }
+  .fade-in { animation:fadeIn .3s ease both; }
+  @keyframes fadeIn { from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none} }
+
+  @media (prefers-reduced-motion: reduce){ .sheet,.overlay,#toast,.app-card{transition:none}.check-pop,.fade-in{animation:none} }
+  input:focus, textarea:focus, button:focus-visible { outline:2px solid #003087; outline-offset:2px; }
+
+/* ---- Menu de retour, identique sur toutes les pages ---- */
+.tcnav{position:relative;z-index:60;background:var(--nv-bg);border-bottom:1px solid var(--nv-line);
+  display:flex;align-items:center;gap:14px;padding:0 14px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none}
+.tcnav::-webkit-scrollbar{display:none}
+.tcnav a{flex:none;text-decoration:none;font-family:'Instrument Sans',system-ui,sans-serif;
+  font-size:12.5px;font-weight:500;color:var(--nv-mut);padding:12px 0;white-space:nowrap}
+.tcnav a:hover{color:var(--nv-ink)}
+.tcnav a.home{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--nv-ink);
+  padding-right:14px;margin-right:2px;border-right:1px solid var(--nv-line)}
+.tcnav .bdg{width:24px;height:24px;border-radius:7px;background:var(--nv-ink);color:var(--nv-bg);
+  display:grid;place-items:center;font-family:'Unbounded',sans-serif;font-size:9.5px;font-weight:700}
+.tcnav a.on{color:var(--nv-ink);font-weight:600}
+
+.spec{display:flex;gap:6px;padding:10px 16px;max-width:620px;margin:0 auto;overflow-x:auto;scrollbar-width:none}
+.spec::-webkit-scrollbar{display:none}
+.spec a{flex:none;text-decoration:none;font-family:'Instrument Sans',system-ui,sans-serif;font-size:13.5px;
+  padding:9px 15px;border-radius:999px;border:1.5px solid var(--sp-line);color:var(--sp-mut);white-space:nowrap}
+.spec a.on{border-color:var(--sp-ink);color:var(--sp-ink);font-weight:600}
+
+/* ====== AFFICHAGE SUR GRAND ÉCRAN ====== */
+.pl-grid{display:grid;gap:10px}
+@media (min-width:1024px){
+  .app-shell{max-width:980px !important;box-shadow:0 0 60px rgba(18,21,26,.07)}
+  .app-w{max-width:980px !important}
+  .sheet-w{max-width:660px !important}
+  .pl-grid{grid-template-columns:1fr 1fr}
+}
+@media (min-width:1400px){
+  .app-shell,.app-w{max-width:1120px !important}
+  .pl-grid{grid-template-columns:1fr 1fr 1fr}
+}
+
+/* ====== ÉCONOMIE DU PACK ====== */
+#pack-gain{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  margin-top:12px;padding:11px 14px;background:#FFF1F7;border:1px solid #FBCFE1;border-radius:16px}
+#pack-gain.hidden{display:none}
+.gain-prix{font-size:21px;font-weight:700;letter-spacing:-.03em;color:#12151A}
+.gain-bloc{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.gain-old{font-size:13.5px;color:#7A8497;text-decoration-line:line-through;
+  text-decoration-color:#EC008C;text-decoration-thickness:1.5px}
+.gain-rem{font-style:normal;font-size:12.5px;font-weight:700;color:#fff;background:#EC008C;
+  border-radius:999px;padding:3px 10px}
+</style>
+</head>
+<body>
+<nav class="tcnav" style="--nv-bg:#F7F5EF;--nv-line:#E7E3D8;--nv-ink:#12151A;--nv-mut:#6E747C">
+  <a class="home" href="/"><span class="bdg">TC</span> technic-compo.tn</a>
+  <a href="/medical/" class="on">Médical</a>
+  <a href="/medical/?espace=img">Imagerie</a>
+  <a href="/medical/?espace=labo">Laboratoires</a>
+  <a href="/societes/">Sociétés</a>
+  <a href="/scandar/">Scandar</a>
+  <a href="/scandar/commander/">Scandar Hôtel</a>
+  <a href="/tarifs/">Tarifs</a>
+  <a href="/partenaires/">Partenaires</a>
+</nav>
+
+
+
+<style>
+/* ====== CALAGE PRESSE — transition de page ====== */
+.tcload{position:fixed;inset:0;z-index:9999;background:var(--lo-bg);display:flex;align-items:center;
+  justify-content:center;transition:opacity .5s ease,visibility .5s}
+.tcload.done{opacity:0;visibility:hidden;pointer-events:none}
+.tcload .lpass{position:absolute;inset:0;transform:translateX(-102%);mix-blend-mode:var(--lo-blend);pointer-events:none}
+.tcload .lpass.c{background:var(--lo-a);animation:tclpass .5s cubic-bezier(.6,0,.3,1) .05s forwards}
+.tcload .lpass.m{background:var(--lo-b);animation:tclpass .5s cubic-bezier(.6,0,.3,1) .19s forwards}
+.tcload .lpass.y{background:var(--lo-c);animation:tclpass .5s cubic-bezier(.6,0,.3,1) .33s forwards}
+.tcload .lpass.k{background:var(--lo-ink);animation:tclpass .5s cubic-bezier(.6,0,.3,1) .47s forwards;mix-blend-mode:normal}
+@keyframes tclpass{0%{transform:translateX(-102%)}100%{transform:translateX(102%)}}
+.tcload .lcore{position:relative;text-align:center;z-index:2}
+.tcload .lbadge{position:relative;width:58px;height:58px;margin:0 auto 16px;background:var(--lo-ink);
+  color:var(--lo-bg);border-radius:16px;display:flex;align-items:center;justify-content:center;
+  font-family:'Instrument Sans',system-ui,sans-serif;font-weight:700;font-size:18px;letter-spacing:-.02em;overflow:hidden}
+.tcload .lbadge::after{content:'';position:absolute;bottom:0;left:0;right:0;height:6px;
+  background:linear-gradient(90deg,var(--lo-a) 33%,var(--lo-b) 33% 66%,var(--lo-c) 66%)}
+.tcload .lt{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.7rem;font-weight:600;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--lo-mut)}
+.tcload .ld{display:flex;gap:8px;justify-content:center;margin-top:14px}
+.tcload .ld i{width:10px;height:10px;border-radius:2px;opacity:0;animation:tcldot .3s forwards}
+.tcload .ld i:nth-child(1){background:var(--lo-a);animation-delay:.12s}
+.tcload .ld i:nth-child(2){background:var(--lo-b);animation-delay:.26s}
+.tcload .ld i:nth-child(3){background:var(--lo-c);animation-delay:.40s}
+.tcload .ld i:nth-child(4){background:var(--lo-ink);animation-delay:.54s}
+@keyframes tcldot{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.tcload{display:none}}
+</style>
+<div class="tcload" id="tcload" aria-hidden="true"
+     style="--lo-bg:#F7F5EF;--lo-ink:#12151A;--lo-mut:#8B9099;--lo-a:#00AEEF;--lo-b:#EC008C;--lo-c:#FFD400;--lo-blend:multiply">
+  <span class="lpass c"></span><span class="lpass m"></span><span class="lpass y"></span><span class="lpass k"></span>
+  <div class="lcore">
+    <div class="lbadge">TC</div>
+    <div class="lt">Imprimés médicaux</div>
+    <div class="ld"><i></i><i></i><i></i><i></i></div>
+  </div>
+</div>
+<noscript><style>.tcload{display:none}</style></noscript>
+<script>
+(function(){
+  var l=document.getElementById('tcload'); if(!l) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){ l.style.display='none'; return; }
+  setTimeout(function(){ l.classList.add('done'); }, 950);
+  setTimeout(function(){ l.style.display='none'; }, 1500);
+})();
+</script>
+
+
+
+<div class="app-shell max-w-[480px] mx-auto min-h-screen bg-white relative">
+
+  <!-- ===== HEADER ===== -->
+  <header class="px-5 py-4 flex justify-between items-center sticky top-0 bg-[#FAFAF7]/90 backdrop-blur z-40 border-b border-[#E7E7DE]">
+    <div class="flex items-center gap-x-3">
+      <div class="w-10 h-10 bg-[#003087] rounded-xl flex items-center justify-center">
+        <span class="text-white heading text-[13px]">TC</span>
+      </div>
+      <div>
+        <span class="heading text-[17px] leading-none block">Technic Compo</span>
+        <span class="cmyk mt-1"><i></i><i></i><i></i><i></i><span class="mono text-[9px] text-slate-400 ml-1.5 tracking-wider">IMPRESSION OFFSET</span></span>
+      </div>
+    </div>
+    <button id="profile-chip" onclick="openProfile()" class="hidden w-10 h-10 rounded-full bg-[#003087] text-white font-bold text-sm items-center justify-center" aria-label="Mon profil"></button>
+  </header>
+
+  <!-- ===== VUE ACCUEIL ===== -->
+  <main id="view-home" class="px-5 pt-7 pb-28">
+
+    <h1 class="heading text-[23px] leading-snug">Vos imprimés,<br>en quelques secondes.</h1>
+    <p class="text-slate-500 mt-2">Photographiez votre modèle, choisissez la quantité — Technic Compo s’occupe du reste.</p>
+
+    <div class="mt-5 flex items-center gap-x-4 text-[13px] text-slate-500">
+      <span class="flex items-center gap-x-1.5"><i class="fa-solid fa-bolt text-amber-500"></i> Devis instantané</span>
+      <span class="flex items-center gap-x-1.5"><i class="fa-solid fa-envelope text-emerald-500"></i> Confirmation par email</span>
+    </div>
+
+    <div class="flex items-center justify-between mt-9 mb-3">
+      <h2 class="text-xs font-bold uppercase tracking-[0.15em] text-slate-400">Catalogue</h2>
+      <span class="text-[11px] font-semibold text-slate-400">Prix hors taxes (HT)</span>
+    </div>
+    <div id="espaces" class="flex flex-wrap gap-2 pb-1 mb-3"></div>
+    <div id="product-list" class="space-y-3"></div>
+  </main>
+
+  <!-- ===== VUE MES COMMANDES ===== -->
+  <main id="view-orders" class="hidden px-5 pt-7 pb-28">
+    <h1 class="heading text-3xl">Mes commandes</h1>
+    <p class="text-slate-500 mt-1.5">Historique enregistré sur cet appareil.</p>
+    <div id="orders-list" class="mt-6 space-y-3"></div>
+  </main>
+
+  <!-- ===== BARRE PANIER ===== -->
+  <div id="cart-bar" class="hidden fixed bottom-[68px] left-0 right-0 max-w-[480px] app-w mx-auto px-4 z-40">
+    <button onclick="openCartSheet()" class="w-full bg-[#003087] text-white rounded-3xl py-3.5 px-5 flex justify-between items-center shadow-xl shadow-blue-900/30">
+      <span class="font-semibold text-sm"><i class="fa-solid fa-cart-shopping mr-2"></i><span id="cart-count"></span></span>
+      <span class="font-bold mono"><span id="cart-total"></span> TND HT <i class="fa-solid fa-chevron-right text-xs ml-1"></i></span>
+    </button>
+  </div>
+
+  <!-- ===== NAVIGATION ===== -->
+  <nav class="fixed bottom-0 left-0 right-0 max-w-[480px] app-w mx-auto bg-[#FAFAF7]/95 backdrop-blur border-t border-[#E7E7DE] flex z-50">
+    <button onclick="showView('home')" id="nav-home" class="flex-1 flex flex-col items-center py-3 text-[#003087]">
+      <i class="fa-solid fa-house text-lg"></i><span class="text-[11px] font-semibold mt-0.5">Accueil</span>
+    </button>
+    <button onclick="showView('orders')" id="nav-orders" class="flex-1 flex flex-col items-center py-3 text-slate-400 relative">
+      <i class="fa-solid fa-box text-lg"></i><span class="text-[11px] font-semibold mt-0.5">Mes commandes</span>
+      <span id="orders-badge" class="hidden absolute top-2 right-[28%] min-w-[18px] h-[18px] px-1 bg-[#EC008C] text-white text-[10px] font-bold rounded-full items-center justify-center"></span>
+    </button>
+  </nav>
+
+  <!-- ===== MODAL COMMANDE ===== -->
+  <div id="order-overlay" class="overlay fixed inset-0 bg-black/50 z-[100]" onclick="closeOrder()"></div>
+  <div id="order-sheet" class="sheet fixed bottom-0 left-0 right-0 max-w-[480px] sheet-w mx-auto bg-white rounded-t-3xl z-[101] max-h-[92vh] overflow-y-auto">
+    <div class="p-6 pb-8">
+      <div class="w-10 h-1 bg-slate-200 rounded-full mx-auto mb-5"></div>
+      <div class="flex justify-between items-start mb-6">
+        <div class="flex items-center gap-x-3">
+          <div id="modal-product-icon" class="w-11 h-11 rounded-2xl bg-blue-50 text-[#003087] flex items-center justify-center flex-shrink-0"></div>
+          <div>
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Nouvelle commande</span>
+            <h3 id="modal-product-name" class="heading text-lg leading-tight"></h3>
+            <div id="modal-product-format" class="mono text-[11px] text-slate-500 mt-0.5 tracking-wide"></div>
+            <ul id="modal-product-detail" class="mt-2.5 space-y-1 hidden"></ul>
+            <div id="pack-gain" class="hidden"></div>
+          </div>
+        </div>
+        <button onclick="closeOrder()" class="w-9 h-9 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center flex-shrink-0" aria-label="Fermer"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+
+      <!-- Quantité -->
+      <label class="text-sm font-semibold mb-2 mt-6 block">Quantité <span class="font-normal text-slate-400">(prix HT)</span></label>
+      <div class="grid grid-cols-3 gap-2" id="qty-row"></div>
+
+      <!-- Reliure : avec / sans colle (Ordonnances, Certificats) -->
+      <div id="glue-block" class="hidden">
+        <label class="text-sm font-semibold mb-2 mt-6 block">Reliure</label>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="setGlue('Avec colle')" id="glue-avec" class="py-3 rounded-2xl text-center border"><i class="fa-solid fa-book mb-0.5"></i><div class="text-[12px] font-semibold">Avec colle</div><div class="text-[10px] text-slate-400">Bloc collé en tête</div></button>
+          <button onclick="setGlue('Sans colle')" id="glue-sans" class="py-3 rounded-2xl text-center border"><i class="fa-solid fa-layer-group mb-0.5"></i><div class="text-[12px] font-semibold">Sans colle</div><div class="text-[10px] text-slate-400">Feuilles non collées</div></button>
+        </div>
+      </div>
+
+      <!-- Couleur d'impression (Carte visite 1 couleur) -->
+      <div id="color-block" class="hidden">
+        <label class="text-sm font-semibold mb-2 mt-6 block">Couleur d'impression</label>
+        <div class="grid grid-cols-3 gap-2" id="color-row"></div>
+      </div>
+
+      <!-- Texte de la carte (Carte visite 1 couleur) -->
+      <div id="cardtext-block" class="hidden">
+        <label for="card-text" class="text-sm font-semibold mb-2 mt-6 block">Texte de votre carte</label>
+        <textarea id="card-text" rows="3" class="w-full border border-slate-200 rounded-2xl px-4 py-3 text-sm bg-slate-50/50" placeholder="Nom, fonction, téléphone, adresse, email…"></textarea>
+      </div>
+
+      <!-- Notes -->
+<label for="order-notes" class="text-sm font-semibold mb-2 mt-6 block">Précisions <span class="font-normal text-slate-400">(facultatif)</span></label>
+      <textarea id="order-notes" rows="2" class="w-full border border-slate-200 rounded-2xl px-4 py-3 text-sm bg-slate-50/50" placeholder="Couleur, papier, délai souhaité…"></textarea>
+
+            <!-- Photo(s) -->
+      <label id="photo-label" class="text-sm font-semibold mb-2 block">Votre modèle ou visuel <span class="text-red-500">*</span> <span class="font-normal text-slate-400">(obligatoire)</span></label>
+      <div id="upload-zone" class="border-2 border-dashed border-slate-200 rounded-3xl p-6 text-center">
+        <i class="fa-solid fa-wand-magic-sparkles text-3xl text-[#003087] mb-2"></i>
+        <p id="upload-hint" class="text-sm text-slate-500">Photographiez votre ancien imprimé :<br>notre IA le transforme en scan propre</p>
+        <input type="file" id="photo-input" class="hidden" accept="image/*" multiple onchange="handleFile(event)">
+        <input type="file" id="camera-input" class="hidden" accept="image/*" capture="environment" onchange="handleFile(event)">
+        <div class="flex justify-center gap-x-2 mt-4">
+          <button onclick="document.getElementById('camera-input').click()" class="text-sm font-semibold px-4 py-2.5 bg-[#003087] text-white rounded-2xl flex items-center gap-x-1.5"><i class="fa-solid fa-camera"></i> Photo</button>
+          <button onclick="document.getElementById('photo-input').click()" class="text-sm font-semibold px-4 py-2.5 border border-slate-200 rounded-2xl flex items-center gap-x-1.5"><i class="fa-solid fa-image text-slate-400"></i> Galerie</button>
+        </div>
+        <p class="text-[11px] text-slate-400 mt-3"><i class="fa-solid fa-lightbulb text-amber-400"></i> Attendez la mise au point avant de déclencher. Lumière du jour, document bien à plat, remplissez tout le cadre</p>
+      </div>
+      <!-- Galerie des visuels ajoutés -->
+      <div id="photos-gallery" class="hidden space-y-2"></div>
+      <div id="add-photo-btn" class="hidden mt-2 border-2 border-dashed border-slate-200 rounded-2xl p-2">
+        <div class="text-center text-[12px] font-semibold text-[#003087] mb-1.5"><i class="fa-solid fa-plus mr-1"></i><span id="add-photo-label">Ajouter une photo</span></div>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="document.getElementById('camera-input').click()" class="py-2.5 bg-[#003087] text-white text-sm font-semibold rounded-xl"><i class="fa-solid fa-camera mr-1"></i> Photo</button>
+          <button onclick="document.getElementById('photo-input').click()" class="py-2.5 border border-slate-200 text-slate-600 text-sm font-semibold rounded-xl"><i class="fa-solid fa-image mr-1"></i> Galerie</button>
+        </div>
+      </div>
+
+      <!-- Total -->
+      <div class="mt-6 flex justify-between items-center bg-slate-50 px-5 py-4 rounded-2xl border border-slate-100">
+        <div>
+          <div class="font-semibold">Total estimé <span class="text-[11px] font-bold text-slate-400">HT</span></div>
+          <div class="text-[11px] text-slate-400">Hors taxes • confirmé après validation du visuel</div>
+        </div>
+        <span id="total-price" class="mono heading text-2xl text-[#003087]"></span>
+      </div>
+
+      <button onclick="addToCart()" class="mt-4 w-full py-4 bg-[#003087] text-white font-bold rounded-3xl active:bg-[#002266] flex items-center justify-center gap-x-2">
+        <i class="fa-solid fa-cart-plus"></i> Ajouter à la commande
+      </button>
+      <p class="text-center text-[12px] text-slate-400 mt-2">Vous pourrez ajouter d'autres produits avant de valider.</p>
+    </div>
+  </div>
+
+  <!-- ===== FEUILLE PANIER ===== -->
+  <div id="cart-overlay" class="overlay fixed inset-0 bg-black/50 z-[105]" onclick="closeSheet('cart')"></div>
+  <div id="cart-sheet" class="sheet fixed bottom-0 left-0 right-0 max-w-[480px] sheet-w mx-auto bg-white rounded-t-3xl z-[106] max-h-[92vh] overflow-y-auto">
+    <div class="p-6 pb-8">
+      <div class="w-10 h-1 bg-slate-200 rounded-full mx-auto mb-5"></div>
+      <div class="flex justify-between items-center mb-5">
+        <h3 class="heading text-xl">Votre commande</h3>
+        <button onclick="closeSheet('cart')" class="w-9 h-9 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center" aria-label="Fermer"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="cart-items" class="space-y-3"></div>
+      <button onclick="closeSheet('cart')" class="mt-4 w-full py-3.5 border-2 border-dashed border-slate-200 text-[#003087] font-semibold rounded-3xl">
+        <i class="fa-solid fa-plus mr-1"></i> Ajouter un autre produit
+      </button>
+      <div id="cart-suggest" class="mt-4 space-y-2"></div>
+      <div id="cart-client"></div>
+      <div id="cart-summary" class="mt-4 bg-slate-50 px-5 py-4 rounded-2xl border border-slate-100 space-y-2"></div>
+      <button onclick="checkout()" class="mt-4 w-full py-4 bg-[#003087] text-white font-bold rounded-3xl active:bg-[#002266] flex items-center justify-center gap-x-2">
+        <i class="fa-solid fa-paper-plane"></i> Valider la commande
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== MODAL COMPTE ===== -->
+  <div id="account-overlay" class="overlay fixed inset-0 bg-black/50 z-[110]"></div>
+  <div id="account-sheet" class="sheet fixed bottom-0 left-0 right-0 max-w-[480px] sheet-w mx-auto bg-white rounded-t-3xl z-[111] max-h-[92vh] overflow-y-auto">
+    <div class="p-6 pb-8">
+      <div class="w-10 h-1 bg-slate-200 rounded-full mx-auto mb-5"></div>
+      <h3 class="heading text-xl">Créez votre espace client</h3>
+      <p class="text-sm text-slate-500 mt-1 mb-5">Pour suivre vos commandes et être recontacté.</p>
+      <div class="space-y-3.5">
+        <div><label for="account-name" class="text-sm font-medium">Nom complet <span class="text-red-500">*</span></label><input id="account-name" type="text" class="w-full border border-slate-200 rounded-2xl px-4 py-3 mt-1.5" placeholder="Dr. Ahmed Ben Salah"></div>
+        <div><label for="account-phone" class="text-sm font-medium">Téléphone <span class="text-red-500">*</span></label><input id="account-phone" type="tel" class="w-full border border-slate-200 rounded-2xl px-4 py-3 mt-1.5" placeholder="+216 XX XXX XXX"></div>
+        <div><label for="account-email" class="text-sm font-medium">Email</label><input id="account-email" type="email" class="w-full border border-slate-200 rounded-2xl px-4 py-3 mt-1.5" placeholder="votre@email.com"></div>
+        <div><label for="account-ville" class="text-sm font-medium">Gouvernorat <span class="text-red-500">*</span></label><select id="account-ville" class="w-full border border-slate-200 rounded-2xl px-4 py-3 mt-1.5 bg-white"></select></div>
+        <div><label for="account-address" class="text-sm font-medium">Adresse de livraison <span class="text-red-500">*</span></label><input id="account-address" type="text" class="w-full border border-slate-200 rounded-2xl px-4 py-3 mt-1.5" placeholder="Rue, quartier, code postal"></div>
+      </div>
+      <p id="account-error" class="hidden text-sm text-red-600 mt-3"><i class="fa-solid fa-circle-exclamation"></i> Le nom, le téléphone et l'adresse de livraison sont obligatoires.</p>
+      <button onclick="createAccount()" class="mt-5 w-full py-4 bg-[#003087] text-white font-bold rounded-3xl active:bg-[#002266]">Créer mon compte et envoyer</button>
+    </div>
+  </div>
+
+  <!-- ===== MODAL PROFIL ===== -->
+  <div id="profile-overlay" class="overlay fixed inset-0 bg-black/50 z-[110]" onclick="closeProfile()"></div>
+  <div id="profile-sheet" class="sheet fixed bottom-0 left-0 right-0 max-w-[480px] sheet-w mx-auto bg-white rounded-t-3xl z-[111]">
+    <div class="p-6 pb-8">
+      <div class="w-10 h-1 bg-slate-200 rounded-full mx-auto mb-5"></div>
+      <div class="flex items-center gap-x-4">
+        <div id="profile-avatar" class="w-14 h-14 rounded-full bg-[#003087] text-white heading text-lg flex items-center justify-center flex-shrink-0"></div>
+        <div class="min-w-0">
+          <div id="profile-name" class="font-bold text-lg truncate"></div>
+          <div id="profile-phone" class="text-sm text-slate-500"></div>
+        </div>
+      </div>
+      <div id="profile-details" class="mt-5 text-sm text-slate-600 space-y-2"></div>
+      <button onclick="logout()" class="mt-6 w-full py-3.5 border border-red-200 text-red-600 font-semibold rounded-3xl active:bg-red-50"><i class="fa-solid fa-right-from-bracket mr-1.5"></i> Supprimer mon profil de cet appareil</button>
+    </div>
+  </div>
+
+  <!-- ===== FEUILLE SUCCÈS ===== -->
+  <div id="success-overlay" class="overlay fixed inset-0 bg-black/50 z-[120]"></div>
+  <div id="success-sheet" class="sheet fixed bottom-0 left-0 right-0 max-w-[480px] sheet-w mx-auto bg-white rounded-t-3xl z-[121]">
+    <div class="p-6 pb-8 text-center">
+      <div class="check-pop w-16 h-16 mx-auto rounded-full bg-emerald-100 flex items-center justify-center mt-2">
+        <i class="fa-solid fa-check text-emerald-600 text-2xl"></i>
+      </div>
+      <h3 class="heading text-xl mt-4">Commande envoyée !</h3>
+      <p id="success-summary" class="text-sm text-slate-600 mt-1.5"></p>
+      <div class="mt-3 inline-block bg-slate-100 text-slate-600 text-xs font-semibold px-3.5 py-2 rounded-full" id="success-ref" class="mono"></div>
+      <p id="send-status" class="text-[13px] text-slate-500 mt-3 flex items-center justify-center gap-x-1.5"></p>
+      <button id="send-retry" onclick="retrySend()" class="hidden mt-2 px-5 py-2.5 border border-red-200 text-red-600 text-sm font-semibold rounded-2xl"><i class="fa-solid fa-rotate-right mr-1"></i> Réessayer l'envoi email</button>
+      <button onclick="saveThenWhatsApp(currentSuccessOrder)" class="mt-5 w-full py-4 bg-emerald-500 text-white font-bold rounded-3xl active:bg-emerald-600 flex items-center justify-center gap-x-2">
+        <i class="fa-brands fa-whatsapp text-xl"></i> Enregistrer les visuels + WhatsApp
+      </button>
+      <p class="text-[11px] text-slate-400 mt-1.5">Les visuels s'enregistrent sur votre téléphone, puis WhatsApp s'ouvre : joignez-les au message.</p>
+      <button onclick="closeSuccess(); showView('orders')" class="mt-2.5 w-full py-3.5 border border-slate-200 font-semibold rounded-3xl text-slate-700">Voir mes commandes</button>
+    </div>
+  </div>
+
+  <!-- ===== ÉCRAN DE CADRAGE (scanner 4 coins) ===== -->
+  <div id="crop-overlay" class="overlay fixed inset-0 bg-black/80 z-[130]"></div>
+  <div id="crop-sheet" class="sheet fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-slate-900 rounded-t-3xl z-[131] flex flex-col max-h-[96vh]">
+    <div class="p-4 pb-6 flex flex-col" style="max-height:96vh">
+      <div class="w-10 h-1 bg-slate-600 rounded-full mx-auto mb-2 flex-shrink-0"></div>
+      <h3 class="heading text-base text-white text-center flex-shrink-0">Cadrez votre document</h3>
+      <p class="text-[12px] text-slate-400 text-center mt-0.5 mb-2 flex-shrink-0">Placez les 4 coins bleus sur les angles — une loupe vous aide à viser au pixel près.</p>
+      <div class="rounded-2xl overflow-hidden bg-black flex items-center justify-center" style="height:62vh">
+        <canvas id="crop-canvas" class="block touch-none" style="max-width:100%; max-height:62vh"></canvas>
+      </div>
+      <div id="crop-progress-wrap" class="hidden mt-3 flex-shrink-0">
+        <div class="flex justify-between text-[11px] text-slate-400 mb-1"><span><i class="fa-solid fa-microchip mr-1"></i>Traitement haute définition…</span><span>≈300 DPI</span></div>
+        <div class="h-2 bg-slate-700 rounded-full overflow-hidden"><div id="crop-progress" class="h-full bg-gradient-to-r from-[#0040C1] to-emerald-400 rounded-full transition-all" style="width:0%"></div></div>
+      </div>
+      <button id="crop-confirm-btn" onclick="confirmCrop()" class="mt-3 w-full py-3.5 bg-[#0040C1] text-white font-bold rounded-3xl flex items-center justify-center gap-x-2 flex-shrink-0">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Recadrer en haute définition
+      </button>
+      <div class="grid grid-cols-2 gap-2 mt-2 flex-shrink-0">
+        <button onclick="rotateCrop()" class="py-2.5 text-slate-300 font-semibold rounded-3xl border border-slate-700"><i class="fa-solid fa-rotate-right mr-1"></i> Pivoter 90°</button>
+        <button onclick="cancelCrop()" class="py-2.5 text-slate-400 font-semibold rounded-3xl border border-slate-700"><i class="fa-solid fa-camera-rotate mr-1"></i> Reprendre</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOAST ===== -->
+  <div id="toast" class="fixed top-4 left-1/2 z-[200] bg-slate-900 text-white text-sm font-medium px-5 py-3 rounded-2xl shadow-lg whitespace-nowrap"></div>
+
+  <!-- Formulaire Netlify Forms (caché) : déclare les champs pour que Netlify
+       détecte le formulaire au déploiement. Ne s'affiche jamais. -->
+  <form name="commande" data-netlify="true" netlify-honeypot="bot-field" hidden>
+    <input type="text" name="bot-field">
+    <input type="text" name="reference">
+    <input type="text" name="date">
+    <textarea name="details"></textarea>
+    <input type="text" name="sous_total">
+    <input type="text" name="livraison">
+    <input type="text" name="total">
+    <input type="text" name="fodec">
+    <input type="text" name="tva">
+    <input type="text" name="timbre">
+    <input type="text" name="total_ttc">
+    <input type="text" name="destinataire">
+    <input type="text" name="client">
+    <input type="text" name="telephone">
+    <input type="email" name="email">
+    <input type="text" name="ville">
+    <input type="text" name="adresse">
+    <input type="text" name="nb_visuels">
+    <input type="file" name="visuel1">
+    <input type="file" name="visuel2">
+    <input type="file" name="visuel3">
+    <input type="file" name="visuel4">
+    <input type="file" name="visuel5">
+    <input type="file" name="visuel6">
+  </form>
+</div>
+
+<script>
+/* ============================================================
+   CONFIGURATION
+   ============================================================ */
+/* === RÉCEPTION DES COMMANDES : NETLIFY FORMS (intégré au site) ===
+   Les commandes (avec photos) arrivent dans Netlify → ton site
+   → onglet "Forms" → "commande".
+   POUR RECEVOIR UN EMAIL à khemaisshabou@gmail.com à chaque commande :
+   Netlify → Forms → Settings → Form notifications → Email notification.
+   (à faire UNE seule fois). */
+
+const WHATSAPP_NUMBER = "21624678721"; // WhatsApp Technic Compo
+
+/* ============================================================
+   ENVOI DES COMMANDES — LE SEUL ENDROIT A MODIFIER
+   ------------------------------------------------------------
+   MODE 'netlify'    : valable tant que le site est sur Netlify.
+   MODE 'web3forms'  : valable sur n'importe quel hebergement, donc
+                       sur le futur domaine .tn. Marche a suivre :
+                       1. creer un compte sur web3forms.com avec
+                          l'adresse mail du domaine ;
+                       2. coller la cle dans CLE_WEB3FORMS ;
+                       3. passer MODE a 'web3forms'.
+                       Rien d'autre a changer dans le fichier.
+   Chaque commande part TOUJOURS par mail. WhatsApp vient en plus,
+   pour les visuels et la confirmation immediate.
+   ============================================================ */
+const ENVOI = {
+  MODE: 'netlify',
+  CLE_WEB3FORMS: '',
+  EMAIL_IMPRIMERIE: 'hello@technic-compo.tn',
+  COPIE_CLIENT: true
+};
+
+/* Qualité impression :
+   - SRC_MAX  : résolution max conservée de la photo d'origine
+   - WARP_MAX : résolution max du document redressé (≈300 DPI en A5)
+   - THUMB    : taille des miniatures (affichage + stockage local)
+   - FORM_BUDGET : poids total max des fichiers envoyés à Netlify Forms */
+const SRC_MAX = 3200, WARP_MAX = 2800, THUMB = 420;
+const FORM_BUDGET = 7 * 1024 * 1024;
+const JPEG_Q = 0.92;
+
+const GOUVERNORATS = ["Tunis","Ariana","Ben Arous","Manouba","Nabeul","Bizerte","Béja","Jendouba","Le Kef","Siliana","Zaghouan","Sousse","Monastir","Mahdia","Sfax","Kairouan","Kasserine","Sidi Bouzid","Gabès","Médenine","Tataouine","Gafsa","Tozeur","Kébili"];
+
+const PRODUCTS = [
+  // Prix HORS TAXES (HT) — grille tarifaire officielle. wcm/hcm : format réel pour le calcul de qualité (DPI).
+  { pub:['med'], name:"Ordonnances personnalisées", img:"p-carnet-ordonnances", icon:"fa-file-medical",   desc:"Blocs de 100 feuilles, offset",  format:"A5 (14,8 × 21 cm)", wcm:14.8, hcm:21,   glueChoice:true, qtys:[1000,2000,3000], prices:{1000:70,  2000:125, 3000:180}  },
+  { pub:['med'], name:"Certificats médicaux", img:"p-certificats-bloc",       icon:"fa-file-signature", desc:"Blocs de 100 feuilles, offset",      format:"A5 (14,8 × 21 cm)", wcm:14.8, hcm:21,   glueChoice:true, qtys:[1000,2000,3000], prices:{1000:70,  2000:125, 3000:180}  },
+  { pub:['med','labo','img'], name:"Carte visite 1 couleur", img:"p-carte-1-couleur",     icon:"fa-id-card",        desc:"Bleu réflexe, noir ou rouge", format:"8,5 × 5,5 cm", wcm:8.5, hcm:5.5, photos:2, colorChoice:true, cardText:true, qtys:[1000,2000,3000], prices:{1000:70,  2000:125, 3000:180} },
+  { pub:['med','labo','img'], name:"Carte visite 4 couleurs", img:"p-cartes-quadri",    icon:"fa-id-card-clip",   desc:"Quadrichromie, couché 350g",  format:"8,5 × 5,5 cm", wcm:8.5, hcm:5.5, photos:2, qtys:[1000,2000,3000], prices:{1000:168, 2000:294, 3000:420}  },
+  { pub:['med'], name:"Enveloppes imprimées", img:"p-enveloppes-imprimees",       icon:"fa-envelope",       desc:"Avec votre logo",        format:"11 × 22 cm", wcm:11, hcm:22, qtys:[1000,2000,3000], prices:{1000:200, 2000:370, 3000:540}  },
+  { pub:['med','labo','img'], name:"Enveloppes vierges", img:"p-enveloppes-vierges",         icon:"fa-envelope-open",  desc:"Formats standards",      format:"11 × 22 cm", wcm:11, hcm:22, qtys:[1000,2000,3000], prices:{1000:100, 2000:185, 3000:270}  },
+  { pub:['med','labo','img'], name:"En-têtes de lettre", img:"p-entetes",         icon:"fa-heading",        desc:"Papier à lettre",        format:"A4 (21 × 29,7 cm)", wcm:21, hcm:29.7, qtys:[1000,2000,3000], prices:{1000:150, 2000:270, 3000:390}  },
+  { pub:['med'], name:"Pochettes patients", img:"p-pochette-patients",         icon:"fa-folder-open",    desc:"Carton rigide",          format:"A3 (29,7 × 42 cm)", wcm:29.7, hcm:42, qtys:[500,1000,2000],  prices:{500:260, 1000:450, 2000:830} },
+  { pub:['med','labo','img'], name:"Fiches patients", img:"p-fiches-patients",            icon:"fa-file-lines",     desc:"Fiches de suivi",        format:"A5 (14,8 × 21 cm)", wcm:14.8, hcm:21, qtys:[500,1000,2000],  prices:{500:120, 1000:170, 2000:320}  },
+  { pub:['med'], name:"Offre spéciale — Pack médical", plein:{1:250, 2:370, 3:538}, defq:2, detail:{
+      1:["3 000 ordonnances personnalisées","1 000 certificats médicaux","250 DT de produits pour 229 DT"],
+      2:["3 000 ordonnances personnalisées","1 000 certificats médicaux","500 fiches patients — 90 DT au lieu de 120","30 DT d'avantage"],
+      3:["3 000 ordonnances personnalisées","1 000 certificats médicaux","500 fiches patients — 90 DT au lieu de 120","1 000 cartes de visite quadri — 100 DT au lieu de 168","98 DT d'avantage"]},
+    qlab:{1:"Essentiel",2:"Cabinet",3:"Complet"},
+    icon:"fa-gift", desc:"Trois niveaux, de l'essentiel au cabinet équipé", format:"A5 (14,8 × 21 cm)", wcm:14.8, hcm:21, glueChoice:true, photos:2, badge:"OFFRE", img:"p-pack-medical", qtys:[1,2,3], prices:{1:229, 2:319, 3:419} },
+  { pub:['labo'], name:"Enveloppes à fenêtre", img:"p-enveloppes-fenetre", icon:"fa-envelope-circle-check", desc:"Fenêtre transparente, résultats", format:"11 × 22 cm", wcm:11, hcm:22, qtys:[1000,2000,3000], prices:{1000:215, 2000:400, 3000:585} },
+  { pub:['labo'], name:"Pack Laboratoire", defq:4000,
+    plein:{2000:670, 3000:975, 4000:1290, 5000:1605, 6000:1920},
+    detail:{
+      2000:["2 000 en-têtes A4 — 0,125 l'unité","2 000 enveloppes à fenêtre — 0,125 l'unité"],
+      3000:["3 000 en-têtes A4 — 0,110 l'unité","3 000 enveloppes à fenêtre — 0,110 l'unité"],
+      4000:["4 000 en-têtes A4 — 0,100 l'unité","4 000 enveloppes à fenêtre — 0,100 l'unité"],
+      5000:["5 000 en-têtes A4 — 0,095 l'unité","5 000 enveloppes à fenêtre — 0,095 l'unité"],
+      6000:["6 000 en-têtes A4 — 0,090 l'unité","6 000 enveloppes à fenêtre — 0,090 l'unité"]},
+    icon:"fa-flask", desc:"En-têtes + enveloppes à fenêtre", format:"A4 + 11 × 22 cm", wcm:21, hcm:29.7,
+    photos:2, badge:"PACK", img:"p-entetes", qtys:[2000,3000,4000,5000,6000],
+    prices:{2000:500, 3000:660, 4000:800, 5000:950, 6000:1080} },
+  { pub:['img'], name:"Pochettes 25 × 35", img:"p-pochette-imagerie", icon:"fa-folder-closed", desc:"Films et CD", format:"25 × 35 cm", wcm:25, hcm:35, qtys:[1000,2000,3000], prices:{1000:380, 2000:720, 3000:1020} },
+  { pub:['img'], name:"Pochettes 30 × 40", img:"p-pochette-imagerie", icon:"fa-folder-closed", desc:"Grands films", format:"30 × 40 cm", wcm:30, hcm:40, qtys:[1000,2000,3000], prices:{1000:450, 2000:860, 3000:1230} },
+  { pub:['img'], name:"Pochettes 22,9 × 32,4", img:"p-pochette-imagerie", icon:"fa-folder-closed", desc:"Compte rendu à plat", format:"22,9 × 32,4 cm", wcm:22.9, hcm:32.4, qtys:[1000,2000,3000], prices:{1000:350, 2000:660, 3000:930} },
+  { pub:['img'], name:"Pack Imagerie grand format", plein:{1000:600, 2000:1130, 3000:1720}, defq:2000, detail:{
+      1000:["1 000 pochettes 30 × 40 — 0,440 l'unité","1 000 en-têtes A4 — 0,110 l'unité"],
+      2000:["2 000 pochettes 30 × 40 — 0,385 l'unité","2 000 en-têtes A4 — 0,100 l'unité"],
+      3000:["3 000 pochettes 30 × 40 — 0,370 l'unité","3 000 en-têtes A4 — 0,090 l'unité","1 000 cartes de visite offertes"]},
+    icon:"fa-x-ray", desc:"Grands films IRM + comptes rendus", format:"30 × 40 + A4", wcm:30, hcm:40, photos:2, badge:"PACK", img:"p-pochette-imagerie", qtys:[1000,2000,3000], prices:{1000:550, 2000:970, 3000:1380} },
+  { pub:['img'], name:"Pack Imagerie", plein:{1000:530, 2000:990, 3000:1510}, defq:2000, detail:{
+      1000:["1 000 pochettes 25 × 35 — 0,380 l'unité","1 000 en-têtes A4 — 0,110 l'unité"],
+      2000:["2 000 pochettes 25 × 35 — 0,325 l'unité","2 000 en-têtes A4 — 0,100 l'unité"],
+      3000:["3 000 pochettes 25 × 35 — 0,315 l'unité","3 000 en-têtes A4 — 0,090 l'unité","1 000 cartes de visite offertes"]}, img:"p-pochette-imagerie", icon:"fa-x-ray", desc:"Pochettes 25 × 35 + comptes rendus", format:"25 × 35 + A4", wcm:25, hcm:35, photos:2, badge:"PACK", qtys:[1000,2000,3000], prices:{1000:490, 2000:850, 3000:1215} },
+];
+
+/* ============================================================
+   STOCKAGE
+   Les photos HD ne vont JAMAIS dans localStorage (quota 5 Mo) :
+   seules les miniatures y sont conservées. Les fichiers HD
+   restent en mémoire (PHOTO_FULL) le temps de la session.
+   ============================================================ */
+const memStore = {};
+const store = {
+  get(k){ try { return JSON.parse(localStorage.getItem(k)); } catch(e){ return memStore[k] ?? null; } },
+  set(k,v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){ memStore[k]=v; } },
+  del(k){ try { localStorage.removeItem(k); } catch(e){ delete memStore[k]; } }
+};
+
+const PHOTO_FULL = {};   // cache mémoire : id → { original, color, doc? }
+let photoSeq = 1;
+
+/* ------------------------------------------------------------
+   PERSISTANCE DES VISUELS HD (IndexedDB)
+   localStorage plafonne a 5 Mo : les photos HD n'y tiennent pas.
+   IndexedDB n'a pas cette limite. Les HD survivent donc a la
+   fermeture de l'onglet, a un appel recu pendant la commande,
+   et au passage de l'appareil photo en arriere-plan.
+   ------------------------------------------------------------ */
+const IDB_NAME = 'technic_photos', IDB_STORE = 'hd';
+let idbPromise = null;
+function idbOpen(){
+  if (idbPromise) return idbPromise;
+  idbPromise = new Promise((res, rej) => {
+    const r = indexedDB.open(IDB_NAME, 1);
+    r.onupgradeneeded = () => { if (!r.result.objectStoreNames.contains(IDB_STORE)) r.result.createObjectStore(IDB_STORE); };
+    r.onsuccess = () => res(r.result);
+    r.onerror  = () => rej(r.error);
+  });
+  return idbPromise;
+}
+async function idbPut(id, val){
+  try { const db = await idbOpen();
+    await new Promise((res, rej) => { const t = db.transaction(IDB_STORE,'readwrite');
+      t.objectStore(IDB_STORE).put(val, id); t.oncomplete = res; t.onerror = () => rej(t.error); });
+  } catch(e){ console.warn('Sauvegarde visuel impossible', e); }
+}
+async function idbDel(id){
+  try { const db = await idbOpen();
+    await new Promise((res) => { const t = db.transaction(IDB_STORE,'readwrite');
+      t.objectStore(IDB_STORE).delete(id); t.oncomplete = res; t.onerror = res; });
+  } catch(e){}
+}
+async function idbAll(){
+  try { const db = await idbOpen();
+    return await new Promise((res) => {
+      const out = {}, t = db.transaction(IDB_STORE,'readonly'), st = t.objectStore(IDB_STORE);
+      const cur = st.openCursor();
+      cur.onsuccess = e => { const c = e.target.result; if (c){ out[c.key] = c.value; c.continue(); } else res(out); };
+      cur.onerror = () => res(out);
+    });
+  } catch(e){ return {}; }
+}
+function savePhotoFull(id, obj){ PHOTO_FULL[id] = obj; idbPut(id, obj); }
+function dropPhotoFull(id){ delete PHOTO_FULL[id]; idbDel(id); }
+
+/* Au demarrage : on remet en memoire les visuels encore utiles
+   (panier + historique) et on efface les orphelins. */
+async function restorePhotos(){
+  try {
+    const keep = new Set();
+    const scan = it => (it && it.photos ? it.photos : []).forEach(p => p && p.id && keep.add(p.id));
+    (store.get('technic_cart') || []).forEach(scan);
+    (store.get('technic_orders') || []).forEach(o => { (o.items || [o]).forEach(scan); });
+    const all = await idbAll();
+    let restored = 0;
+    Object.keys(all).forEach(id => {
+      if (keep.has(id)) { PHOTO_FULL[id] = all[id]; restored++; }
+      else idbDel(id);
+    });
+    if (restored) renderCartBar();
+  } catch(e){ console.warn('Restauration des visuels', e); }
+}
+const newPhotoId = () => 'ph' + Date.now().toString(36) + (photoSeq++);
+
+let currentProduct = null, currentQty = 1000, uploadedPhotos = [], currentSuccessOrder = null;
+let currentGlue = null;
+
+/* ============================================================
+   OUTILS IMAGE
+   ============================================================ */
+function loadImage(url){
+  return new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = url; });
+}
+async function dataUrlToCanvas(url){
+  const im = await loadImage(url);
+  const c = document.createElement('canvas'); c.width = im.width; c.height = im.height;
+  c.getContext('2d').drawImage(im, 0, 0);
+  return c;
+}
+async function makeThumb(url, max = THUMB, q = 0.72){
+  const im = await loadImage(url);
+  const r = Math.min(1, max / Math.max(im.width, im.height));
+  const c = document.createElement('canvas');
+  c.width = Math.max(1, Math.round(im.width * r)); c.height = Math.max(1, Math.round(im.height * r));
+  c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+  return c.toDataURL('image/jpeg', q);
+}
+const dataUrlBytes = url => Math.round((url.length - (url.indexOf(',') + 1)) * 3 / 4);
+
+/* ============================================================
+   CATALOGUE & NAVIGATION
+   ============================================================ */
+function paperPreview(p){
+  if (p.img) return `<img src="/images/${p.img}.webp" alt="" loading="lazy" decoding="async"
+      class="w-[62px] h-[62px] object-cover rounded-xl border border-[#E7E7DE] flex-none">`;
+  // feuille aux proportions réelles (wcm × hcm), max 48px
+  const MAXD = 48;
+  const n = p.name.toLowerCase();
+  // les enveloppes se présentent à l'italienne (paysage)
+  let wc = p.wcm, hc = p.hcm;
+  if (n.includes('enveloppe') && hc > wc){ [wc, hc] = [hc, wc]; }
+  const r = MAXD / Math.max(wc, hc);
+  const w = Math.max(18, Math.round(wc * r));
+  const hh = Math.max(18, Math.round(hc * r));
+  let inner = '';
+  if (n.includes('ordonnance') || n.includes('certificat') || n.includes('fiche') || n.includes('pack')){
+    inner = `<span class="hdrband"></span>` +
+      [38,50,62,74].map(t=>`<span class="rule" style="top:${t}%"></span>`).join('');
+  } else if (n.includes('carte')){
+    inner = `<span class="rule ink" style="top:32%;left:10%;right:45%"></span>
+             <span class="rule" style="top:52%;left:10%;right:30%"></span>
+             <span class="rule" style="top:66%;left:10%;right:38%"></span>`;
+  } else if (n.includes('enveloppe')){
+    inner = `<span class="flap"></span>`;
+  } else if (n.includes('pochette')){
+    inner = `<span class="tab"></span><span class="rule" style="top:46%"></span><span class="rule" style="top:60%"></span>`;
+  } else if (n.includes('en-t') || n.includes('lettre')){
+    inner = `<span class="hdrband"></span>` +
+      [34,44,54,64,74,84].map(t=>`<span class="rule" style="top:${t}%"></span>`).join('');
+  }
+  return `<div class="paper-wrap"><div class="paper" style="width:${w}px;height:${hh}px">
+      <span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>
+      ${inner}</div></div>`;
+}
+
+function productCategory(p){
+  const n = p.name.toLowerCase();
+  if (p.badge === 'PACK' || n.includes('offre')) return 'Offres';
+  if (n.includes('pochette')) return 'Pochettes';
+  if (n.includes('carte')) return 'Cartes de visite';
+  if (n.includes('enveloppe')) return 'Enveloppes';
+  if (n.includes('en-t') || n.includes('lettre')) return 'Papeterie';
+  return 'Médical';
+}
+const CATEGORY_ORDER = ['Offres','Médical','Pochettes','Enveloppes','Papeterie','Cartes de visite'];
+
+/* Espaces : le catalogue reste unique, les onglets ne font que filtrer.
+   Un laboratoire qui a besoin d'ordonnances les trouve dans son propre espace. */
+const ESPACES=[{cle:'med',nom:'Médecins'},{cle:'labo',nom:'Laboratoires'},
+               {cle:'img',nom:'Imagerie'},{cle:'tout',nom:'Tout le catalogue'}];
+let espace='med';
+function setEspace(c){
+  espace=c;
+  try{ localStorage.setItem('tc_espace',c); }catch(e){}
+  document.querySelectorAll('.esp-b').forEach(b=>{
+    const on=b.dataset.e===c;
+    b.className='esp-b flex-none border rounded-full px-4 py-2 text-[13px] font-semibold whitespace-nowrap '
+      +(on ? 'bg-[#003087] text-white border-[#003087]' : 'bg-white text-slate-500 border-[#E7E7DE]');
+  });
+  renderProducts();
+}
+function renderEspaces(){
+  document.getElementById('espaces').innerHTML=
+    ESPACES.map(e=>`<button type="button" class="esp-b" data-e="${e.cle}" onclick="setEspace('${e.cle}')">${e.nom}</button>`).join('');
+}
+
+function renderProducts(){
+  const groups = {};
+  PRODUCTS.forEach((p,i) => {
+    if (espace!=='tout' && !(p.pub||['med']).includes(espace)) return;
+    const c = productCategory(p);
+    (groups[c] = groups[c] || []).push([p,i]);
+  });
+  document.getElementById('product-list').innerHTML = CATEGORY_ORDER
+    .filter(c => groups[c])
+    .map(c => `
+      <div class="flex items-center gap-x-2 pt-3 pb-0.5">
+        <span class="mono text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-400">${c}</span>
+        <span class="flex-1 h-px bg-[#E7E7DE]"></span>
+      </div>
+      <div class="pl-grid">${groups[c].map(([p,i]) => productCard(p,i)).join('')}</div>`).join('');
+}
+
+function productCard(p,i){
+  return `
+    <button onclick="openOrder(${i})" class="app-card w-full text-left bg-white border border-[#E7E7DE] rounded-2xl p-3.5 flex gap-x-3.5 items-center">
+      ${paperPreview(p)}
+      <div class="flex-1 min-w-0">
+        <div class="font-semibold text-[15px] leading-snug">${p.badge ? `<span class="mono text-[8px] font-bold bg-[#EC008C] text-white px-1.5 py-0.5 rounded align-middle mr-1.5 tracking-wider">${p.badge}</span>` : ''}${p.name}</div>
+        <div class="text-[12.5px] text-slate-400 truncate">${p.desc}</div>
+        <div class="mono text-[10px] text-slate-400 mt-1 tracking-wide">${p.format || ''}</div>
+      </div>
+      <div class="text-right flex-shrink-0 pl-1">
+        <div class="text-[10px] uppercase tracking-wider text-slate-400 mb-0.5">dès</div>
+        <div class="mono font-bold text-[#003087] text-[16px] leading-none">${p.prices[p.qtys[0]]}</div>
+        <div class="mono text-[9px] text-slate-400 mt-0.5">TND HT</div>
+      </div>
+    </button>`;
+}
+
+function showView(v){
+  document.getElementById('view-home').classList.toggle('hidden', v!=='home');
+  document.getElementById('view-orders').classList.toggle('hidden', v!=='orders');
+  document.getElementById('nav-home').className   = 'flex-1 flex flex-col items-center py-3 ' + (v==='home'   ? 'text-[#003087]' : 'text-slate-400');
+  document.getElementById('nav-orders').className = 'flex-1 flex flex-col items-center py-3 relative ' + (v==='orders' ? 'text-[#003087]' : 'text-slate-400');
+  if (v==='orders') renderOrders();
+  window.scrollTo({top:0});
+}
+
+/* ============================================================
+   MES COMMANDES
+   ============================================================ */
+function getOrders(){ return store.get('technic_orders') || []; }
+function getOrderByRef(ref){ return getOrders().find(o => o.ref === ref); }
+
+function orderItems(o){
+  return o.items || [{ product:o.product, quantity:o.quantity, total:o.total, color:o.color, cardText:o.cardText, notes:o.notes, photo:o.photo, photoName:o.photoName, photoMode:o.photoMode }];
+}
+
+function renderOrders(){
+  const orders = getOrders();
+  const box = document.getElementById('orders-list');
+  if (!orders.length){
+    box.innerHTML = `
+      <div class="text-center py-16 fade-in">
+        <div class="w-16 h-16 mx-auto rounded-full bg-slate-100 flex items-center justify-center"><i class="fa-solid fa-box-open text-2xl text-slate-400"></i></div>
+        <p class="font-semibold mt-4">Aucune commande pour l'instant</p>
+        <p class="text-sm text-slate-500 mt-1">Choisissez un produit dans le catalogue<br>pour passer votre première commande.</p>
+        <button onclick="showView('home')" class="mt-5 px-6 py-3 bg-[#003087] text-white font-semibold rounded-2xl">Voir le catalogue</button>
+      </div>`;
+    return;
+  }
+  box.innerHTML = orders.map(o => {
+    const items = orderItems(o);
+    return `
+    <div class="fade-in bg-white border border-[#E7E7DE] rounded-2xl p-4">
+      <div class="flex justify-between items-center">
+        <div class="mono text-[11px] text-slate-400 tracking-wide">${o.ref} · ${o.date}</div>
+        <span class="text-[11px] font-semibold px-2.5 py-1 rounded-full ${o.status==='Envoyée' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${o.status}</span>
+      </div>
+      <div class="mt-3 space-y-2.5">
+        ${items.map(it => `
+          <div class="flex gap-x-3 items-center">
+            ${it.photo ? `<img src="${it.photo}" class="w-12 h-12 rounded-xl object-cover bg-slate-50 flex-shrink-0" alt="">`
+                       : `<div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-print text-[#003087] text-sm"></i></div>`}
+            <div class="flex-1 min-w-0">
+              <div class="font-semibold text-[14px] leading-tight">${it.product}</div>
+              <div class="text-[12px] text-slate-500">${(it.quantity||0).toLocaleString('fr-FR')} ex.${it.color ? ' • '+it.color : ''}${it.glue ? ' • '+it.glue : ''} • ${it.total} TND HT</div>
+              ${it.format ? `<div class="text-[12px] text-slate-400">${it.format}${itemPhotos(it).length>1 ? ' • '+itemPhotos(it).length+' visuels' : ''}</div>` : ''}
+              ${it.cardText ? `<div class="text-[12px] text-slate-400 truncate"><i class="fa-solid fa-font text-[10px]"></i> ${it.cardText}</div>` : ''}
+              ${it.notes ? `<div class="text-[12px] text-slate-400 truncate"><i class="fa-solid fa-pen text-[10px]"></i> ${it.notes}</div>` : ''}
+            </div>
+          </div>`).join('')}
+      </div>
+      <div class="mt-3 pt-3 border-t border-slate-100 flex justify-between items-center">
+        <span class="text-sm font-semibold">Total</span>
+        <span class="font-bold text-[#003087]">${o.total} TND HT</span>
+      </div>
+      <div class="flex gap-x-2 mt-3">
+        <button onclick='sendWhatsApp(getOrderByRef("${o.ref}"))' class="flex-1 py-2.5 bg-emerald-50 text-emerald-700 font-semibold text-sm rounded-2xl text-center"><i class="fa-brands fa-whatsapp"></i> Renvoyer sur WhatsApp</button>
+        <button onclick='deleteOrder("${o.ref}")' class="w-11 py-2.5 bg-red-50 text-red-500 rounded-2xl" aria-label="Supprimer la commande"><i class="fa-solid fa-trash-can text-sm"></i></button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function deleteOrder(ref){
+  if (!confirm("Supprimer cette commande de l'historique ?")) return;
+  store.set('technic_orders', getOrders().filter(o => o.ref !== ref));
+  renderOrders(); updateBadge(); toast("Commande supprimée");
+}
+
+function updateBadge(){
+  const n = getOrders().length, b = document.getElementById('orders-badge');
+  b.classList.toggle('hidden', n===0); b.classList.toggle('flex', n>0); b.innerText = n;
+}
+
+/* ============================================================
+   MODAL COMMANDE
+   ============================================================ */
+const PRINT_COLORS = [
+  { id:"Bleu réflexe", swatch:"#001E96" },
+  { id:"Noir",         swatch:"#16181D" },
+  { id:"Rouge",        swatch:"#D7141A" },
+];
+let currentColor = null;
+
+function openOrder(i){
+  currentProduct = PRODUCTS[i]; uploadedPhotos = [];
+  document.getElementById('modal-product-name').innerText = currentProduct.name;
+  document.getElementById('modal-product-format').innerText = currentProduct.format ? "Format : " + currentProduct.format : "";
+  document.getElementById('modal-product-icon').innerHTML = `<i class="fa-solid ${currentProduct.icon} text-xl"></i>`;
+  document.getElementById('order-notes').value = '';
+  document.getElementById('card-text').value = '';
+  const multi = (currentProduct.photos || 1) >= 2;
+  const pack = /pack|offre/i.test(currentProduct.name);
+  document.getElementById('photo-label').innerHTML = !multi
+    ? 'Votre modèle ou visuel <span class="text-red-500">*</span> <span class="font-normal text-slate-400">(obligatoire)</span>'
+    : pack
+      ? 'Vos modèles <span class="text-red-500">*</span> <span class="font-normal text-slate-400">(2 photos minimum)</span>'
+      : 'Recto &amp; verso <span class="text-red-500">*</span> <span class="font-normal text-slate-400">(2 photos minimum)</span>';
+  document.getElementById('upload-hint').innerHTML = !multi
+    ? 'Photographiez votre ancien imprimé :<br>il sera redressé et nettoyé en haute définition'
+    : pack
+      ? 'Photographiez un modèle de <b>chaque imprimé</b> du pack'
+      : 'Photographiez le <b>recto</b> puis le <b>verso</b> de la carte';
+  renderPhotos();
+  document.getElementById('color-block').classList.toggle('hidden', !currentProduct.colorChoice);
+  document.getElementById('cardtext-block').classList.toggle('hidden', !currentProduct.cardText);
+  if (currentProduct.colorChoice){ renderColorButtons(); setColor(PRINT_COLORS[0].id); }
+  else { currentColor = null; }
+  document.getElementById('glue-block').classList.toggle('hidden', !currentProduct.glueChoice);
+  if (currentProduct.glueChoice){ setGlue('Avec colle'); } else { currentGlue = null; }
+  renderQtyButtons(); setQuantity(currentProduct.defq || currentProduct.qtys[0]); openSheet('order');
+}
+
+function setGlue(val){
+  currentGlue = val;
+  document.getElementById('glue-avec').className = 'py-3 rounded-2xl text-center border ' + (val==='Avec colle' ? 'border-[#003087] bg-blue-50 ring-1 ring-[#003087]' : 'border-slate-200 bg-white');
+  document.getElementById('glue-sans').className = 'py-3 rounded-2xl text-center border ' + (val==='Sans colle' ? 'border-[#003087] bg-blue-50 ring-1 ring-[#003087]' : 'border-slate-200 bg-white');
+}
+
+function renderColorButtons(){
+  document.getElementById('color-row').innerHTML = PRINT_COLORS.map(c => `
+    <button onclick="setColor('${c.id}')" id="color-${c.id.replace(/[^a-z]/gi,'')}" class="py-3 rounded-2xl text-center border">
+      <span class="inline-block w-5 h-5 rounded-full border-2 border-white shadow" style="background:${c.swatch}"></span>
+      <div class="text-[11px] font-semibold mt-1">${c.id}</div>
+    </button>`).join('');
+}
+
+function setColor(id){
+  currentColor = id;
+  PRINT_COLORS.forEach(c => {
+    const btn = document.getElementById('color-'+c.id.replace(/[^a-z]/gi,''));
+    btn.className = 'py-3 rounded-2xl text-center border ' + (c.id===id ? 'border-[#003087] bg-blue-50 ring-1 ring-[#003087]' : 'border-slate-200 bg-white');
+  });
+}
+function closeOrder(){ closeSheet('order'); }
+
+function renderDetail(q){
+  const el = document.getElementById('modal-product-detail');
+  const d = currentProduct.detail && currentProduct.detail[q];
+  const gain = document.getElementById('pack-gain');
+  const plein = currentProduct.plein && currentProduct.plein[q];
+  if (plein){
+    const prix = currentProduct.prices[q];
+    const remise = Math.round((1 - prix/plein) * 100);
+    gain.classList.remove('hidden');
+    gain.innerHTML = `<span class="gain-prix mono">${prix} DT</span>
+      <span class="gain-bloc"><s class="gain-old mono">${plein} DT séparément</s>
+      <i class="gain-rem mono">−${remise} %</i></span>`;
+  } else { gain.classList.add('hidden'); gain.innerHTML=''; }
+  if (!d){ el.classList.add('hidden'); el.innerHTML=''; return; }
+  el.classList.remove('hidden');
+  el.innerHTML = d.map(l => {
+    const offert = /offert/i.test(l);
+    return `<li class="flex gap-x-2 text-[12.5px] leading-snug ${offert?'text-[#EC008C] font-semibold':'text-slate-500'}">
+      <i class="fa-solid ${offert?'fa-gift':'fa-check'} text-[10px] mt-1"></i><span>${l}</span></li>`;
+  }).join('');
+}
+
+function renderQtyButtons(){
+  const base = currentProduct.prices[currentProduct.qtys[0]];
+  document.getElementById('qty-row').innerHTML = currentProduct.qtys.map((q,n) => {
+    const ecart = currentProduct.prices[q] - base;
+    const libelle = (currentProduct.qlab && currentProduct.qlab[q]) || (q===1 ? 'Pack' : q.toLocaleString('fr-FR'));
+    const sup = n===0
+      ? `<div class="text-[10.5px] qty-price mono">${currentProduct.prices[q]} HT</div>`
+      : `<div class="text-[10.5px] mono font-bold text-[#EC008C] qty-ecart">+${ecart} DT</div>`;
+    return `<button onclick="setQuantity(${q})" id="qty-${q}" class="py-3 rounded-2xl text-center">
+      <div class="font-bold mono text-[13px]">${libelle}</div>${sup}</button>`;
+  }).join('');
+}
+
+function setQuantity(q){
+  currentQty = q;
+  renderDetail(q);
+  currentProduct.qtys.forEach(x => {
+    const btn = document.getElementById('qty-'+x), active = x===q;
+    btn.className = 'py-3 rounded-2xl text-center border ' + (active ? 'bg-[#003087] border-[#003087] text-white' : 'bg-white border-slate-200');
+    const prix  = btn.querySelector('.qty-price');
+    const ecart = btn.querySelector('.qty-ecart');
+    if (prix)  prix.className  = 'text-[10.5px] font-semibold qty-price mono ' + (active ? 'text-blue-200' : 'text-emerald-600');
+    if (ecart) ecart.className = 'text-[10.5px] mono font-bold qty-ecart ' + (active ? 'text-white' : 'text-[#EC008C]');
+  });
+  document.getElementById('total-price').innerText = currentProduct.prices[q] + " TND HT";
+}
+
+/* ============================================================
+   CORRECTION DE PERSPECTIVE — HAUTE DÉFINITION, ASYNCHRONE
+   Le client place 4 coins → le document est découpé et redressé
+   comme un vrai scanner, jusqu'à 2800 px (≈300 DPI en A5).
+   Le traitement est découpé en tranches pour ne jamais figer
+   le téléphone, avec une barre de progression.
+   ============================================================ */
+function solveLinear(A, b){
+  const n = b.length;
+  const M = A.map((row,i) => row.concat([b[i]]));
+  for (let col=0; col<n; col++){
+    let piv = col;
+    for (let r=col+1; r<n; r++) if (Math.abs(M[r][col]) > Math.abs(M[piv][col])) piv = r;
+    [M[col], M[piv]] = [M[piv], M[col]];
+    const d = M[col][col] || 1e-10;
+    for (let c=col; c<=n; c++) M[col][c] /= d;
+    for (let r=0; r<n; r++){
+      if (r===col) continue;
+      const f = M[r][col];
+      for (let c=col; c<=n; c++) M[r][c] -= f*M[col][c];
+    }
+  }
+  return M.map(row => row[n]);
+}
+
+function computeHomography(src, dst){
+  const A=[], b=[];
+  for (let i=0;i<4;i++){
+    const {x:X,y:Y} = dst[i], {x,y} = src[i];
+    A.push([X, Y, 1, 0, 0, 0, -X*x, -Y*x]); b.push(x);
+    A.push([0, 0, 0, X, Y, 1, -X*y, -Y*y]); b.push(y);
+  }
+  const h = solveLinear(A,b);
+  return [h[0],h[1],h[2],h[3],h[4],h[5],h[6],h[7],1];
+}
+
+const nextFrame = () => new Promise(r => requestAnimationFrame(r));
+
+async function warpPerspectiveAsync(srcCanvas, corners, onProgress){
+  const d = (a,b)=>Math.hypot(a.x-b.x, a.y-b.y);
+  let W = Math.round((d(corners[0],corners[1]) + d(corners[3],corners[2]))/2);
+  let H = Math.round((d(corners[0],corners[3]) + d(corners[1],corners[2]))/2);
+  const sc = Math.min(1, WARP_MAX/Math.max(W,H));
+  W = Math.max(50, Math.round(W*sc)); H = Math.max(50, Math.round(H*sc));
+  const Hm = computeHomography(corners, [{x:0,y:0},{x:W-1,y:0},{x:W-1,y:H-1},{x:0,y:H-1}]);
+  const sctx = srcCanvas.getContext('2d');
+  const sd = sctx.getImageData(0,0,srcCanvas.width,srcCanvas.height).data;
+  const sw = srcCanvas.width, sh = srcCanvas.height;
+  const out = document.createElement('canvas'); out.width = W; out.height = H;
+  const octx = out.getContext('2d');
+  const od = octx.createImageData(W,H);
+  const D = od.data;
+  const ROWS = Math.max(8, Math.round(140000 / W));   // ~140k pixels par tranche
+  for (let y0=0; y0<H; y0+=ROWS){
+    const yEnd = Math.min(H, y0+ROWS);
+    for (let y=y0; y<yEnd; y++){
+      // Les numérateurs de la projection sont linéaires en x :
+      // on incrémente au lieu de recalculer (3× plus rapide).
+      let nx = Hm[1]*y + Hm[2], ny = Hm[4]*y + Hm[5], nw = Hm[7]*y + 1;
+      let p = y*W*4;
+      for (let x=0; x<W; x++, p+=4, nx+=Hm[0], ny+=Hm[3], nw+=Hm[6]){
+        const sx = nx/nw, sy = ny/nw;
+        if (sx<0||sy<0||sx>=sw-1||sy>=sh-1){ D[p+3]=255; continue; }
+        const x0=sx|0, y0b=sy|0, fx=sx-x0, fy=sy-y0b;
+        const i00=(y0b*sw+x0)*4, i10=i00+4, i01=i00+sw*4, i11=i01+4;
+        const a=(1-fx)*(1-fy), bq=fx*(1-fy), cq=(1-fx)*fy, dq=fx*fy;
+        D[p]   = sd[i00]  *a + sd[i10]  *bq + sd[i01]  *cq + sd[i11]  *dq;
+        D[p+1] = sd[i00+1]*a + sd[i10+1]*bq + sd[i01+1]*cq + sd[i11+1]*dq;
+        D[p+2] = sd[i00+2]*a + sd[i10+2]*bq + sd[i01+2]*cq + sd[i11+2]*dq;
+        D[p+3] = 255;
+      }
+    }
+    if (onProgress) onProgress(yEnd/H);
+    await nextFrame();
+  }
+  octx.putImageData(od,0,0);
+  return out;
+}
+
+/* ============================================================
+   AMÉLIORATION D'IMAGE
+   ============================================================ */
+function boxBlurChannelData(src, w, h, radius){
+  const tmp = new Uint8ClampedArray(src.length);
+  const out = new Uint8ClampedArray(src.length);
+  const div = radius*2+1;
+  for (let y=0; y<h; y++){
+    let r=0,g=0,b=0;
+    for (let i=-radius;i<=radius;i++){
+      const x=Math.min(w-1,Math.max(0,i)), p=(y*w+x)*4;
+      r+=src[p];g+=src[p+1];b+=src[p+2];
+    }
+    for (let x=0;x<w;x++){
+      const p=(y*w+x)*4;
+      tmp[p]=r/div; tmp[p+1]=g/div; tmp[p+2]=b/div; tmp[p+3]=255;
+      const xa=Math.min(w-1,x+radius+1), xs=Math.max(0,x-radius);
+      const pa=(y*w+xa)*4, ps=(y*w+xs)*4;
+      r+=src[pa]-src[ps]; g+=src[pa+1]-src[ps+1]; b+=src[pa+2]-src[ps+2];
+    }
+  }
+  for (let x=0; x<w; x++){
+    let r=0,g=0,b=0;
+    for (let i=-radius;i<=radius;i++){
+      const y=Math.min(h-1,Math.max(0,i)), p=(y*w+x)*4;
+      r+=tmp[p];g+=tmp[p+1];b+=tmp[p+2];
+    }
+    for (let y=0;y<h;y++){
+      const p=(y*w+x)*4;
+      out[p]=r/div; out[p+1]=g/div; out[p+2]=b/div; out[p+3]=255;
+      const ya=Math.min(h-1,y+radius+1), ys=Math.max(0,y-radius);
+      const pa=(ya*w+x)*4, ps=(ys*w+x)*4;
+      r+=tmp[pa]-tmp[ps]; g+=tmp[pa+1]-tmp[ps+1]; b+=tmp[pa+2]-tmp[ps+2];
+    }
+  }
+  return out;
+}
+
+function sharpenLight(imgData, w, h, amount){
+  // Netteté légère (laplacien 3×3) — rend le texte plus net à l'impression.
+  const s = new Uint8ClampedArray(imgData.data);
+  const d = imgData.data;
+  const A = amount;
+  for (let y=1; y<h-1; y++){
+    let p = (y*w+1)*4;
+    for (let x=1; x<w-1; x++, p+=4){
+      for (let c=0;c<3;c++){
+        const v = s[p+c]*(1+4*A) - A*(s[p+c-4]+s[p+c+4]+s[p+c-w*4]+s[p+c+w*4]);
+        d[p+c] = v<0?0:v>255?255:v;
+      }
+    }
+  }
+}
+
+function scanEnhance(canvas){
+  // Mode DOCUMENT : fond blanchi, texte net (ordonnances, en-têtes…)
+  const w = canvas.width, h = canvas.height;
+  const ctx = canvas.getContext('2d');
+  const imgData = ctx.getImageData(0,0,w,h);
+  const src = imgData.data;
+  const radius = Math.max(8, Math.round(Math.max(w,h)/35));
+  const bg = boxBlurChannelData(src, w, h, radius);
+  const d = imgData.data;
+  for (let p=0; p<d.length; p+=4){
+    for (let c=0;c<3;c++){
+      const v = d[p+c] / Math.max(bg[p+c], 1) * 240;
+      d[p+c] = Math.min(255, Math.max(0, (v-128)*1.18+128));
+    }
+  }
+  sharpenLight(imgData, w, h, 0.3);
+  ctx.putImageData(imgData,0,0);
+  return canvas.toDataURL('image/jpeg', 0.9);
+}
+
+function colorFaithful(canvas){
+  // Mode COULEURS FIDÈLES (par défaut) : balance des blancs douce
+  // + étirement de contraste par percentiles (1 % – 99 %),
+  // sans blanchir ni dénaturer les couleurs réelles.
+  const w = canvas.width, h = canvas.height;
+  const ctx = canvas.getContext('2d');
+  const imgData = ctx.getImageData(0,0,w,h);
+  const d = imgData.data;
+  // 1) Balance des blancs (gray-world atténué à 50 %)
+  let sr=0,sg=0,sb=0,n=0;
+  for (let p=0;p<d.length;p+=16){ sr+=d[p]; sg+=d[p+1]; sb+=d[p+2]; n++; }
+  const ar=sr/n, ag=sg/n, ab=sb/n, gray=(ar+ag+ab)/3;
+  const kr=(gray/ar-1)*0.5+1, kg=(gray/ag-1)*0.5+1, kb=(gray/ab-1)*0.5+1;
+  // 2) Histogramme de luminance pour les percentiles
+  const hist = new Uint32Array(256);
+  for (let p=0;p<d.length;p+=16){
+    const l = (d[p]*kr*0.299 + d[p+1]*kg*0.587 + d[p+2]*kb*0.114)|0;
+    hist[l>255?255:l]++;
+  }
+  const tot = n; let cum=0, lo=0, hi=255;
+  for (let i=0;i<256;i++){ cum+=hist[i]; if (cum >= tot*0.01){ lo=i; break; } }
+  cum=0;
+  for (let i=255;i>=0;i--){ cum+=hist[i]; if (cum >= tot*0.01){ hi=i; break; } }
+  if (hi-lo < 40){ lo=0; hi=255; }              // image déjà plate : ne pas forcer
+  const scale = 255/(hi-lo);
+  for (let p=0;p<d.length;p+=4){
+    let r=d[p]*kr, g=d[p+1]*kg, b=d[p+2]*kb;
+    r=(r-lo)*scale; g=(g-lo)*scale; b=(b-lo)*scale;
+    d[p]  = r<0?0:r>255?255:r;
+    d[p+1]= g<0?0:g>255?255:g;
+    d[p+2]= b<0?0:b>255?255:b;
+  }
+  ctx.putImageData(imgData,0,0);
+  return canvas.toDataURL('image/jpeg', JPEG_Q);
+}
+
+/* ============================================================
+   ÉDITEUR DE CADRAGE — 4 coins, loupe de précision, rotation,
+   file d'attente (import multiple depuis la galerie)
+   ============================================================ */
+let cropSource = null;
+let cropCorners = null;
+let cropFileName = "";
+let dragIdx = -1;
+let cropBusy = false;
+let fileQueue = [];
+
+function handleFile(e){
+  for (const f of e.target.files) fileQueue.push(f);
+  e.target.value = '';
+  processNextFile();
+}
+
+function processNextFile(){
+  if (cropSource || cropBusy || !fileQueue.length) return;
+  const file = fileQueue.shift();
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      // On conserve la photo en haute résolution (jusqu'à 3200 px)
+      const ratio = Math.min(1, SRC_MAX / Math.max(img.width, img.height));
+      cropSource = document.createElement('canvas');
+      cropSource.width = Math.round(img.width*ratio);
+      cropSource.height = Math.round(img.height*ratio);
+      cropSource.getContext('2d').drawImage(img, 0, 0, cropSource.width, cropSource.height);
+      cropFileName = file.name || 'photo.jpg';
+      resetCorners();
+      const cv = document.getElementById('crop-canvas');
+      cv.width = cropSource.width; cv.height = cropSource.height;
+      drawCrop();
+      setCropProgress(-1);
+      openSheet('crop');
+    };
+    img.onerror = () => { toast("⚠️ Image illisible"); cropSource=null; processNextFile(); };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function resetCorners(){
+  const W = cropSource.width, H = cropSource.height, mx = W*0.08, my = H*0.08;
+  cropCorners = [{x:mx,y:my},{x:W-mx,y:my},{x:W-mx,y:H-my},{x:mx,y:H-my}];
+}
+
+function rotateCrop(){
+  if (!cropSource || cropBusy) return;
+  const c = document.createElement('canvas');
+  c.width = cropSource.height; c.height = cropSource.width;
+  const ctx = c.getContext('2d');
+  ctx.translate(c.width/2, c.height/2);
+  ctx.rotate(Math.PI/2);
+  ctx.drawImage(cropSource, -cropSource.width/2, -cropSource.height/2);
+  cropSource = c;
+  resetCorners();
+  const cv = document.getElementById('crop-canvas');
+  cv.width = cropSource.width; cv.height = cropSource.height;
+  drawCrop();
+}
+
+function drawCrop(){
+  const cv = document.getElementById('crop-canvas'), ctx = cv.getContext('2d');
+  ctx.drawImage(cropSource, 0, 0);
+  ctx.save();
+  ctx.fillStyle = 'rgba(0,0,0,0.55)';
+  ctx.beginPath();
+  ctx.rect(0,0,cv.width,cv.height);
+  ctx.moveTo(cropCorners[0].x, cropCorners[0].y);
+  for (let i=3;i>=0;i--) ctx.lineTo(cropCorners[i].x, cropCorners[i].y);
+  ctx.closePath();
+  ctx.fill('evenodd');
+  ctx.restore();
+  const s = Math.max(cv.width, cv.height)/100;
+  ctx.strokeStyle = '#3B82F6'; ctx.lineWidth = s*0.6;
+  ctx.beginPath();
+  ctx.moveTo(cropCorners[0].x, cropCorners[0].y);
+  for (let i=1;i<4;i++) ctx.lineTo(cropCorners[i].x, cropCorners[i].y);
+  ctx.closePath(); ctx.stroke();
+  cropCorners.forEach(c => {
+    ctx.beginPath(); ctx.arc(c.x, c.y, s*2.6, 0, Math.PI*2);
+    ctx.fillStyle = '#3B82F6'; ctx.fill();
+    ctx.beginPath(); ctx.arc(c.x, c.y, s*1.1, 0, Math.PI*2);
+    ctx.fillStyle = '#fff'; ctx.fill();
+  });
+  // Loupe de précision pendant le glissement
+  if (dragIdx >= 0){
+    const c = cropCorners[dragIdx];
+    const R = Math.max(cv.width, cv.height)/9;      // rayon de la loupe
+    const zoom = 2.6;
+    const ly = c.y - R*1.9 > R ? c.y - R*1.9 : c.y + R*1.9;   // au-dessus, sinon en dessous
+    const lx = Math.min(cv.width - R - 4, Math.max(R + 4, c.x));
+    ctx.save();
+    ctx.beginPath(); ctx.arc(lx, ly, R, 0, Math.PI*2); ctx.clip();
+    ctx.fillStyle='#000'; ctx.fillRect(lx-R, ly-R, R*2, R*2);
+    ctx.drawImage(cropSource,
+      c.x - R/zoom, c.y - R/zoom, (R*2)/zoom, (R*2)/zoom,
+      lx - R, ly - R, R*2, R*2);
+    // croix de visée
+    ctx.strokeStyle = '#3B82F6'; ctx.lineWidth = s*0.5;
+    ctx.beginPath(); ctx.moveTo(lx-R*0.5, ly); ctx.lineTo(lx+R*0.5, ly);
+    ctx.moveTo(lx, ly-R*0.5); ctx.lineTo(lx, ly+R*0.5); ctx.stroke();
+    ctx.restore();
+    ctx.beginPath(); ctx.arc(lx, ly, R, 0, Math.PI*2);
+    ctx.strokeStyle='#fff'; ctx.lineWidth = s*0.7; ctx.stroke();
+  }
+}
+
+function cropPointerPos(ev){
+  const cv = document.getElementById('crop-canvas');
+  const r = cv.getBoundingClientRect();
+  return { x: (ev.clientX - r.left) * cv.width / r.width,
+           y: (ev.clientY - r.top)  * cv.height / r.height };
+}
+
+function initCropEvents(){
+  const cv = document.getElementById('crop-canvas');
+  cv.addEventListener('pointerdown', ev => {
+    if (cropBusy) return;
+    const p = cropPointerPos(ev);
+    const grab = Math.max(cv.width, cv.height)/10;
+    let best = -1, bd = grab;
+    cropCorners.forEach((c,i) => { const d = Math.hypot(c.x-p.x, c.y-p.y); if (d < bd){ bd = d; best = i; } });
+    dragIdx = best;
+    if (dragIdx >= 0){ cv.setPointerCapture(ev.pointerId); drawCrop(); }
+  });
+  cv.addEventListener('pointermove', ev => {
+    if (dragIdx < 0) return;
+    const p = cropPointerPos(ev);
+    cropCorners[dragIdx] = {
+      x: Math.min(cropSource.width-1,  Math.max(0, p.x)),
+      y: Math.min(cropSource.height-1, Math.max(0, p.y))
+    };
+    drawCrop();
+  });
+  ['pointerup','pointercancel'].forEach(t => cv.addEventListener(t, () => {
+    if (dragIdx >= 0){ dragIdx = -1; drawCrop(); }
+  }));
+}
+
+function cancelCrop(){
+  if (cropBusy) return;
+  closeSheet('crop');
+  cropSource = null;
+  setTimeout(() => document.getElementById('camera-input').click(), 300);
+}
+
+function setCropProgress(v){
+  const wrap = document.getElementById('crop-progress-wrap');
+  const bar = document.getElementById('crop-progress');
+  const btn = document.getElementById('crop-confirm-btn');
+  if (v < 0){ wrap.classList.add('hidden'); btn.disabled = false; btn.classList.remove('opacity-60'); return; }
+  wrap.classList.remove('hidden');
+  bar.style.width = Math.round(v*100) + '%';
+  btn.disabled = true; btn.classList.add('opacity-60');
+}
+
+/* Qualité d'impression : DPI effectif par rapport au format du produit */
+function computeDpi(w, h){
+  if (!currentProduct || !currentProduct.wcm) return null;
+  const win = currentProduct.wcm/2.54, hin = currentProduct.hcm/2.54;
+  const d1 = Math.min(w/win, h/hin);
+  const d2 = Math.min(w/hin, h/win);   // orientation inversée
+  return Math.round(Math.max(d1, d2));
+}
+/* Nettete : variance du laplacien sur une reduction a 800 px.
+   Le DPI mesure la taille du fichier, pas la nettete : une photo
+   bougee peut afficher 300 DPI et etre inutilisable a l'impression.
+   Seuils ajustables ci-dessous apres essais sur photos reelles. */
+const FLOU_LIMITE = 60, FLOU_MOYEN = 200;
+function sharpnessScore(src){
+  try {
+    const max = 800, r = Math.min(1, max / Math.max(src.width, src.height));
+    const w = Math.max(8, Math.round(src.width * r)), h = Math.max(8, Math.round(src.height * r));
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    const ctx = c.getContext('2d'); ctx.drawImage(src, 0, 0, w, h);
+    const d = ctx.getImageData(0, 0, w, h).data;
+    const g = new Float32Array(w * h);
+    for (let i = 0, p = 0; i < d.length; i += 4, p++) g[p] = d[i]*0.299 + d[i+1]*0.587 + d[i+2]*0.114;
+    let s = 0, s2 = 0, n = 0;
+    for (let y = 1; y < h-1; y++) for (let x = 1; x < w-1; x++){
+      const i = y*w + x;
+      const L = 4*g[i] - g[i-1] - g[i+1] - g[i-w] - g[i+w];
+      s += L; s2 += L*L; n++;
+    }
+    if (!n) return null;
+    const m = s/n;
+    return Math.round(s2/n - m*m);
+  } catch(e){ return null; }
+}
+function sharpBadge(sharp){
+  if (sharp == null) return '';
+  if (sharp < FLOU_LIMITE) return `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600"><i class="fa-solid fa-triangle-exclamation"></i> Floue — refaites la photo</span>`;
+  if (sharp < FLOU_MOYEN)  return `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700"><i class="fa-solid fa-triangle-exclamation"></i> Peu nette</span>`;
+  return `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600"><i class="fa-solid fa-check"></i> Nette</span>`;
+}
+function dpiBadge(dpi){
+  if (dpi == null) return '';
+  if (dpi >= 280) return `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700"><i class="fa-solid fa-circle-check"></i> ${dpi} DPI — Excellente</span>`;
+  if (dpi >= 180) return `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600"><i class="fa-solid fa-check"></i> ${dpi} DPI — Bonne</span>`;
+  if (dpi >= 120) return `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700"><i class="fa-solid fa-triangle-exclamation"></i> ${dpi} DPI — Correcte</span>`;
+  return `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600"><i class="fa-solid fa-triangle-exclamation"></i> ${dpi} DPI — Insuffisante, reprenez plus près</span>`;
+}
+
+async function confirmCrop(){
+  if (!cropSource || cropBusy) return;
+  cropBusy = true;
+  try {
+    const warped = await warpPerspectiveAsync(cropSource, cropCorners, setCropProgress);
+    const originalUrl = warped.toDataURL('image/jpeg', JPEG_Q);
+    // Mode par défaut : couleurs fidèles (vraies couleurs, contraste équilibré)
+    let colorUrl = originalUrl;
+    try {
+      const c = document.createElement('canvas'); c.width=warped.width; c.height=warped.height;
+      c.getContext('2d').drawImage(warped,0,0);
+      colorUrl = colorFaithful(c);
+    } catch(err){ console.warn("Couleurs:", err); }
+    const id = newPhotoId();
+    savePhotoFull(id, { original: originalUrl, color: colorUrl });   // le mode Document est calculé à la demande
+    const thumb = await makeThumb(colorUrl);
+    const dpi = computeDpi(warped.width, warped.height);
+    const sharp = sharpnessScore(warped);
+    uploadedPhotos.push({ id, name: cropFileName, mode:'color', thumb, dpi, sharp, w: warped.width, h: warped.height });
+    renderPhotos();
+    setCropProgress(-1);
+    closeSheet('crop');
+    cropSource = null;
+    if (sharp != null && sharp < FLOU_LIMITE)      toast("⚠️ Photo floue — posez le document à plat et refaites-la");
+    else if (dpi && dpi < 120)                      toast("⚠️ Qualité faible — rapprochez-vous du document");
+    else if (sharp != null && sharp < FLOU_MOYEN)   toast("Photo ajoutée — un peu molle, vérifiez la netteté");
+    else                                            toast("Photo HD prête ✓");
+  } catch(e){
+    console.error(e);
+    setCropProgress(-1);
+    toast("⚠️ Traitement impossible, réessayez");
+  } finally {
+    cropBusy = false;
+    setTimeout(processNextFile, 350);   // photo suivante de la file (import multiple)
+  }
+}
+
+/* Accès aux versions pleine résolution */
+function fullUrl(ph){
+  const f = PHOTO_FULL[ph.id];
+  if (!f) return ph.thumb;                     // page rechargée : il ne reste que la miniature
+  return ph.mode==='doc' ? (f.doc || f.color) : ph.mode==='original' ? f.original : f.color;
+}
+function photoModeLabel(ph){
+  return ph.mode==='doc' ? "Document scanné" : ph.mode==='original' ? "Original" : "Couleurs fidèles";
+}
+
+async function setPhotoMode(idx, mode){
+  const ph = uploadedPhotos[idx]; if (!ph) return;
+  const f = PHOTO_FULL[ph.id];
+  if (!f){ toast("⚠️ Version HD indisponible (page rechargée)"); return; }
+  if (mode==='doc' && !f.doc){
+    toast("✨ Préparation du mode document…");
+    await nextFrame();
+    try {
+      const c = await dataUrlToCanvas(f.original);
+      f.doc = scanEnhance(c);
+      idbPut(ph.id, f);
+    } catch(e){ console.warn(e); toast("⚠️ Mode document impossible"); return; }
+  }
+  ph.mode = mode;
+  ph.thumb = await makeThumb(fullUrl(ph));
+  renderPhotos();
+}
+
+function removePhotoAt(idx){
+  const ph = uploadedPhotos[idx];
+  if (ph) dropPhotoFull(ph.id);
+  uploadedPhotos.splice(idx,1);
+  renderPhotos();
+}
+
+function renderPhotos(){
+  const need = currentProduct.photos || 1;
+  const has = uploadedPhotos.length;
+  const zone = document.getElementById('upload-zone');
+  const gallery = document.getElementById('photos-gallery');
+  const addRow = document.getElementById('add-photo-btn');
+  zone.classList.toggle('hidden', has > 0);
+  gallery.classList.toggle('hidden', has === 0);
+  addRow.classList.toggle('hidden', !(has > 0 && (need >= 2 || has < need || true)));
+  document.getElementById('add-photo-label').innerText =
+    (need >= 2 && has < 2) ? (has === 0 ? 'Ajouter le recto' : 'Ajouter le verso') : 'Ajouter une autre photo';
+  gallery.innerHTML = uploadedPhotos.map((ph,i) => {
+    const label = need >= 2 ? (i===0 ? 'Recto' : i===1 ? 'Verso' : 'Photo '+(i+1)) : 'Visuel';
+    const btn = (m,txt) => {
+      const active = ph.mode===m;
+      const cls = active ? 'bg-[#003087] text-white' : 'bg-white border border-slate-200 text-slate-500';
+      return `<button onclick="setPhotoMode(${i},'${m}')" class="flex-1 py-1.5 rounded-lg text-[10px] font-bold ${cls}">${txt}</button>`;
+    };
+    return `
+    <div class="bg-slate-50 rounded-2xl p-2.5 border border-slate-100">
+      <div class="flex gap-x-2.5">
+        <img src="${ph.thumb}" class="w-16 h-16 object-contain rounded-xl bg-white flex-shrink-0" alt="">
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-x-1.5 flex-wrap">
+            <span class="text-[12px] font-bold text-[#003087]">${label}</span>
+            ${dpiBadge(ph.dpi)} ${sharpBadge(ph.sharp)}
+          </div>
+          <div class="flex gap-x-1 mt-1.5">
+            ${btn('color','Couleurs')}
+            ${btn('doc','Document')}
+            ${btn('original','Original')}
+          </div>
+        </div>
+        <button onclick="removePhotoAt(${i})" class="text-red-500 self-start" aria-label="Retirer"><i class="fa-solid fa-circle-xmark"></i></button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ============================================================
+   SOUMISSION
+   ============================================================ */
+function makeRef(){
+  const d = new Date();
+  const ymd = d.getFullYear().toString().slice(2) + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
+  return 'TC-' + ymd + '-' + String(Date.now()).slice(-4);
+}
+
+/* ============================================================
+   PANIER — les miniatures vont dans localStorage,
+   les versions HD restent en mémoire (clé = id de la photo).
+   ============================================================ */
+let cart = [];
+let checkoutPending = false;
+
+function addToCart(){
+  const need = currentProduct.photos || 1;
+  if (uploadedPhotos.length < need){
+    toast(need >= 2 ? "📷 Ajoutez le recto ET le verso" : "📷 Ajoutez une photo de votre modèle");
+    const z = document.getElementById(uploadedPhotos.length ? 'add-photo-btn' : 'upload-zone');
+    z.classList.add('border-red-400','bg-red-50');
+    z.scrollIntoView({behavior:'smooth', block:'center'});
+    setTimeout(() => z.classList.remove('border-red-400','bg-red-50'), 2000);
+    return;
+  }
+  const lowQ = uploadedPhotos.find(ph => ph.dpi != null && ph.dpi < 120);
+  if (lowQ && !confirm("Une photo a une qualité insuffisante pour l'impression (" + lowQ.dpi + " DPI). L'imprimerie pourrait vous demander de la reprendre. Continuer quand même ?")) return;
+  const photos = uploadedPhotos.map(ph => ({
+    id: ph.id,
+    thumb: ph.thumb,
+    name: ph.name,
+    mode: photoModeLabel(ph),
+    modeKey: ph.mode,
+    dpi: ph.dpi
+  }));
+  cart.push({
+    product: currentProduct.name,
+    format: currentProduct.format || null,
+    quantity: currentQty,
+    total: currentProduct.prices[currentQty],
+    color: currentProduct.colorChoice ? currentColor : null,
+    glue: currentProduct.glueChoice ? currentGlue : null,
+    cardText: currentProduct.cardText ? document.getElementById('card-text').value.trim() : null,
+    notes: document.getElementById('order-notes').value.trim(),
+    photos: photos,
+    // compat affichage
+    photo: photos[0].thumb,
+    photoName: photos[0].name,
+    photoMode: photos[0].mode
+  });
+  store.set('technic_cart', cart);
+  closeOrder();
+  renderCartBar();
+  toast("✓ Ajouté — vous pouvez ajouter un autre produit");
+}
+
+/* ---- Compléments à tarif préférentiel ----
+   Proposés dès qu'un pack est au panier : le client ajoute sans repasser
+   par le catalogue, et paie moins cher qu'à l'unité. */
+const COMPLEMENTS=[
+ {cle:'fiches500',  produit:"Fiches patients",        qte:500,  prix:90,  plein:120,
+  img:'p-fiches-patients',  desc:"500 fiches patients"},
+ {cle:'cartes1000', produit:"Carte visite 4 couleurs", qte:1000, prix:100, plein:168,
+  img:'p-cartes-quadri',    desc:"1 000 cartes de visite quadri"},
+ {cle:'entetes1000',produit:"En-têtes de lettre",      qte:1000, prix:120, plein:150,
+  img:'p-entetes',          desc:"1 000 en-têtes A4"}
+];
+function panierAUnPack(){ return cart.some(it => /pack|offre/i.test(it.product)); }
+function renderSuggestions(){
+  const zone = document.getElementById('cart-suggest');
+  if (!zone) return;
+  if (!panierAUnPack()){ zone.innerHTML=''; return; }
+  const libres = COMPLEMENTS.filter(c => !cart.some(it => it.complement === c.cle));
+  if (!libres.length){ zone.innerHTML=''; return; }
+  zone.innerHTML = `<div class="text-[11px] mono tracking-wider text-slate-400 uppercase mb-1">
+      Ajoutez à prix réduit</div>` + libres.map(c => `
+    <button type="button" onclick="ajouterComplement('${c.cle}')"
+      class="w-full flex items-center gap-3 bg-white border border-[#E7E7DE] rounded-2xl p-2.5 text-left">
+      <img src="/images/${c.img}.webp" alt="" class="w-11 h-11 rounded-xl object-cover flex-none">
+      <div class="flex-1 min-w-0">
+        <div class="font-semibold text-[13.5px] leading-tight">${c.desc}</div>
+        <div class="text-[12px] mt-0.5">
+          <span class="font-bold text-[#EC008C] mono">${c.prix} DT</span>
+          <span class="text-slate-400 line-through mono ml-1.5">${c.plein}</span>
+          <span class="text-slate-500 ml-1">soit ${c.plein-c.prix} DT de moins</span>
+        </div>
+      </div>
+      <span class="w-9 h-9 rounded-full bg-[#003087] text-white flex items-center justify-center flex-none">
+        <i class="fa-solid fa-plus text-sm"></i></span>
+    </button>`).join('');
+}
+function ajouterComplement(cle){
+  const c = COMPLEMENTS.find(x => x.cle === cle); if (!c) return;
+  if (cart.some(it => it.complement === cle)) return;   // jamais deux fois le même complément
+  cart.push({ product:c.produit, format:null, quantity:c.qte, total:c.prix,
+              complement:c.cle, color:null, glue:null, cardText:null,
+              notes:"Tarif complément de pack", photos:[] });
+  store.set('technic_cart', cart); renderCartBar(); renderCartSheet();
+  toast("Ajouté — " + (c.plein-c.prix) + " DT de moins qu'à l'unité");
+}
+
+function cartTotal(){ return cart.reduce((s,it) => s + it.total, 0); }
+const DELIVERY_FEE = 20;   /* livraison forfaitaire, identique sur toutes les commandes */
+/* Chaine fiscale tunisienne : FODEC sur le HT, TVA sur HT + FODEC, timbre en fin. */
+const FODEC = 0.01, TVA = 0.19, TIMBRE = 1;
+const dt3 = v => v.toLocaleString('fr-FR',{minimumFractionDigits:3, maximumFractionDigits:3});
+function taxes(ht){
+  const fodec = ht * FODEC, tva = (ht + fodec) * TVA;
+  return { fodec, tva, timbre: TIMBRE, ttc: ht + fodec + tva + TIMBRE };
+}
+function deliveryFee(){ return DELIVERY_FEE; }
+function grandTotal(){ const s = cartTotal(); return s + deliveryFee(s); }
+
+function renderCartBar(){
+  const bar = document.getElementById('cart-bar');
+  if (!cart.length){ bar.classList.add('hidden'); return; }
+  bar.classList.remove('hidden');
+  document.getElementById('cart-count').innerText = cart.length + (cart.length>1 ? " produits" : " produit");
+  document.getElementById('cart-total').innerText = grandTotal();
+}
+
+function openCartSheet(){ renderCartSheet(); openSheet('cart'); }
+
+function renderCartSheet(){
+  document.getElementById('cart-items').innerHTML = cart.map((it,i) => `
+    <div class="flex gap-x-3 items-center bg-slate-50 rounded-2xl p-3 border border-slate-100">
+      <img src="${it.photo}" class="w-12 h-12 rounded-xl object-cover bg-white flex-shrink-0" alt="">
+      <div class="flex-1 min-w-0">
+        <div class="font-semibold text-sm leading-tight">${it.product}</div>
+        <div class="text-[12px] text-slate-500">${it.quantity===1 ? 'Pack' : it.quantity.toLocaleString('fr-FR')+' ex.'}${it.color ? ' • '+it.color : ''}${it.glue ? ' • '+it.glue : ''} • <b class="text-[#003087]">${it.total} TND HT</b></div>
+        ${it.format ? `<div class="text-[11px] text-slate-400">${it.format}${itemPhotos(it).length>1 ? ' • '+itemPhotos(it).length+' visuels' : ''}</div>` : ''}
+      </div>
+      <button onclick="removeCartItem(${i})" class="w-9 h-9 rounded-full bg-white text-red-500 flex items-center justify-center flex-shrink-0" aria-label="Retirer"><i class="fa-solid fa-trash-can text-sm"></i></button>
+    </div>`).join('');
+  renderSuggestions();
+  // Récapitulatif : sous-total, livraison, total
+  {
+    const sub = cartTotal(), fee = deliveryFee();
+    const t = taxes(sub + fee);
+    document.getElementById('cart-summary').innerHTML = `
+      <div class="flex justify-between text-[13px] text-slate-500"><span>Sous-total</span><span class="mono">${sub} TND HT</span></div>
+      <div class="flex justify-between text-[13px] text-slate-500">
+        <span><i class="fa-solid fa-truck mr-1"></i>Livraison — Grand Tunis</span>
+        <span class="mono">${fee} TND</span>
+      </div>
+      
+      <div class="flex justify-between items-center pt-2 border-t border-slate-200">
+        <span class="font-semibold">Total <span class="text-[11px] font-bold text-slate-400">HT</span></span>
+        <span class="font-bold text-[17px]">${sub+fee} <span class="text-[12px]">TND</span></span>
+      </div>
+      <div class="flex justify-between text-[13px] text-slate-500"><span>FODEC 1 %</span><span class="mono">${dt3(t.fodec)}</span></div>
+      <div class="flex justify-between text-[13px] text-slate-500"><span>TVA 19 %</span><span class="mono">${dt3(t.tva)}</span></div>
+      <div class="flex justify-between text-[13px] text-slate-500"><span>Timbre fiscal</span><span class="mono">${dt3(TIMBRE)}</span></div>
+      <div class="flex justify-between items-center pt-2 border-t border-slate-200">
+        <span class="font-semibold">Total <span class="text-[11px] font-bold text-slate-400">TTC</span></span>
+        <span class="heading text-2xl text-[#003087]">${dt3(t.ttc)} <span class="text-sm">TND</span></span>
+      </div>`;
+  }
+  // Rappel des infos de livraison si le client est connu
+  const u = store.get('technic_user');
+  document.getElementById('cart-client').innerHTML = u ? `
+    <div class="mt-3 flex items-center justify-between bg-blue-50/60 border border-blue-100 rounded-2xl px-4 py-3">
+      <div class="text-[13px] text-slate-600 min-w-0">
+        <i class="fa-solid fa-truck text-[#003087] mr-1"></i>
+        <b>${u.name}</b> — ${u.ville ? u.ville + ', ' : ''}${u.address}
+      </div>
+      <button onclick="editProfileFromCart()" class="text-[12px] font-bold text-[#003087] flex-shrink-0 ml-2">Modifier</button>
+    </div>` : '';
+}
+
+function editProfileFromCart(){
+  const u = store.get('technic_user') || {};
+  closeSheet('cart');
+  document.getElementById('account-name').value = u.name || '';
+  document.getElementById('account-phone').value = u.phone || '';
+  document.getElementById('account-email').value = u.email || '';
+  document.getElementById('account-address').value = u.address || '';
+  document.getElementById('account-ville').value = u.ville || '';
+  checkoutPending = false;
+  setTimeout(() => openSheet('account'), 250);
+}
+
+function removeCartItem(i){
+  const it = cart[i];
+  if (it && it.photos) it.photos.forEach(ph => { if (ph.id) dropPhotoFull(ph.id); });
+  cart.splice(i,1);
+  store.set('technic_cart', cart);
+  renderCartBar();
+  if (!cart.length) closeSheet('cart'); else renderCartSheet();
+}
+
+function checkout(){
+  if (!cart.length) return;
+  const user = store.get('technic_user');
+  closeSheet('cart');
+  if (user){ checkoutPending = false; finalizeOrder(); }
+  else { checkoutPending = true; setTimeout(() => openSheet('account'), 250); }
+}
+
+function finalizeOrder(){
+  const order = {
+    ref: makeRef(),
+    date: new Date().toLocaleDateString('fr-FR', {day:'numeric', month:'short', year:'numeric'}),
+    items: cart.slice(),
+    subtotal: cartTotal(),
+    delivery: deliveryFee(cartTotal()),
+    total: grandTotal(),
+    user: store.get('technic_user') || null,
+    status: "Envoyée"
+  };
+  const orders = getOrders(); orders.unshift(order);
+  store.set('technic_orders', orders);
+  currentSuccessOrder = order;
+  cart = []; store.set('technic_cart', cart); renderCartBar();
+  updateBadge();
+  document.getElementById('success-summary').innerText =
+    `${order.items.length} produit${order.items.length>1?'s':''} — Total ${order.total} TND HT`;
+  document.getElementById('success-ref').innerText = "Référence " + order.ref;
+  setSendStatus('sending');
+  setTimeout(() => openSheet('success'), 250);
+  sendOrderEmail(order);
+}
+function closeSuccess(){ closeSheet('success'); }
+
+/* Statut d'envoi affiché en direct sur l'écran de succès */
+function setSendStatus(state, extra){
+  const el = document.getElementById('send-status');
+  const retry = document.getElementById('send-retry');
+  retry.classList.add('hidden');
+  if (state === 'sending'){
+    el.className = "text-[13px] text-slate-500 mt-3 flex items-center justify-center gap-x-1.5";
+    el.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin text-[#003087]"></i> Envoi de la commande et des visuels HD…`;
+  } else if (state === 'ok'){
+    el.className = "text-[13px] text-emerald-600 mt-3 flex items-center justify-center gap-x-1.5 font-semibold";
+    el.innerHTML = `<i class="fa-solid fa-envelope-circle-check"></i> L'imprimerie a reçu votre demande${extra ? ' '+extra : ' et vos visuels'}`;
+  } else {
+    el.className = "text-[13px] text-red-600 mt-3 flex items-center justify-center gap-x-1.5 font-semibold";
+    el.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Envoi email impossible — utilisez WhatsApp ou réessayez`;
+    retry.classList.remove('hidden');
+  }
+}
+function retrySend(){
+  if (!currentSuccessOrder) return;
+  setSendStatus('sending');
+  sendOrderEmail(currentSuccessOrder);
+}
+
+/* ============================================================
+   ENVOI via NETLIFY FORMS — avec budget de poids
+   Les visuels HD sont compressés progressivement pour rester
+   sous la limite d'envoi de Netlify (sinon rejet silencieux).
+   Plan B : renvoi sans photos pour que les infos passent.
+   ============================================================ */
+async function shrinkDataUrl(url, maxDim, q){
+  const im = await loadImage(url);
+  const r = Math.min(1, maxDim / Math.max(im.width, im.height));
+  const c = document.createElement('canvas');
+  c.width = Math.max(1, Math.round(im.width*r)); c.height = Math.max(1, Math.round(im.height*r));
+  c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+  return c.toDataURL('image/jpeg', q);
+}
+
+async function collectFormPhotos(items){
+  // Rassemble jusqu'à 6 visuels (limite Netlify), en pleine résolution,
+  // puis compresse par paliers si le total dépasse le budget.
+  const list = [];
+  items.forEach((it, idx) => {
+    itemPhotos(it).forEach((ph, j) => {
+      if (list.length >= 6) return;
+      const full = ph.id && PHOTO_FULL[ph.id]
+        ? (ph.modeKey==='doc' ? (PHOTO_FULL[ph.id].doc || PHOTO_FULL[ph.id].color)
+           : ph.modeKey==='original' ? PHOTO_FULL[ph.id].original
+           : PHOTO_FULL[ph.id].color)
+        : (ph.url || ph.thumb);
+      if (!full) return;
+      const tag = (j===0 ? 'recto' : j===1 ? 'verso' : 'p'+(j+1));
+      list.push({ url: full, name: `produit${idx+1}-${tag}-${(ph.name||'visuel.jpg').replace(/[^\w.\-]/g,'_')}` });
+    });
+  });
+  // Compression par paliers : 2800 → 2200 → 1800 → 1400 px
+  const steps = [ {d:2800,q:JPEG_Q}, {d:2200,q:0.88}, {d:1800,q:0.85}, {d:1400,q:0.82} ];
+  let si = 0;
+  const total = () => list.reduce((s,p) => s + dataUrlBytes(p.url), 0);
+  while (total() > FORM_BUDGET && si < steps.length - 1){
+    si++;
+    for (const p of list){
+      if (dataUrlBytes(p.url) > FORM_BUDGET / list.length){
+        try { p.url = await shrinkDataUrl(p.url, steps[si].d, steps[si].q); } catch(e){}
+      }
+    }
+  }
+  return list;
+}
+
+async function buildEmailForm(order, withFiles){
+  const u = order.user || store.get('technic_user') || {};
+  const items = orderItems(order);
+  const fd = new FormData();
+  fd.append("form-name", "commande");
+  if (ENVOI.MODE === 'web3forms'){
+    fd.append("access_key", ENVOI.CLE_WEB3FORMS);
+    fd.append("subject", `Commande ${order.ref} — ${u.name || 'client'}`);
+    fd.append("from_name", "Site Technic Compo");
+    fd.append("botcheck", "");
+    if (ENVOI.COPIE_CLIENT && u.email) fd.append("replyto", u.email);
+  }
+  fd.append("destinataire", ENVOI.EMAIL_IMPRIMERIE);
+  fd.append("reference", order.ref);
+  fd.append("date", order.date);
+  const lines = items.map((it, idx) => {
+    let line = `${idx+1}) ${it.product} — ${it.quantity===1 ? 'Pack' : it.quantity.toLocaleString('fr-FR')+' ex.'} — ${it.total} TND HT`;
+    if (it.format)    line += ` — Format : ${it.format}`;
+    if (it.glue)      line += ` — Reliure : ${it.glue}`;
+    if (it.color)     line += ` — Couleur : ${it.color}`;
+    if (it.cardText)  line += ` — Texte carte : ${it.cardText}`;
+    if (it.notes)     line += ` — Précisions : ${it.notes}`;
+    const ph = itemPhotos(it);
+    if (ph.length){
+      line += ` — ${ph.length} visuel(s)`;
+      const q = ph.map(p => p.dpi ? p.dpi + ' DPI' : '').filter(Boolean).join(', ');
+      if (q) line += ` (${q})`;
+    }
+    return line;
+  });
+  if (!withFiles) lines.push("⚠️ Visuels non joints (limite technique) — contactez le client pour les récupérer.");
+  fd.append("details", lines.join("\n"));
+  fd.append("sous_total", (order.subtotal!=null?order.subtotal:order.total) + " TND HT");
+  fd.append("livraison", (order.delivery!=null?order.delivery:0) + " TND");
+  fd.append("total", order.total + " TND HT (livraison incluse)");
+  { const t = taxes(order.total);
+    fd.append("fodec",     dt3(t.fodec) + " TND");
+    fd.append("tva",       dt3(t.tva) + " TND");
+    fd.append("timbre",    dt3(TIMBRE) + " TND");
+    fd.append("total_ttc", dt3(t.ttc) + " TND TTC"); }
+  fd.append("client", u.name || "—");
+  fd.append("telephone", u.phone || "—");
+  fd.append("email", u.email || "");
+  fd.append("ville", u.ville || "—");
+  fd.append("adresse", u.address || "—");
+  let nFiles = 0;
+  if (withFiles){
+    const photos = await collectFormPhotos(items);
+    photos.forEach(p => {
+      const f = dataUrlToFile(p.url, p.name);
+      if (f){ nFiles++; fd.append("visuel"+nFiles, f, f.name); }
+    });
+  }
+  fd.append("nb_visuels", String(nFiles));
+  return fd;
+}
+
+async function postEmail(fd){
+  if (ENVOI.MODE === 'web3forms' && !ENVOI.CLE_WEB3FORMS){
+    console.error("Cle Web3Forms manquante : la commande ne peut pas partir par mail.");
+    return { ok:false, status:0 };
+  }
+  const url = ENVOI.MODE === 'web3forms' ? "https://api.web3forms.com/submit" : "/";
+  try {
+    const res = await fetch(url, { method:"POST", body: fd });
+    return { ok: res.ok, status: res.status };
+  } catch(e){
+    console.error("Reseau indisponible :", e);
+    return { ok:false, status:0 };
+  }
+}
+
+async function sendOrderEmail(order){
+  try {
+    let r = await postEmail(await buildEmailForm(order, true));
+    if (r.ok){ setSendStatus('ok'); return; }
+    console.warn("Envoi avec photos refusé :", r.status);
+    r = await postEmail(await buildEmailForm(order, false));
+    if (r.ok){ setSendStatus('ok', "(infos reçues, visuels par WhatsApp)"); toast("📧 Infos envoyées — joignez les visuels via WhatsApp"); return; }
+    console.error("Envoi échoué :", r.status);
+    setSendStatus('fail');
+  } catch(e){
+    console.error("Envoi impossible :", e);
+    setSendStatus('fail');
+  }
+}
+
+/* ============================================================
+   COMPTE & PROFIL — avec validation des données
+   ============================================================ */
+function validPhone(p){
+  const digits = p.replace(/\D/g,'');
+  return digits.length === 8 || (digits.length === 11 && digits.startsWith('216'));
+}
+function validEmail(e){ return !e || /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e); }
+
+function accountError(msg){
+  const el = document.getElementById('account-error');
+  el.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> ${msg}`;
+  el.classList.remove('hidden');
+}
+
+function createAccount(){
+  const name = document.getElementById('account-name').value.trim();
+  const phone = document.getElementById('account-phone').value.trim();
+  const email = document.getElementById('account-email').value.trim();
+  const ville = document.getElementById('account-ville').value;
+  const address = document.getElementById('account-address').value.trim();
+  if (!name || !phone || !address || !ville) return accountError("Le nom, le téléphone, le gouvernorat et l'adresse sont obligatoires.");
+  if (!validPhone(phone)) return accountError("Numéro de téléphone invalide — 8 chiffres (ex : 24 678 721), avec ou sans +216.");
+  if (!validEmail(email)) return accountError("Adresse email invalide.");
+  document.getElementById('account-error').classList.add('hidden');
+  const user = {
+    name, phone, address, ville, email,
+    avatar: name.split(' ').filter(Boolean).map(n => n[0]).join('').toUpperCase().slice(0,2)
+  };
+  store.set('technic_user', user);
+  refreshProfileChip(); closeSheet('account');
+  toast("Bienvenue, " + name.split(' ')[0] + " !");
+  if (checkoutPending){ checkoutPending = false; finalizeOrder(); }
+}
+
+function refreshProfileChip(){
+  const user = store.get('technic_user'), chip = document.getElementById('profile-chip');
+  if (user){ chip.innerText = user.avatar || 'TC'; chip.classList.remove('hidden'); chip.classList.add('flex'); }
+  else { chip.classList.add('hidden'); chip.classList.remove('flex'); }
+}
+
+function openProfile(){
+  const user = store.get('technic_user'); if (!user) return;
+  document.getElementById('profile-avatar').innerText = user.avatar || 'TC';
+  document.getElementById('profile-name').innerText = user.name;
+  document.getElementById('profile-phone').innerText = user.phone || '';
+  document.getElementById('profile-details').innerHTML =
+    (user.email   ? `<div><i class="fa-solid fa-envelope text-slate-400 w-6"></i>${user.email}</div>` : '') +
+    ((user.ville || user.address) ? `<div><i class="fa-solid fa-location-dot text-slate-400 w-6"></i>${user.ville ? user.ville + ' — ' : ''}${user.address || ''}</div>` : '');
+  openSheet('profile');
+}
+function closeProfile(){ closeSheet('profile'); }
+
+function logout(){
+  if (!confirm("Supprimer votre profil de cet appareil ? Vos commandes resteront visibles.")) return;
+  store.del('technic_user'); refreshProfileChip(); closeProfile(); toast("Profil supprimé");
+}
+
+/* ============================================================
+   OUTILS FICHIER
+   ============================================================ */
+function itemPhotos(it){
+  if (it.photos && it.photos.length) return it.photos;
+  if (it.photo) return [{ url:it.photo, name:it.photoName, mode:it.photoMode }];
+  return [];
+}
+
+function dataUrlToFile(dataUrl, name){
+  try {
+    const [head, b64] = dataUrl.split(',');
+    const mime = (head.match(/:(.*?);/) || [,'image/jpeg'])[1];
+    const bin = atob(b64); const arr = new Uint8Array(bin.length);
+    for (let i=0;i<bin.length;i++) arr[i] = bin.charCodeAt(i);
+    return new File([arr], name || 'visuel.jpg', { type: mime });
+  } catch(e){ return null; }
+}
+
+/* ============================================================
+   VISUELS POUR WHATSAPP
+   wa.me ne sait pas joindre de fichier. On enregistre donc les
+   visuels HD dans la galerie du telephone : le client n'a plus
+   qu'a les joindre dans WhatsApp, qui s'ouvre juste apres.
+   ============================================================ */
+function downloadOrderPhotos(order){
+  if (!order) return;
+  const items = orderItems(order);
+  let n = 0;
+  items.forEach((it, idx) => {
+    itemPhotos(it).forEach((ph, j) => {
+      const url = (ph.id && PHOTO_FULL[ph.id])
+        ? (ph.modeKey==='doc' ? (PHOTO_FULL[ph.id].doc || PHOTO_FULL[ph.id].color)
+           : ph.modeKey==='original' ? PHOTO_FULL[ph.id].original : PHOTO_FULL[ph.id].color)
+        : (ph.url || ph.thumb);
+      if (!url) return;
+      n++;
+      const tag = (j===0 ? 'recto' : j===1 ? 'verso' : 'p'+(j+1));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${order.ref}-produit${idx+1}-${tag}.jpg`;
+      document.body.appendChild(a);
+      setTimeout(() => { a.click(); a.remove(); }, n * 400);
+    });
+  });
+  toast(n ? `${n} visuel(s) enregistré(s) — joignez-les dans WhatsApp` : "Aucun visuel à enregistrer");
+  return n;
+}
+function saveThenWhatsApp(order){
+  const n = downloadOrderPhotos(order);
+  setTimeout(() => sendWhatsApp(order), (n || 0) * 400 + 900);
+}
+
+/* ============================================================
+   WHATSAPP
+   ============================================================ */
+function sendWhatsApp(order){
+  if (!order) return;
+  const u = order.user || store.get('technic_user') || {};
+  const items = orderItems(order);
+  const lines = items.map((it,i) =>
+    `${i+1}. ${it.product} — ${it.quantity===1 ? 'Pack' : it.quantity.toLocaleString('fr-FR')+' ex.'} — ${it.total} TND HT` +
+    (it.format ? `\n   📐 ${it.format}` : '') +
+    (it.glue ? `\n   📕 ${it.glue}` : '') +
+    (it.color ? `\n   🎨 ${it.color}` : '') +
+    (it.cardText ? `\n   ✍️ ${it.cardText}` : '') +
+    (it.notes ? `\n   📝 ${it.notes}` : '')
+  ).join('\n');
+  const msg =
+`🖨️ *Commande Technic Compo*
+
+📋 Réf : ${order.ref}
+📎 Visuels enregistrés sur mon téléphone — je les joins ici
+
+${lines}
+
+🚚 Livraison : ${(order.delivery!=null?order.delivery:0)} TND
+💰 Total HT : ${order.total} TND (livraison incluse)
+🧾 FODEC 1 % : ${dt3(taxes(order.total).fodec)} · TVA 19 % : ${dt3(taxes(order.total).tva)} · Timbre : ${dt3(TIMBRE)}
+💰 *TOTAL TTC : ${dt3(taxes(order.total).ttc)} TND*
+
+👤 Client : ${u.name || '—'}
+📞 Tél : ${u.phone || '—'}
+${u.ville ? '🏙️ Gouvernorat : ' + u.ville : ''}
+${u.address ? '📍 Adresse : ' + u.address : ''}`;
+  window.open('https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
+}
+
+/* ============================================================
+   FEUILLES & TOAST
+   ============================================================ */
+function openSheet(id){ document.getElementById(id+'-overlay').classList.add('open'); document.getElementById(id+'-sheet').classList.add('open'); }
+function closeSheet(id){ document.getElementById(id+'-overlay').classList.remove('open'); document.getElementById(id+'-sheet').classList.remove('open'); }
+
+let toastTimer;
+function toast(text){
+  const t = document.getElementById('toast'); t.innerText = text; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+/* ============================================================
+   INITIALISATION
+   ============================================================ */
+cart = store.get('technic_cart') || [];
+restorePhotos();   // remet les visuels HD en memoire apres une fermeture d'onglet
+(function(){
+  const par=new URLSearchParams(location.search).get('espace');
+  let e=par;
+  if(!e){ try{ e=localStorage.getItem('tc_espace'); }catch(err){} }
+  if(!['med','labo','img','tout'].includes(e)) e='med';
+  renderEspaces(); setEspace(e);
+})();
+// Sélecteur de gouvernorat
+document.getElementById('account-ville').innerHTML =
+  '<option value="">Sélectionnez…</option>' + GOUVERNORATS.map(g => `<option>${g}</option>`).join('');
+renderProducts(); refreshProfileChip(); updateBadge(); renderCartBar(); initCropEvents();
+
+</script>
+</body>
+</html>

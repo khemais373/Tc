@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Scandar — vos documents par QR code | Technic Compo</title>
+<meta name="description" content="Scandar : menus, cartes, règlements et programmes accessibles par QR code, en plusieurs langues, mis à jour sans réimprimer. Par Technic Compo, Tunis.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:ital,wght@1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#0A0B0D; --surf:#131519; --surf-2:#1B1E24; --ink:#F4F5F7; --ink-2:#A3AAB5; --ink-3:#6B727D;
+  --line:#22262C; --line-2:#2F343C; --cy:#22C8F5; --mg:#FF3D9A; --yl:#FFD400;
+  --eo:cubic-bezier(.23,1,.32,1);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--paper)}
+body{font-family:'Instrument Sans',system-ui,sans-serif;color:var(--ink);font-size:16px;line-height:1.5}
+.cmjn{display:flex;height:3px}.cmjn i{flex:1}
+.cmjn .c{background:var(--cy)}.cmjn .m{background:var(--mg)}
+.cmjn .y{background:var(--yl)}.cmjn .k{background:var(--ink)}
+.top{position:sticky;top:0;z-index:40;background:rgba(10,11,13,.82);backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top-in{max-width:620px;margin:0 auto;padding:11px 16px;display:flex;align-items:center;gap:11px}
+.logo{width:38px;height:38px;border-radius:9px;background:var(--ink);color:var(--paper);display:grid;
+  place-items:center;font-weight:700;font-size:13px;flex:none}
+.logo-n{font-weight:700;font-size:13.5px;letter-spacing:-.02em;line-height:1.2}
+.logo-s{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-3);margin-top:3px;letter-spacing:.14em}
+.sig{font-family:'Playfair Display',serif;font-style:italic;font-weight:500;font-size:17px;
+  background:linear-gradient(95deg,var(--cy),var(--mg));-webkit-background-clip:text;background-clip:text;
+  color:transparent;padding-left:3px}
+.wrap{max-width:620px;margin:0 auto;padding:0 16px 40px}
+.hero{padding:34px 0 22px}
+h1{margin:0;font-size:clamp(29px,7.2vw,38px);font-weight:700;letter-spacing:-.035em;line-height:1.1}
+.und{background:linear-gradient(95deg,var(--cy),var(--mg));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--ink-2);font-size:15.5px;line-height:1.65;margin:14px 0 0}
+.trust{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap}
+.trust div{font-size:11.5px;font-weight:500;color:var(--ink-2);background:var(--surf);
+  border:1px solid var(--line);border-radius:999px;padding:7px 12px}
+.card{background:var(--surf);border:1px solid var(--line);border-radius:20px;padding:22px 19px;margin-bottom:13px}
+.tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.h2{font-size:19px;font-weight:600;letter-spacing:-.025em;margin:8px 0 0}
+.bar{display:flex;gap:4px;margin-top:13px}.bar i{height:3px;flex:1;border-radius:2px}
+.sep{height:1px;background:var(--line);margin:16px 0}
+.step{display:flex;gap:13px;margin-bottom:16px}
+.sn{width:26px;height:26px;border-radius:8px;background:var(--surf-2);border:1px solid var(--line-2);
+  display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-2);flex:none}
+.st{font-size:14.5px;font-weight:600;letter-spacing:-.02em}
+.ss{color:var(--ink-2);font-size:13.5px;line-height:1.6;margin-top:3px}
+.plan{border:1px solid var(--line-2);border-radius:16px;padding:17px;margin-bottom:11px}
+.plan.best{border-color:var(--mg)}
+.pn{font-size:16px;font-weight:600;letter-spacing:-.02em}
+.pp{font-family:'JetBrains Mono',monospace;font-size:21px;font-weight:600;letter-spacing:-.03em;margin-top:4px}
+.pp span{font-size:11.5px;color:var(--ink-3);letter-spacing:0}
+.pl{margin:11px 0 0;padding:0;list-style:none}
+.pl li{color:var(--ink-2);font-size:13.5px;line-height:1.75;padding-left:15px;position:relative}
+.pl li::before{content:"";position:absolute;left:0;top:9px;width:5px;height:5px;border-radius:50%;background:var(--cy)}
+.note{color:var(--ink-3);font-size:12.5px;line-height:1.6;margin:12px 0 0}
+.lab{display:block;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ink-3);margin:14px 0 6px}
+.inp{width:100%;font-family:'Instrument Sans',sans-serif;font-size:15.5px;color:var(--ink);background:var(--surf-2);
+  border:1.5px solid var(--line-2);border-radius:12px;padding:12px 14px;outline:none}
+.inp:focus{border-color:var(--ink)}
+.inp.n{font-family:'JetBrains Mono',monospace}
+textarea.inp{min-height:78px;resize:vertical}
+.row{display:flex;gap:10px}.row>*{flex:1}
+.go{width:100%;margin-top:16px;background:var(--ink);color:var(--paper);border:none;border-radius:12px;
+  padding:14px;font-family:'Instrument Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;
+  transition:transform 130ms var(--eo)}
+.go:active{transform:scale(.97)}
+.out{display:block;text-align:center;margin-top:13px;background:transparent;border:1px solid var(--line-2);
+  color:var(--ink);border-radius:12px;padding:13px;font-size:14.5px;font-weight:600;text-decoration:none}
+.wa{display:block;text-align:center;margin-top:12px;color:var(--ink-2);font-size:13px;text-decoration:none;
+  border-bottom:1px solid var(--line-2);width:fit-content;margin-left:auto;margin-right:auto;padding-bottom:2px}
+.err{display:none;margin-top:12px;background:rgba(255,61,154,.12);border:1px solid var(--mg);
+  font-size:13.5px;font-weight:500;line-height:1.55;padding:11px 14px;border-radius:12px}
+.hp{position:absolute;left:-9999px}
+.end{padding:22px 2px 30px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-3);line-height:1.9}
+
+/* ---- Typographie unifiée avec l'accueil ---- */
+h1,h2,h3,.h2,.hero h1,.logo-n,.tcname,.gate-t,.pn,.ttl,.cfg-ttl,.lbadge,.tclogo,.logo,.gate-logo,.badge,
+.sec-title,.dt,.est-t{font-family:'Unbounded',sans-serif;letter-spacing:-.03em}
+.tag,.kicker,.lab,.lt,.logo-s,.tcsub,.mono,.n,.inp.n,.pp,.price,.rtot,.numfield{font-family:'JetBrains Mono',ui-monospace,monospace}
+.sig{font-family:'Playfair Display',serif}
+
+/* ---- Menu de retour, identique sur toutes les pages ---- */
+.tcnav{position:relative;z-index:60;background:var(--nv-bg);border-bottom:1px solid var(--nv-line);
+  display:flex;align-items:center;gap:14px;padding:0 14px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none}
+.tcnav::-webkit-scrollbar{display:none}
+.tcnav a{flex:none;text-decoration:none;font-family:'Instrument Sans',system-ui,sans-serif;
+  font-size:12.5px;font-weight:500;color:var(--nv-mut);padding:12px 0;white-space:nowrap}
+.tcnav a:hover{color:var(--nv-ink)}
+.tcnav a.home{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--nv-ink);
+  padding-right:14px;margin-right:2px;border-right:1px solid var(--nv-line)}
+.tcnav .bdg{width:24px;height:24px;border-radius:7px;background:var(--nv-ink);color:var(--nv-bg);
+  display:grid;place-items:center;font-family:'Unbounded',sans-serif;font-size:9.5px;font-weight:700}
+.tcnav a.on{color:var(--nv-ink);font-weight:600}
+</style>
+</head>
+<body>
+<nav class="tcnav" style="--nv-bg:#131519;--nv-line:#22262C;--nv-ink:#F4F5F7;--nv-mut:#8B92A0">
+  <a class="home" href="/"><span class="bdg">TC</span> technic-compo.tn</a>
+  <a href="/medical/">Médical</a>
+  <a href="/medical/?espace=img">Imagerie</a>
+  <a href="/medical/?espace=labo">Laboratoires</a>
+  <a href="/societes/">Sociétés</a>
+  <a href="/scandar/" class="on">Scandar</a>
+  <a href="/scandar/commander/">Scandar Hôtel</a>
+  <a href="/tarifs/">Tarifs</a>
+  <a href="/partenaires/">Partenaires</a>
+</nav>
+
+<style>
+/* ====== CALAGE PRESSE — transition de page ====== */
+.tcload{position:fixed;inset:0;z-index:9999;background:var(--lo-bg);display:flex;align-items:center;
+  justify-content:center;transition:opacity .5s ease,visibility .5s}
+.tcload.done{opacity:0;visibility:hidden;pointer-events:none}
+.tcload .lpass{position:absolute;inset:0;transform:translateX(-102%);mix-blend-mode:var(--lo-blend);pointer-events:none}
+.tcload .lpass.c{background:var(--lo-a);animation:tclpass .5s cubic-bezier(.6,0,.3,1) .05s forwards}
+.tcload .lpass.m{background:var(--lo-b);animation:tclpass .5s cubic-bezier(.6,0,.3,1) .19s forwards}
+.tcload .lpass.y{background:var(--lo-c);animation:tclpass .5s cubic-bezier(.6,0,.3,1) .33s forwards}
+.tcload .lpass.k{background:var(--lo-ink);animation:tclpass .5s cubic-bezier(.6,0,.3,1) .47s forwards;mix-blend-mode:normal}
+@keyframes tclpass{0%{transform:translateX(-102%)}100%{transform:translateX(102%)}}
+.tcload .lcore{position:relative;text-align:center;z-index:2}
+.tcload .lbadge{position:relative;width:58px;height:58px;margin:0 auto 16px;background:var(--lo-ink);
+  color:var(--lo-bg);border-radius:16px;display:flex;align-items:center;justify-content:center;
+  font-family:'Instrument Sans',system-ui,sans-serif;font-weight:700;font-size:18px;letter-spacing:-.02em;overflow:hidden}
+.tcload .lbadge::after{content:'';position:absolute;bottom:0;left:0;right:0;height:6px;
+  background:linear-gradient(90deg,var(--lo-a) 33%,var(--lo-b) 33% 66%,var(--lo-c) 66%)}
+.tcload .lt{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.7rem;font-weight:600;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--lo-mut)}
+.tcload .ld{display:flex;gap:8px;justify-content:center;margin-top:14px}
+.tcload .ld i{width:10px;height:10px;border-radius:2px;opacity:0;animation:tcldot .3s forwards}
+.tcload .ld i:nth-child(1){background:var(--lo-a);animation-delay:.12s}
+.tcload .ld i:nth-child(2){background:var(--lo-b);animation-delay:.26s}
+.tcload .ld i:nth-child(3){background:var(--lo-c);animation-delay:.40s}
+.tcload .ld i:nth-child(4){background:var(--lo-ink);animation-delay:.54s}
+@keyframes tcldot{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.tcload{display:none}}
+</style>
+<div class="tcload" id="tcload" aria-hidden="true"
+     style="--lo-bg:#0A0B0D;--lo-ink:#F4F5F7;--lo-mut:#6B727D;--lo-a:#22C8F5;--lo-b:#FFD400;--lo-c:#FF3D9A;--lo-blend:screen">
+  <span class="lpass c"></span><span class="lpass m"></span><span class="lpass y"></span><span class="lpass k"></span>
+  <div class="lcore">
+    <div class="lbadge">TC</div>
+    <div class="lt">Scandar</div>
+    <div class="ld"><i></i><i></i><i></i><i></i></div>
+  </div>
+</div>
+<noscript><style>.tcload{display:none}</style></noscript>
+<script>
+(function(){
+  var l=document.getElementById('tcload'); if(!l) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){ l.style.display='none'; return; }
+  setTimeout(function(){ l.classList.add('done'); }, 950);
+  setTimeout(function(){ l.style.display='none'; }, 1500);
+})();
+</script>
+
+
+<div class="cmjn"><i class="c"></i><i class="m"></i><i class="y"></i><i class="k"></i></div>
+<div class="top"><div class="top-in">
+  <div class="logo">TC</div>
+  <div><div class="logo-n">TECHNIC COMPO <span class="sig">Scandar</span></div>
+    <div class="logo-s">IMPRIMERIE · TUNISIE</div></div>
+</div></div>
+
+<div class="wrap">
+  <div class="hero">
+    <h1>Vos documents,<br><span class="und">derrière un QR code</span></h1>
+    <p>Menu, carte, règlement intérieur, programme d'animation, fiche de chambre : vos clients scannent,
+       le document s'ouvre dans leur langue. Vous le changez quand vous voulez, sans rien réimprimer.</p>
+    <div class="trust">
+      <div>Plusieurs langues</div>
+      <div>Mise à jour immédiate</div>
+      <div>Arabe et RTL</div>
+      <div>Hôtels et restaurants</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Comment ça marche</span>
+    <div class="h2">Trois étapes, et c'est en service</div>
+    <div class="bar"><i style="background:var(--cy)"></i><i style="background:var(--mg)"></i><i style="background:var(--yl)"></i><i style="background:var(--ink)"></i></div>
+    <div class="sep"></div>
+    <div class="step"><div class="sn">1</div><div>
+      <div class="st">Vous nous envoyez vos documents</div>
+      <div class="ss">Menu, carte, règlement, programme. Nous les montons dans votre espace,
+        onglet par onglet, langue par langue.</div></div></div>
+    <div class="step"><div class="sn">2</div><div>
+      <div class="st">Nous imprimons votre QR code</div>
+      <div class="ss">Autocollant 7 × 7 cm en offset, ou plaque PVC 3 mm pour les tables et les comptoirs.
+        C'est notre métier, il est imprimé chez nous.</div></div></div>
+    <div class="step" style="margin-bottom:0"><div class="sn">3</div><div>
+      <div class="st">Vos clients scannent</div>
+      <div class="ss">Pas d'application à installer. Vous modifiez un prix ou un horaire depuis votre espace,
+        le changement est visible tout de suite.</div></div></div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Abonnement</span>
+    <div class="h2">Deux formules</div>
+    <div class="bar"><i style="background:var(--mg)"></i><i style="background:var(--cy)"></i><i style="background:var(--yl)"></i><i style="background:var(--ink)"></i></div>
+    <div class="sep"></div>
+
+    <div class="plan">
+      <div class="pn">Essentiel</div>
+      <div class="pp">20 DT <span>HT / mois</span></div>
+      <ul class="pl">
+        <li>Jusqu'à 3 langues</li>
+        <li>Jusqu'à 8 onglets par langue</li>
+        <li>Documents en PDF</li>
+        <li>Design et logo personnalisés</li>
+      </ul>
+    </div>
+
+    <div class="plan best">
+      <div class="pn">Premium</div>
+      <div class="pp">40 DT <span>HT / mois</span></div>
+      <ul class="pl">
+        <li>Langues et onglets illimités</li>
+        <li>Images JPEG en plus des PDF</li>
+        <li>Statistiques complètes : carte des scans, courbes sur 15 jours et par mois, historique exportable</li>
+        <li>Design et logo personnalisés</li>
+      </ul>
+    </div>
+
+    <p class="note">Tous les prix sont hors taxes : FODEC 1 %, TVA 19 % et timbre de 1,000 DT s'ajoutent à la facture.<br>Packs de lancement : 50 DT pour un restaurant, 150 DT pour un hôtel.
+      Page ou langue supplémentaire : 5 DT. Formulaire de réclamation disponible pour les hôtels et les restaurants.
+      La traduction n'est pas comprise dans l'abonnement : vous fournissez vos textes, ou nous les traduisons sur devis.</p>
+  </div>
+
+  <div class="card">
+    <span class="tag">Voir en vrai</span>
+    <div class="h2">Le service tourne déjà</div>
+    <div class="bar"><i style="background:var(--yl)"></i><i style="background:var(--cy)"></i><i style="background:var(--mg)"></i><i style="background:var(--ink)"></i></div>
+    <div class="sep"></div>
+    <p class="note" style="margin-top:0">Scandar a son propre site, avec la démonstration et l'accès client.</p>
+    <a class="out" href="/scandar/commander/" style="background:var(--ink);color:var(--paper);border-color:var(--ink)">Commander mon Scandar</a>
+    <a class="out" href="https://scandar.tn/" target="_blank" rel="noopener">Ouvrir scandar.tn</a>
+  </div>
+
+  <form class="card" id="sForm" name="demande-scandar" method="POST" action="/merci/"
+        data-netlify="true" netlify-honeypot="bot-field-scandar">
+    <input type="hidden" name="form-name" value="demande-scandar">
+    <input type="hidden" name="destinataire" value="hello@scandar.tn">
+    <p class="hp"><label>Ne pas remplir <input name="bot-field-scandar"></label></p>
+
+    <span class="tag">Vous êtes intéressé</span>
+    <div class="h2">Demandez votre Scandar</div>
+    <div class="bar"><i style="background:var(--cy)"></i><i style="background:var(--yl)"></i><i style="background:var(--mg)"></i><i style="background:var(--ink)"></i></div>
+    <div class="sep"></div>
+
+    <span class="lab">Établissement</span>
+    <input class="inp" name="etablissement" required placeholder="Hôtel, restaurant, maison d'hôtes…">
+
+    <span class="lab">Vous êtes</span>
+    <input class="inp" name="type" placeholder="Hôtel, restaurant, café, autre">
+
+    <span class="lab">Formule souhaitée</span>
+    <input class="inp" name="formule" placeholder="Essentiel, Premium, ou vous hésitez">
+
+    <span class="lab">Langues souhaitées</span>
+    <input class="inp" name="langues" placeholder="Français, anglais, arabe, allemand…">
+
+    <span class="lab">Interlocuteur</span>
+    <input class="inp" name="contact" required>
+
+    <div class="row" style="margin-top:14px">
+      <div><span class="lab" style="margin-top:0">Téléphone</span><input class="inp n" name="telephone" inputmode="tel" required></div>
+      <div><span class="lab" style="margin-top:0">Ville</span><input class="inp" name="ville" required></div>
+    </div>
+
+    <span class="lab">E-mail</span>
+    <input class="inp" type="email" name="email" required>
+
+    <span class="lab">Votre message</span>
+    <textarea class="inp" name="message" placeholder="Ce que vous voulez mettre derrière le QR code, vos questions…"></textarea>
+
+    <div class="err" id="sErr"></div>
+    <button class="go" type="submit" id="sBtn">Envoyer ma demande</button>
+    <a class="wa" id="sWa" href="#" target="_blank" rel="noopener">ou parlons-en sur WhatsApp</a>
+  </form>
+
+  <div class="end">
+    TECHNIC COMPO SARL — Coin Sidi Abdeljalil et Bkira, Bab Jedid, Tunis 1008<br>
+    24 678 721 · 21 730 367 — hello@scandar.tn<br>
+    MF 1968566V/A/M/000
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const WA_SC="21624678721";
+
+$('sWa').addEventListener('click',()=>{
+  const g=n=>{const e=$('sForm').querySelector('[name='+n+']');return e?e.value.trim():"";};
+  let t="*DEMANDE SCANDAR*\n\n";
+  if(g('etablissement')) t+="Établissement : "+g('etablissement')+"\n";
+  if(g('type'))          t+="Type : "+g('type')+"\n";
+  if(g('formule'))       t+="Formule : "+g('formule')+"\n";
+  if(g('langues'))       t+="Langues : "+g('langues')+"\n";
+  if(g('contact'))       t+="Contact : "+g('contact')+"\n";
+  if(g('telephone'))     t+="Tél : "+g('telephone')+"\n";
+  if(g('message'))       t+="\n"+g('message');
+  $('sWa').href="https://wa.me/"+WA_SC+"?text="+encodeURIComponent(t);
+});
+
+$('sForm').addEventListener('submit',e=>{
+  const b=$('sErr'); b.style.display="none";
+  const manquant=[...$('sForm').querySelectorAll('[required]')].find(f=>!f.value.trim());
+  if(manquant){ e.preventDefault(); manquant.focus();
+    manquant.scrollIntoView({behavior:"smooth",block:"center"});
+    b.textContent="Il reste un champ à remplir pour que nous puissions vous répondre."; b.style.display="block"; return; }
+  const tel=$('sForm').querySelector('[name=telephone]');
+  if(tel.value.replace(/\D/g,'').length<8){ e.preventDefault(); tel.focus();
+    b.textContent="Le numéro de téléphone doit comporter au moins 8 chiffres."; b.style.display="block"; return; }
+  const bt=$('sBtn'); bt.disabled=true; bt.textContent="Envoi en cours…";
+  setTimeout(()=>{ bt.disabled=false; bt.textContent="Envoyer ma demande"; },12000);
+});
+</script>
+</body>
+</html>

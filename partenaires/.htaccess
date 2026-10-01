@@ -1,0 +1,18 @@
+# ============================================================
+#  VERROU DE L'ESPACE PARTENAIRE  —  a activer par l'hebergeur
+# ------------------------------------------------------------
+#  L'ecran de mot de passe dans la page est un rideau : la page
+#  est deja chargee derriere. Ce fichier-ci est la vraie serrure,
+#  cote serveur : sans identifiant, la page n'est meme pas livree.
+#
+#  A faire une seule fois :
+#  1. l'hebergeur cree le fichier des mots de passe :
+#       htpasswd -c /chemin/prive/.htpasswd partenaire
+#  2. il remplace le chemin ci-dessous par le vrai chemin
+#  3. il retire les # des cinq lignes suivantes
+# ============================================================
+
+# AuthType Basic
+# AuthName "Espace partenaire Technic Compo"
+# AuthUserFile /chemin/prive/.htpasswd
+# Require valid-user

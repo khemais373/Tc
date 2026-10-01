@@ -1,0 +1,18 @@
+# Technic Compo — en-têtes Netlify
+
+# Images provisoires (issues de la planche contact) : cache court, le temps
+# de les remplacer par les fichiers pleine résolution.
+# Quand les vraies images seront en place, remettre :
+#   Cache-Control: public, max-age=31536000, immutable
+/images/*
+  Cache-Control: public, max-age=86400
+
+# La page n'est jamais mise en cache : les prix doivent être à jour.
+/
+  Cache-Control: public, max-age=0, must-revalidate
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin

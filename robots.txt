@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /partenaires/
+Disallow: /merci/
+Allow: /
+
+Sitemap: https://technic-compo.tn/sitemap.xml

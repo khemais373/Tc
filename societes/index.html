@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Catalogue papeterie société — Technic Compo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:ital,wght@1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#0A0B0D; --surf:#131519; --surf-2:#1B1E24; --ink:#F4F5F7; --ink-2:#A3AAB5; --ink-3:#6B727D;
+  --line:#22262C; --line-2:#2F343C;
+  --cy:#22C8F5; --mg:#FF3D9A; --yl:#FFD400;
+  --sh-s:0 1px 2px rgba(0,0,0,.4); --eo:cubic-bezier(.23,1,.32,1);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;background:var(--paper);}
+body::before{content:"";position:fixed;top:-220px;left:50%;transform:translateX(-50%);
+  width:760px;height:520px;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse at center,rgba(34,200,245,.10) 0%,rgba(255,61,154,.05) 42%,transparent 70%);}
+.wrap,.top,.dock{position:relative;z-index:1;}
+body{font-family:'Instrument Sans',system-ui,sans-serif;color:var(--ink);font-size:16px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;padding-bottom:100px;}
+.wrap{max-width:620px;margin:0 auto;padding:0 16px;}
+.cmjn{display:flex;height:3px;} .cmjn i{flex:1;}
+.cmjn .c{background:var(--cy);} .cmjn .m{background:var(--mg);}
+.cmjn .y{background:var(--yl);} .cmjn .k{background:var(--ink);}
+.top{position:sticky;top:0;z-index:40;background:rgba(10,11,13,.82);backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line);}
+.top-in{max-width:620px;margin:0 auto;padding:11px 16px;display:flex;align-items:center;gap:11px;}
+.logo{width:38px;height:38px;border-radius:10px;background:var(--ink);color:var(--paper);display:grid;place-items:center;
+  font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:13px;flex:none;}
+.logo-n{font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:13.5px;letter-spacing:-.02em;line-height:1.2;}
+.logo-s{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-3);margin-top:3px;letter-spacing:.14em;}
+.sig{font-family:'Playfair Display',serif;font-style:italic;font-weight:500;font-size:17px;
+  letter-spacing:0;background:linear-gradient(95deg,var(--cy),var(--mg));-webkit-background-clip:text;
+  background-clip:text;color:transparent;padding-left:3px;}
+.hero{padding:34px 0 22px;}
+h1{font-family:'Instrument Sans',sans-serif;margin:0;font-size:clamp(29px,7.2vw,38px);font-weight:700;
+  letter-spacing:-.045em;line-height:1.1;}
+.und{position:relative;display:inline-block;}
+.und::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:4px;border-radius:2px;
+  background:linear-gradient(90deg,var(--cy) 0 25%,var(--mg) 25% 50%,var(--yl) 50% 75%,var(--ink) 75% 100%);}
+.hero p{margin:19px 0 0;color:var(--ink-2);font-size:15.5px;max-width:44ch;font-weight:500;}
+.trust{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;}
+.trust div{font-family:'Instrument Sans',sans-serif;font-size:11.5px;font-weight:500;color:var(--ink-2);background:var(--surf);
+  border:1px solid var(--line);border-radius:999px;padding:7px 13px;}
+.card{background:var(--surf);border:1px solid var(--line);border-radius:20px;padding:22px 19px;
+  margin-bottom:14px;}
+.tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);}
+.h2{font-family:'Instrument Sans',sans-serif;font-size:19px;font-weight:600;letter-spacing:-.025em;margin:8px 0 0;}
+.h3{font-family:'Instrument Sans',sans-serif;font-size:13.5px;font-weight:600;letter-spacing:-.02em;margin:0 0 4px;}
+.bar{display:flex;height:3px;width:48px;border-radius:2px;overflow:hidden;margin-top:9px;}
+.bar i{flex:1;}
+.sep{height:1px;background:var(--line);margin:17px 0;}
+.lab{display:block;font-size:13px;font-weight:600;color:var(--ink-2);margin-bottom:8px;}
+.hint{font-size:12.5px;color:var(--ink-3);margin-top:9px;line-height:1.5;}
+.pills{display:flex;flex-wrap:wrap;gap:7px;}
+.pill{font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:500;background:var(--surf-2);
+  color:var(--ink-2);border:1.5px solid var(--line-2);border-radius:999px;padding:9px 15px;cursor:pointer;
+  transition:transform 130ms var(--eo),background 170ms ease,color 170ms ease,border-color 170ms ease;}
+.pill:active{transform:scale(.955);} .pill.on{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+/* remises */
+.rem{display:flex;gap:11px;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--line);}
+.rem:last-child{border-bottom:none;padding-bottom:0;}
+.rem .b{font-family:'Instrument Sans',sans-serif;font-size:16px;font-weight:700;color:var(--mg);flex:none;
+  width:64px;letter-spacing:-.025em;line-height:1.2;}
+.rem .t{font-size:14px;font-weight:600;}
+.rem .s{font-size:12.5px;color:var(--ink-3);margin-top:2px;line-height:1.45;}
+/* tableau tarifaire */
+.fol{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--line);}
+.fol:last-child{border-bottom:none;}
+.chip{width:34px;height:34px;border-radius:9px;flex:none;display:grid;place-items:center;
+  border:1.5px solid rgba(255,255,255,.34);box-shadow:0 1px 6px rgba(0,0,0,.45);}
+.chip span{color:#0A0B0D;font-size:15px;font-weight:700;line-height:1;}
+.fol .fn{flex:1;min-width:0;}
+.fol .fn b{display:block;font-size:13.5px;font-weight:600;}
+.fol .fn i{font-style:normal;font-size:11.5px;color:var(--ink-3);}
+.fol .sws{display:flex;gap:6px;flex:none;}
+.fol .sws button{width:30px;height:30px;border-radius:9px;cursor:pointer;padding:0;
+  border:1.5px solid rgba(255,255,255,.22);display:grid;place-items:center;
+  transition:transform 130ms var(--eo),box-shadow 170ms ease,border-color 170ms ease;}
+.fol .sws button:active{transform:scale(.9);}
+.fol .sws button.on{border-color:var(--ink);box-shadow:0 0 0 2px var(--ink);}
+.fol .sws button span{color:#0A0B0D;font-size:14px;font-weight:700;line-height:1;}
+.fixe{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.1em;color:var(--ink-3);
+  border:1px solid var(--line-2);border-radius:999px;padding:4px 9px;flex:none;}
+.comp{display:flex;gap:8px;flex-wrap:wrap;}
+.comp .cp{flex:1;min-width:150px;background:var(--surf-2);border:1px solid var(--line);
+  border-radius:12px;padding:12px 13px;}
+.comp .cs{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-3);line-height:1.6;}
+.tb{width:100%;border-collapse:collapse;margin-top:4px;}
+.tb th{font-family:'JetBrains Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--ink-3);font-weight:600;padding:0 2px 9px;text-align:center;}
+.tb th:first-child{text-align:left;}
+.tb td{padding:0;border-top:1px solid var(--line);}
+.tb .q{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--ink-2);padding:10px 8px 10px 0;
+  white-space:nowrap;vertical-align:middle;}
+.tb .q em{display:block;font-style:normal;font-size:10px;color:var(--mg);margin-top:1px;letter-spacing:.02em;}
+.cell{width:100%;background:none;border:none;font-family:'JetBrains Mono',monospace;font-size:12.5px;
+  font-variant-numeric:tabular-nums;color:var(--ink);padding:11px 3px;cursor:pointer;border-radius:9px;
+  transition:background 160ms ease,color 160ms ease,transform 120ms var(--eo);}
+.cell:active{transform:scale(.95);}
+.cell.on{background:var(--ink);color:var(--paper);font-weight:600;}
+.tfoot{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-3);margin-top:10px;}
+/* prix sélection */
+.pr{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;}
+.pr b{font-family:'Instrument Sans',sans-serif;font-size:26px;font-weight:700;letter-spacing:-.035em;line-height:1;
+  font-variant-numeric:tabular-nums;}
+.pr span{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-3);text-align:right;line-height:1.45;}
+.addb{width:100%;margin-top:14px;background:transparent;border:1px solid var(--line-2);color:var(--ink);
+  border-radius:999px;padding:13px;font-size:14.5px;font-weight:600;font-family:'Instrument Sans',sans-serif;
+  cursor:pointer;transition:transform 130ms var(--eo),background 170ms ease,color 170ms ease;}
+.addb:active{transform:scale(.97);} .addb.done{background:var(--ink);color:var(--paper);}
+/* packs */
+.pack{border:1px solid var(--line-2);border-radius:16px;padding:17px;margin-bottom:11px;cursor:pointer;
+  background:var(--surf-2);transition:border-color 170ms ease,transform 130ms var(--eo);}
+.pack:active{transform:scale(.99);} .pack.on{border-color:var(--ink);background:var(--surf);}
+.pack .pn{font-family:'Instrument Sans',sans-serif;font-size:16px;font-weight:600;letter-spacing:-.02em;}
+.pack ul{margin:9px 0 0;padding-left:17px;font-size:13.5px;color:var(--ink-2);}
+.pack .pp{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:11px;
+  padding-top:10px;border-top:1px solid var(--line);}
+.pack .pp b{font-family:'Instrument Sans',sans-serif;font-size:20px;font-weight:700;letter-spacing:-.035em;
+  font-variant-numeric:tabular-nums;}
+.pack .pp s{font-family:'JetBrains Mono',monospace;font-size:13.5px;color:#C7CDD6;
+  text-decoration-color:var(--mg);text-decoration-thickness:1.5px;white-space:nowrap;}
+.pack .pk-eco{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex:none;}
+.pack .pk-rem{font-family:'JetBrains Mono',monospace;font-style:normal;font-size:12px;font-weight:600;
+  color:var(--paper);background:var(--mg);border-radius:999px;padding:3px 9px;white-space:nowrap;}
+/* panier */
+.li{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);}
+.li:last-of-type{border-bottom:none;}
+.li-t{font-size:14.5px;font-weight:600;}
+.li-s{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-3);margin-top:3px;}
+.li-p{font-family:'JetBrains Mono',monospace;font-size:13.5px;font-weight:600;white-space:nowrap;}
+.rm{background:none;border:none;color:var(--ink-3);font-size:12px;cursor:pointer;padding:4px 0 0;text-decoration:underline;}
+.tx{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12.5px;
+  color:var(--ink-2);padding:4px 0;}
+.tx.end{border-top:1px solid var(--line);margin-top:7px;padding-top:9px;font-weight:600;color:var(--ink);font-size:14px;}
+.tx.mg{color:var(--mg);}
+.empty{text-align:center;color:var(--ink-3);font-size:13.5px;padding:14px 0;}
+/* switch */
+.sw{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--line-2);
+  border-radius:16px;background:var(--surf-2);cursor:pointer;}
+.sw.on{border-color:var(--ink);background:var(--surf);}
+.sw .kn{width:42px;height:25px;border-radius:999px;background:var(--line-2);position:relative;flex:none;transition:background 200ms ease;}
+.sw.on .kn{background:var(--ink);}
+.sw .kn i{position:absolute;top:3px;left:3px;width:19px;height:19px;border-radius:50%;background:var(--paper);transition:transform 220ms var(--eo);}
+.sw.on .kn i{transform:translateX(17px);}
+.sw .st{font-size:14px;font-weight:600;} .sw .ss{font-size:12.5px;color:var(--ink-3);margin-top:2px;}
+/* upload + champs */
+.drop{border:1.5px dashed var(--line-2);border-radius:16px;background:var(--surf-2);padding:22px 16px;
+  text-align:center;cursor:pointer;transition:border-color 170ms ease;}
+.drop:hover{border-color:var(--ink-2);}
+.drop .ic{font-size:26px;line-height:1;} .drop .t1{font-weight:600;font-size:14.5px;margin-top:9px;}
+.drop .t2{font-size:12.5px;color:var(--ink-3);margin-top:4px;}
+#thumbs{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+.th{width:74px;height:74px;border-radius:10px;overflow:hidden;border:1px solid var(--line-2);background:var(--surf);
+  display:grid;place-items:center;}
+.th img{width:100%;height:100%;object-fit:cover;}
+.th .fx{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-3);text-align:center;padding:4px;}
+.f{margin-bottom:15px;}
+.inp{width:100%;font-family:'Instrument Sans',sans-serif;font-size:15.5px;color:var(--ink);background:var(--surf-2);
+  border:1.5px solid var(--line-2);border-radius:12px;padding:12px 14px;outline:none;transition:border-color 170ms ease;}
+.inp:focus{border-color:var(--ink);} .inp.n{font-family:'JetBrains Mono',monospace;}
+textarea.inp{min-height:78px;resize:vertical;}
+.row{display:flex;gap:10px;} .row>*{flex:1;}
+/* dock */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(10,11,13,.88);backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);}
+.dock-in{max-width:620px;margin:0 auto;padding:11px 16px;display:flex;align-items:center;gap:12px;}
+.dock .dv{flex:1;min-width:0;}
+.dock .dk{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-3);letter-spacing:.06em;text-transform:uppercase;}
+.dock .dt{font-family:'Instrument Sans',sans-serif;font-size:22px;font-weight:700;letter-spacing:-.035em;line-height:1.15;
+  font-variant-numeric:tabular-nums;}
+.go{background:var(--ink);color:var(--paper);border:none;border-radius:999px;padding:14px 22px;font-size:14.5px;font-weight:600;
+  font-family:'Instrument Sans',sans-serif;cursor:pointer;flex:none;transition:transform 130ms var(--eo),opacity 200ms ease;}
+.go:active{transform:scale(.96);} .go.mute{opacity:.32;pointer-events:none;}
+.foot{padding:26px 0 34px;text-align:center;color:var(--ink-3);font-size:12.5px;line-height:1.7;}
+.hp{position:absolute;left:-9999px;}
+.dock>.ferr{max-width:620px;margin:0 auto 10px;}
+.dock>.fwa{margin-bottom:10px;}
+.ferr{display:none;margin-top:12px;background:rgba(255,61,154,.12);border:1px solid var(--mg);
+  color:var(--ink);font-size:13.5px;font-weight:500;line-height:1.55;padding:11px 14px;border-radius:12px;}
+.fwa{display:block;text-align:center;margin-top:13px;color:var(--ink-2);font-size:13px;
+  text-decoration:none;border-bottom:1px solid var(--line-2);width:fit-content;
+  margin-left:auto;margin-right:auto;padding-bottom:2px;}
+
+/* ---- Typographie unifiée avec l'accueil ---- */
+h1,h2,h3,.h2,.hero h1,.logo-n,.tcname,.gate-t,.pn,.ttl,.cfg-ttl,.lbadge,.tclogo,.logo,.gate-logo,.badge,
+.sec-title,.dt,.est-t{font-family:'Unbounded',sans-serif;letter-spacing:-.03em}
+.tag,.kicker,.lab,.lt,.logo-s,.tcsub,.mono,.n,.inp.n,.pp,.price,.rtot,.numfield{font-family:'JetBrains Mono',ui-monospace,monospace}
+.sig{font-family:'Playfair Display',serif}
+
+/* ---- Menu de retour, identique sur toutes les pages ---- */
+.tcnav{position:relative;z-index:60;background:var(--nv-bg);border-bottom:1px solid var(--nv-line);
+  display:flex;align-items:center;gap:14px;padding:0 14px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none}
+.tcnav::-webkit-scrollbar{display:none}
+.tcnav a{flex:none;text-decoration:none;font-family:'Instrument Sans',system-ui,sans-serif;
+  font-size:12.5px;font-weight:500;color:var(--nv-mut);padding:12px 0;white-space:nowrap}
+.tcnav a:hover{color:var(--nv-ink)}
+.tcnav a.home{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--nv-ink);
+  padding-right:14px;margin-right:2px;border-right:1px solid var(--nv-line)}
+.tcnav .bdg{width:24px;height:24px;border-radius:7px;background:var(--nv-ink);color:var(--nv-bg);
+  display:grid;place-items:center;font-family:'Unbounded',sans-serif;font-size:9.5px;font-weight:700}
+.tcnav a.on{color:var(--nv-ink);font-weight:600}
+</style>
+</head>
+<body>
+<nav class="tcnav" style="--nv-bg:#131519;--nv-line:#22262C;--nv-ink:#F4F5F7;--nv-mut:#8B92A0">
+  <a class="home" href="/"><span class="bdg">TC</span> technic-compo.tn</a>
+  <a href="/medical/">Médical</a>
+  <a href="/medical/?espace=img">Imagerie</a>
+  <a href="/medical/?espace=labo">Laboratoires</a>
+  <a href="/societes/" class="on">Sociétés</a>
+  <a href="/scandar/">Scandar</a>
+  <a href="/scandar/commander/">Scandar Hôtel</a>
+  <a href="/tarifs/">Tarifs</a>
+  <a href="/partenaires/">Partenaires</a>
+</nav>
+
+<style>
+/* ====== CALAGE PRESSE — transition de page ====== */
+.tcload{position:fixed;inset:0;z-index:9999;background:var(--lo-bg);display:flex;align-items:center;
+  justify-content:center;transition:opacity .5s ease,visibility .5s}
+.tcload.done{opacity:0;visibility:hidden;pointer-events:none}
+.tcload .lpass{position:absolute;inset:0;transform:translateX(-102%);mix-blend-mode:var(--lo-blend);pointer-events:none}
+.tcload .lpass.c{background:var(--lo-a);animation:tclpass .5s cubic-bezier(.6,0,.3,1) .05s forwards}
+.tcload .lpass.m{background:var(--lo-b);animation:tclpass .5s cubic-bezier(.6,0,.3,1) .19s forwards}
+.tcload .lpass.y{background:var(--lo-c);animation:tclpass .5s cubic-bezier(.6,0,.3,1) .33s forwards}
+.tcload .lpass.k{background:var(--lo-ink);animation:tclpass .5s cubic-bezier(.6,0,.3,1) .47s forwards;mix-blend-mode:normal}
+@keyframes tclpass{0%{transform:translateX(-102%)}100%{transform:translateX(102%)}}
+.tcload .lcore{position:relative;text-align:center;z-index:2}
+.tcload .lbadge{position:relative;width:58px;height:58px;margin:0 auto 16px;background:var(--lo-ink);
+  color:var(--lo-bg);border-radius:16px;display:flex;align-items:center;justify-content:center;
+  font-family:'Instrument Sans',system-ui,sans-serif;font-weight:700;font-size:18px;letter-spacing:-.02em;overflow:hidden}
+.tcload .lbadge::after{content:'';position:absolute;bottom:0;left:0;right:0;height:6px;
+  background:linear-gradient(90deg,var(--lo-a) 33%,var(--lo-b) 33% 66%,var(--lo-c) 66%)}
+.tcload .lt{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.7rem;font-weight:600;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--lo-mut)}
+.tcload .ld{display:flex;gap:8px;justify-content:center;margin-top:14px}
+.tcload .ld i{width:10px;height:10px;border-radius:2px;opacity:0;animation:tcldot .3s forwards}
+.tcload .ld i:nth-child(1){background:var(--lo-a);animation-delay:.12s}
+.tcload .ld i:nth-child(2){background:var(--lo-b);animation-delay:.26s}
+.tcload .ld i:nth-child(3){background:var(--lo-c);animation-delay:.40s}
+.tcload .ld i:nth-child(4){background:var(--lo-ink);animation-delay:.54s}
+@keyframes tcldot{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.tcload{display:none}}
+</style>
+<div class="tcload" id="tcload" aria-hidden="true"
+     style="--lo-bg:#0A0B0D;--lo-ink:#F4F5F7;--lo-mut:#6B727D;--lo-a:#22C8F5;--lo-b:#FF3D9A;--lo-c:#FFD400;--lo-blend:screen">
+  <span class="lpass c"></span><span class="lpass m"></span><span class="lpass y"></span><span class="lpass k"></span>
+  <div class="lcore">
+    <div class="lbadge">TC</div>
+    <div class="lt">Catalogue sociétés</div>
+    <div class="ld"><i></i><i></i><i></i><i></i></div>
+  </div>
+</div>
+<noscript><style>.tcload{display:none}</style></noscript>
+<script>
+(function(){
+  var l=document.getElementById('tcload'); if(!l) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){ l.style.display='none'; return; }
+  setTimeout(function(){ l.classList.add('done'); }, 950);
+  setTimeout(function(){ l.style.display='none'; }, 1500);
+})();
+</script>
+
+
+
+<div class="cmjn"><i class="c"></i><i class="m"></i><i class="y"></i><i class="k"></i></div>
+<div class="top"><div class="top-in">
+  <div class="logo">TC</div>
+  <div><div class="logo-n">TECHNIC COMPO <span class="sig">Société</span></div>
+    <div class="logo-s">IMPRIMERIE · TUNISIE</div></div>
+</div></div>
+
+<form id="form" name="commande-societes" method="POST" action="/merci/" data-netlify="true" netlify-honeypot="bot-field" enctype="multipart/form-data">
+<input type="hidden" name="form-name" value="commande-societes">
+<input type="hidden" name="destinataire" value="hello@technic-compo.tn">
+<p class="hp"><label>Ne pas remplir <input name="bot-field"></label></p>
+<input type="hidden" name="commande" id="hCmd">
+<input type="hidden" name="total_ttc" id="hTtc">
+
+<div class="wrap">
+  <div class="hero">
+    <h1>Vos imprimés,<br><span class="und">au prix affiché</span></h1>
+    <p>En-têtes, cartes de visite, enveloppes, carnets et chemises à rabat.
+       Tous les tarifs sont dans cette page, sans devis à réclamer.
+       Vous choisissez la quantité, vous voyez le prix, vous commandez.</p>
+    <div class="trust">
+      <div>Impression offset</div>
+      <div>BAT avant impression</div>
+      <div>Facture conforme · MF</div>
+      <div>Livraison Grand Tunis</div>
+    </div>
+  </div>
+
+  <!-- REMISES -->
+  <div class="card">
+    <span class="tag">Ce que vous économisez</span>
+    <div class="h2">Trois façons de payer moins</div>
+    <div class="bar"><i style="background:var(--mg)"></i><i style="background:var(--cy)"></i><i style="background:var(--yl)"></i><i style="background:var(--ink)"></i></div>
+    <div class="sep"></div>
+    <div class="rem"><div class="b">jusqu'à<br>−25 %</div>
+      <div><div class="t">Commandez pour l'année, pas pour le mois</div>
+      <div class="s">Imprimer mille ou cinq mille, la préparation est la même — et vous la payez
+        à chaque commande. Groupez votre année en une seule fois : jusqu'à 25 % de moins,
+        et vous n'y pensez plus.</div></div></div>
+    <div class="rem"><div class="b">−10 %</div>
+      <div><div class="t">Le premier essai est pour nous</div>
+      <div class="s">Changer d'imprimeur, c'est prendre un risque sur votre image.
+        On en prend 10 % à notre charge. Vous jugez le travail une fois en main.</div></div></div>
+    <div class="rem"><div class="b">−12 à<br>−15 %</div>
+      <div><div class="t">Une identité, une seule commande</div>
+      <div class="s">En-tête, cartes, enveloppes : même logo, même couleur, même série.
+        Ensemble, c'est 12 à 15 % de moins — et les trois se ressemblent vraiment.</div></div></div>
+  </div>
+
+  <!-- PACKS -->
+  <div class="card">
+    <span class="tag">Le plus commandé</span>
+    <div class="h2">Packs identité</div>
+    <div class="bar"><i style="background:var(--cy)"></i><i style="background:var(--mg)"></i><i style="background:var(--yl)"></i><i style="background:var(--ink)"></i></div>
+    <div class="sep"></div>
+    <div id="packs"></div>
+    <div class="hint">Même papier, même noir, même rendu de logo sur les trois supports.
+      C'est ce qui fait qu'une identité tient debout devant un client.</div>
+  </div>
+
+  <!-- EN-TÊTES -->
+  <div class="card">
+    <span class="tag">01 · Papeterie</span>
+    <div class="h2">En-têtes A4</div>
+    <div class="bar"><i style="background:var(--mg)"></i><i style="background:var(--yl)"></i><i style="background:var(--cy)"></i><i style="background:var(--ink)"></i></div>
+    <div class="hint" style="margin-top:11px">Papier offset 80 g · 21 × 29,7 cm · impression recto.
+      Prix HT à l'unité — touchez une case pour choisir.</div>
+    <div class="sep"></div>
+    <div id="tE"></div>
+    <div class="sep"></div>
+    <div class="pr"><b id="prE"></b><span id="puE"></span></div>
+    <button type="button" class="addb" id="addE">Ajouter à la commande</button>
+  </div>
+
+  <!-- CARTES -->
+  <div class="card">
+    <span class="tag">02 · Papeterie</span>
+    <div class="h2">Cartes de visite</div>
+    <div class="bar"><i style="background:var(--yl)"></i><i style="background:var(--ink)"></i><i style="background:var(--cy)"></i><i style="background:var(--mg)"></i></div>
+    <div class="hint" style="margin-top:11px">85 × 55 mm · carton 300 g · quadri des deux côtés. Plusieurs noms dans la même
+      commande : on les monte dans la même série, vous ne payez la mise en route qu'une fois.</div>
+    <div class="sep"></div>
+    <div id="tC"></div>
+    <div class="sep"></div>
+    <div class="pr"><b id="prC"></b><span id="puC"></span></div>
+    <button type="button" class="addb" id="addC">Ajouter à la commande</button>
+  </div>
+
+  <!-- ENVELOPPES -->
+  <div class="card">
+    <span class="tag">03 · Papeterie</span>
+    <div class="h2">Enveloppes</div>
+    <div class="bar"><i style="background:var(--cy)"></i><i style="background:var(--ink)"></i><i style="background:var(--mg)"></i><i style="background:var(--yl)"></i></div>
+    <div class="hint" style="margin-top:11px">Impression 1 couleur. La fenêtre laisse apparaître l'adresse :
+      plus de recopie, plus d'erreur d'expédition.</div>
+    <div class="sep"></div>
+    <div id="tV"></div>
+    <div class="sep"></div>
+    <div class="pr"><b id="prV"></b><span id="puV"></span></div>
+    <button type="button" class="addb" id="addV">Ajouter à la commande</button>
+  </div>
+
+  <!-- CARNETS -->
+  <div class="card">
+    <span class="tag">04 · Autocopiant</span>
+    <div class="h2">Carnets et imprimés</div>
+    <div class="bar"><i style="background:var(--mg)"></i><i style="background:var(--cy)"></i><i style="background:var(--ink)"></i><i style="background:var(--yl)"></i></div>
+    <div class="hint" style="margin-top:11px">Papier autocopiant : l'écriture se reporte sur toutes les copies
+      sans carbone, une pour vous, une pour le client, une pour la comptabilité.</div>
+    <div class="sep"></div>
+    <div class="comp">
+      <div class="cp"><div class="h3">2 feuillets</div>
+        <div class="cs">50 liasses par carnet · 100 feuilles<br>Original blanc + copie jaune</div></div>
+      <div class="cp"><div class="h3">3 feuillets</div>
+        <div class="cs">25 liasses par carnet · 75 feuilles<br>Blanc, jaune, bleu</div></div>
+      <div class="cp"><div class="h3">4 feuillets</div>
+        <div class="cs">25 liasses par carnet · 100 feuilles<br>Blanc, jaune, bleu, vert</div></div>
+    </div>
+    <div class="sep"></div>
+    <div class="f"><span class="lab">Ce que vous imprimez</span><div class="pills" id="sUs"></div></div>
+    <div class="f"><span class="lab">Format</span><div class="pills" id="sKf"></div></div>
+    <div class="f"><span class="lab">Façonnage</span><div class="pills" id="sKfac"></div>
+      <div class="hint" id="hKfac"></div></div>
+    <div class="f" id="boxNum"><span class="lab">Numéro de départ <em style="color:var(--mg);font-style:normal">obligatoire</em></span>
+      <input class="inp n" id="numDep" name="numero_depart" placeholder="0001" inputmode="numeric">
+      <div class="hint">Le premier numéro imprimé sur votre carnet. Si vous continuez une série existante,
+        reprenez le numéro qui suit votre dernier carnet utilisé.</div></div>
+    <div class="sep"></div>
+    <div id="tK"></div>
+    <div class="sep"></div>
+    <div class="f"><span class="lab">Couleur de chaque feuillet</span>
+      <div id="kTint"></div>
+      <div class="hint">L'original est toujours blanc, la dernière copie toujours jaune :
+        c'est la règle, tout le monde la reconnaît. Entre les deux, choisissez.</div></div>
+    <div class="sep"></div>
+    <div class="pr"><b id="prK"></b><span id="puK"></span></div>
+    <button type="button" class="addb" id="addK">Ajouter à la commande</button>
+  </div>
+
+  <!-- CHEMISES -->
+  <div class="card">
+    <span class="tag">05 · Façonnage</span>
+    <div class="h2">Chemises à rabat</div>
+    <div class="bar"><i style="background:var(--ink)"></i><i style="background:var(--yl)"></i><i style="background:var(--mg)"></i><i style="background:var(--cy)"></i></div>
+    <div class="hint" style="margin-top:11px">Carton 300 g · format fermé A4 · rabat intérieur avec fente
+      porte-carte. Découpe à la forme, pliage et collage compris.</div>
+    <div class="sep"></div>
+    <div id="tH"></div>
+    <div class="sep"></div>
+    <div class="pr"><b id="prH"></b><span id="puH"></span></div>
+    <button type="button" class="addb" id="addH">Ajouter à la commande</button>
+  </div>
+
+  <!-- PANIER -->
+  <div class="card">
+    <span class="tag">Votre commande</span>
+    <div class="h2">Récapitulatif</div>
+    <div class="bar"><i style="background:var(--ink)"></i><i style="background:var(--cy)"></i><i style="background:var(--mg)"></i><i style="background:var(--yl)"></i></div>
+    <div class="sep"></div>
+    <div id="lines"><div class="empty">Aucun article pour le moment.</div></div>
+    <div id="tot" style="display:none;margin-top:12px">
+      <div class="tx"><span>Total HT</span><span id="tHt"></span></div>
+      <div class="tx mg" id="lRem" style="display:none"><span>Remise première commande 10 %</span><span id="tR"></span></div>
+      <div class="tx"><span>FODEC 1 %</span><span id="tF"></span></div>
+      <div class="tx"><span>TVA 19 %</span><span id="tV2"></span></div>
+      <div class="tx"><span>Timbre fiscal</span><span>1,000 DT</span></div>
+      <div class="tx end"><span>TOTAL TTC</span><span id="tT"></span></div>
+    </div>
+    <div class="sep"></div>
+    <div class="sw" id="swP"><div class="kn"><i></i></div>
+      <div><div class="st">C'est ma première commande chez vous</div>
+      <div class="ss">Remise de 10 % appliquée sur l'ensemble de la commande</div></div></div>
+    <div class="hint">Prix HT hors livraison. Taxes calculées selon la réglementation tunisienne :
+      FODEC 1 %, TVA 19 %, timbre fiscal 1,000 DT. Validité 30 jours.
+      Envoyer cette commande ne vous engage pas : vous recevez d'abord un devis écrit,
+      que vous confirmez ou non.</div>
+  </div>
+
+  <!-- FICHIERS -->
+  <div class="card">
+    <span class="tag">Vos fichiers</span>
+    <div class="h2">Logo et modèles</div>
+    <div class="bar"><i style="background:var(--yl)"></i><i style="background:var(--cy)"></i><i style="background:var(--ink)"></i><i style="background:var(--mg)"></i></div>
+    <div class="sep"></div>
+    <div class="drop" id="drop">
+      <div class="ic">📎</div>
+      <div class="t1">Joindre logo, ancien modèle ou maquette</div>
+      <div class="t2" id="dropLim">AI, PDF, EPS, PNG, JPG</div>
+    </div>
+    <input type="file" id="file" name="fichiers" accept="image/*,application/pdf,.ai,.eps,.psd" multiple style="display:none">
+    <div id="thumbs"></div>
+    <div class="hint" id="fileHint"></div>
+  </div>
+
+  <!-- SOCIÉTÉ -->
+  <div class="card">
+    <span class="tag">Facturation</span>
+    <div class="h2">Votre société</div>
+    <div class="bar"><i style="background:var(--cy)"></i><i style="background:var(--yl)"></i><i style="background:var(--mg)"></i><i style="background:var(--ink)"></i></div>
+    <div class="sep"></div>
+    <div class="f"><span class="lab">Raison sociale</span><input class="inp" name="societe" required></div>
+    <div class="f"><span class="lab">Matricule fiscal</span><input class="inp n" name="matricule" placeholder="0000000/X/A/M/000" required></div>
+    <div class="f"><span class="lab">Interlocuteur</span><input class="inp" name="contact" required></div>
+    <div class="f row">
+      <div><span class="lab">Téléphone</span><input class="inp n" name="telephone" inputmode="tel" required></div>
+      <div><span class="lab">Ville</span><input class="inp" name="ville" required></div>
+    </div>
+    <div class="f"><span class="lab">E-mail</span><input class="inp" type="email" name="email" required></div>
+    <div class="f" style="margin-bottom:0"><span class="lab">Remarques <em style="color:var(--ink-3);font-style:normal;font-weight:400">facultatif</em></span>
+      <textarea class="inp" name="remarques" placeholder="Plusieurs noms sur les cartes, texte à modifier, délai souhaité, adresse de livraison..."></textarea></div>
+  </div>
+
+  <div class="card">
+    <span class="tag">Comment ça se passe</span>
+    <div class="h2">Rien n'est imprimé sans votre accord écrit</div>
+    <div class="bar"><i style="background:var(--mg)"></i><i style="background:var(--yl)"></i><i style="background:var(--cy)"></i><i style="background:var(--ink)"></i></div>
+    <div class="sep"></div>
+    <div class="etp"><div class="en">1</div><div><div class="et">Vous envoyez votre commande</div>
+      <div class="es">Les prix affichés dans cette page sont fermes. Ce que vous voyez en bas de page
+        est ce que vous paierez.</div></div></div>
+    <div class="etp"><div class="en">2</div><div><div class="et">Nous vous adressons un devis</div>
+      <div class="es">Un document écrit, à votre nom et à votre matricule fiscal, reprenant chaque ligne,
+        les taxes et le délai de livraison.</div></div></div>
+    <div class="etp"><div class="en">3</div><div><div class="et">Vous confirmez le devis</div>
+      <div class="es">Par retour de mail ou signé. Tant que cette confirmation ne nous est pas revenue,
+        rien n'est lancé et vous n'êtes engagé à rien.</div></div></div>
+    <div class="etp"><div class="en">4</div><div><div class="et">Bon à tirer, puis impression</div>
+      <div class="es">Vous recevez le visuel exact avant lancement. Vous validez, on imprime,
+        on livre.</div></div></div>
+  </div>
+
+</div>
+
+<div class="dock"><div class="cmjn"><i class="c"></i><i class="m"></i><i class="y"></i><i class="k"></i></div>
+  <div class="dock-in">
+    <div class="dv"><div class="dk" id="dkLab">Aucun article</div><div class="dt" id="dkTot">0,000 DT</div></div>
+    <button class="go mute" id="btn" type="submit">Envoyer</button>
+  </div>
+  <div class="ferr" id="ferr"></div>
+  <a class="fwa" id="fwa" href="#" target="_blank" rel="noopener">L'envoi ne passe pas ? Commandez sur WhatsApp</a>
+</div>
+</form>
+
+<!-- ============================================================
+     DEVIS LIBRE — tout ce qui n'est pas au catalogue
+     Formulaire independant du bon de commande ci-dessus.
+     ============================================================ -->
+<div class="wrap">
+  <form class="card" id="devisForm" name="devis-libre" method="POST" action="/merci/"
+        data-netlify="true" netlify-honeypot="bot-field-devis" enctype="multipart/form-data">
+    <input type="hidden" name="form-name" value="devis-libre">
+    <input type="hidden" name="destinataire" value="hello@technic-compo.tn">
+    <p class="hp"><label>Ne pas remplir <input name="bot-field-devis"></label></p>
+
+    <span class="tag">Hors catalogue</span>
+    <div class="h2">Demandez un devis pour autre chose</div>
+    <div class="bar"><i style="background:var(--yl)"></i><i style="background:var(--mg)"></i><i style="background:var(--cy)"></i><i style="background:var(--ink)"></i></div>
+    <div class="sep"></div>
+    <p class="hint" style="margin:0 0 16px">Affiches, dépliants, brochures, autocollants, blocs, calendriers,
+      badges, étiquettes, ou un travail particulier : décrivez-le, nous chiffrons et vous répondons sous 2 heures ouvrées.</p>
+
+    <div class="f"><span class="lab">Ce que vous voulez imprimer</span>
+      <input class="inp" name="travail" required placeholder="Affiche A2, dépliant 3 volets, autocollants…"></div>
+
+    <div class="row">
+      <div><span class="lab">Format ou dimensions</span><input class="inp" name="format" placeholder="A2, 21 × 10 cm…"></div>
+      <div><span class="lab">Quantité</span><input class="inp n" name="quantite" inputmode="numeric" required placeholder="500"></div>
+    </div>
+
+    <div class="row" style="margin-top:12px">
+      <div><span class="lab">Impression</span><input class="inp" name="impression" placeholder="Quadri recto, 1 couleur R/V…"></div>
+      <div><span class="lab">Papier</span><input class="inp" name="papier" placeholder="Couché 135 g, offset 80 g…"></div>
+    </div>
+
+    <div class="f" style="margin-top:12px"><span class="lab">Délai souhaité</span>
+      <input class="inp" name="delai" placeholder="Sous 10 jours, pour le 30 du mois…"></div>
+
+    <div class="f"><span class="lab">Précisions</span>
+      <textarea class="inp" name="precisions" rows="3" placeholder="Façonnage, pliage, vernis, numérotation, livraison… tout ce qui compte."></textarea></div>
+
+    <div class="f"><span class="lab">Visuel ou maquette (facultatif)</span>
+      <input class="inp" type="file" id="devisFile" name="fichier_devis"
+             accept="image/*,application/pdf,.ai,.eps,.psd" multiple>
+      <div class="hint" style="margin-top:7px">8 Mo maximum. Au-delà, envoyez les fichiers sur WhatsApp.</div></div>
+
+    <div class="sep"></div>
+
+    <div class="f"><span class="lab">Raison sociale</span><input class="inp" name="societe_devis" required></div>
+    <div class="f"><span class="lab">Interlocuteur</span><input class="inp" name="contact_devis" required></div>
+    <div class="row">
+      <div><span class="lab">Téléphone</span><input class="inp n" name="telephone_devis" inputmode="tel" required></div>
+      <div><span class="lab">Ville</span><input class="inp" name="ville_devis" required></div>
+    </div>
+    <div class="f" style="margin-top:12px"><span class="lab">E-mail</span>
+      <input class="inp" type="email" name="email_devis" required></div>
+
+    <div class="ferr" id="derr"></div>
+    <button class="go" id="dbtn" type="submit" style="width:100%;margin-top:16px">Demander le devis</button>
+    <a class="fwa" id="dwa" href="#" target="_blank" rel="noopener">ou décrivez-le nous sur WhatsApp</a>
+  </form>
+
+  <div class="foot">
+    TECHNIC COMPO SARL · Société — Coin Sidi Abdeljalil et Bkira, Bab Jedid, Tunis 1008<br>
+    24 678 721 · 21 730 367 — hello@technic-compo.tn<br>
+    MF 1968566V/A/M/000
+  </div>
+</div>
+<div style="height:120px"></div>
+
+<script>
+/* ═══════════ TARIFS HT UNITAIRES ═══════════ */
+const ENTETE={1:{1000:.150,2000:.135,3000:.130,5000:.125},
+              2:{1000:.200,2000:.180,3000:.175,5000:.170},
+              4:{1000:.330,2000:.300,3000:.285,5000:.275}};
+const CARTE ={44:{1000:.168,2000:.147,3000:.140,5000:.133}};
+const ENVP  ={sf:{1000:.200,2000:.185,3000:.180,5000:.150},
+              af:{1000:.215,2000:.200,3000:.195,5000:.165}};
+const CHEM  ={4:{1000:2.500,2000:2.300,3000:2.200}};
+const KBASE ={A5:{f:{2:3.000,3:2.900,4:3.700},n:{2:2.880,3:2.780,4:3.580}},
+              A4:{f:{2:5.100,3:4.900,4:5.250},n:{2:4.980,3:4.780,4:5.130}}};
+const KLIAS ={2:50,3:25,4:25};
+const TINT={blanc:{n:"Blanc",f:"#FFFFFF"},jaune:{n:"Jaune",f:"#FBEFA8"},bleu:{n:"Bleu",f:"#C9E3F4"},
+            vert:{n:"Vert",f:"#C9E7CE"},rose:{n:"Rose",f:"#F6D0DD"}};
+const TDEF ={2:["blanc","jaune"],3:["blanc","bleu","jaune"],4:["blanc","bleu","vert","jaune"]};
+const KCOEF ={100:1.333,200:1.230,300:1.160,500:1.090,1000:1.040,2000:1.000};
+const USAGES=[{v:"Bon de livraison"},{v:"Bon de commande"},{v:"Facture"},{v:"Reçu"},{v:"Ordre de mission"},{v:"Autre imprimé"}];
+const PACKS=[
+ {n:"Pack Démarrage",d:["1 000 en-têtes A4, 1 couleur","1 000 cartes de visite quadri R/V","1 000 enveloppes 11 × 22"],ref:518,p:455},
+ {n:"Pack Société",  d:["2 000 en-têtes A4, 2 couleurs","2 000 cartes de visite quadri R/V","2 000 enveloppes à fenêtre"],ref:1054,p:905},
+ {n:"Pack Complet",  d:["3 000 en-têtes A4, 2 couleurs","2 000 cartes quadri recto-verso","3 000 enveloppes à fenêtre"],ref:1404,p:1195}
+];
+const REM1 = 0.10;
+
+const S={ e:{c:1,q:1000}, c:{c:44,q:1000}, v:{c:"sf",q:1000},
+          k:{c:4,q:100,fmt:"A5",fac:1,us:"Bon de livraison",tint:["blanc","bleu","vert","jaune"]},
+          h:{c:4,q:1000}, premiere:false };
+let order=[];
+
+const $=id=>document.getElementById(id);
+const dt=v=>v.toLocaleString('fr-FR',{minimumFractionDigits:3,maximumFractionDigits:3})+" DT";
+const nb=v=>v.toLocaleString('fr-FR');
+const u3=v=>v.toLocaleString('fr-FR',{minimumFractionDigits:3,maximumFractionDigits:3});
+
+function pills(id,items,cur,cb){
+  const el=$(id); el.innerHTML="";
+  items.forEach(it=>{ const b=document.createElement('button');
+    b.type="button"; b.className="pill"+(it.v===cur?" on":""); b.textContent=it.t||it.v;
+    b.onclick=()=>cb(it.v); el.appendChild(b); });
+}
+function flash(id){ const b=$(id); b.classList.add('done'); b.textContent="Ajouté ✓";
+  setTimeout(()=>{b.classList.remove('done'); b.textContent="Ajouter à la commande";},1100); }
+
+/* tableau tarifaire cliquable : lignes = quantités, colonnes = variantes */
+function table(host, cols, rows, price, sel, onSel){
+  const base = price(sel.c, rows[0]);
+  let h='<table class="tb"><tr><th>Quantité</th>'+cols.map(c=>'<th>'+c.t+'</th>').join('')+'</tr>';
+  rows.forEach(q=>{
+    const r = Math.round((1-price(sel.c,q)/base)*100);
+    h+='<tr><td class="q">'+nb(q)+(r>0?'<em>−'+r+' %</em>':'')+'</td>';
+    cols.forEach(c=>{
+      const on = (c.v===sel.c && q===sel.q) ? " on" : "";
+      h+='<td><button type="button" class="cell'+on+'" data-c="'+c.v+'" data-q="'+q+'">'+u3(price(c.v,q))+'</button></td>';
+    });
+    h+='</tr>';
+  });
+  h+='</table><div class="tfoot">Prix HT à l\'unité · remise indiquée par rapport à la plus petite quantité</div>';
+  $(host).innerHTML=h;
+  $(host).querySelectorAll('.cell').forEach(b=>b.onclick=()=>{
+    const v=b.dataset.c; onSel(isNaN(v)?v:+v, +b.dataset.q);
+  });
+}
+
+/* couleurs feuillet par feuillet */
+function drawTint(){
+  const n=S.k.c, c=$('kTint'); c.innerHTML="";
+  S.k.tint[0]="blanc"; S.k.tint[n-1]="jaune";          /* règle non négociable */
+  for(let i=0;i<n;i++){
+    const fixe = (i===0 || i===n-1);
+    const k=S.k.tint[i];
+    const r=document.createElement('div'); r.className="fol";
+    r.innerHTML='<div class="chip" style="background:'+TINT[k].f+'"><span>&#10003;</span></div>'
+      +'<div class="fn"><b>'+(i===0?"Original":"Copie "+i)+'</b><i>'+TINT[k].n
+      +(i===0?" — celui que vous gardez":i===n-1?" — la dernière copie":"")+'</i></div>';
+    if(fixe){
+      const t=document.createElement('div'); t.className="fixe"; t.textContent="FIXE"; r.appendChild(t);
+    } else {
+      const w=document.createElement('div'); w.className="sws";
+      ["bleu","vert","rose"].forEach(x=>{
+        const b=document.createElement('button'); b.type="button"; b.title=TINT[x].n;
+        b.style.background=TINT[x].f; b.className=k===x?"on":"";
+        b.innerHTML = k===x ? '<span>&#10003;</span>' : '';
+        b.onclick=()=>{S.k.tint[i]=x;drawTint();};
+        w.appendChild(b);
+      });
+      r.appendChild(w);
+    }
+    c.appendChild(r);
+  }
+}
+
+/* ═══════════ PACKS ═══════════ */
+function drawPacks(){
+  const c=$('packs'); c.innerHTML="";
+  PACKS.forEach(p=>{
+    const d=document.createElement('div'); d.className="pack";
+    const r=Math.round((1-p.p/p.ref)*100);
+    d.innerHTML='<div class="pn">'+p.n+'</div><ul>'+p.d.map(x=>'<li>'+x+'</li>').join('')+'</ul>'
+      +'<div class="pp"><b>'+dt(p.p)+'</b>'
+      +'<span class="pk-eco"><s>'+dt(p.ref)+' DT</s><i class="pk-rem">−'+r+' %</i></span></div>';
+    d.onclick=()=>{ add(p.n,p.d.join(" · "),p.p); d.classList.add('on'); setTimeout(()=>d.classList.remove('on'),700); };
+    c.appendChild(d);
+  });
+}
+
+/* ═══════════ PANIER ═══════════ */
+function add(t,s,m){ order.push({t,s,m}); paintCart(); window.scrollBy({top:0}); }
+function paintCart(){
+  const c=$('lines');
+  if(!order.length){
+    c.innerHTML='<div class="empty">Aucun article pour le moment.</div>';
+    $('tot').style.display="none"; $('btn').classList.add('mute');
+    $('dkLab').textContent="Aucun article"; $('dkTot').textContent=dt(0); majFichiers(); sync(); return;
+  }
+  c.innerHTML="";
+  order.forEach((it,i)=>{
+    const d=document.createElement('div'); d.className="li";
+    d.innerHTML='<div><div class="li-t">'+it.t+'</div><div class="li-s">'+it.s+'</div>'
+      +'<button type="button" class="rm" data-i="'+i+'">retirer</button></div>'
+      +'<div class="li-p">'+dt(it.m)+'</div>';
+    c.appendChild(d);
+  });
+  c.querySelectorAll('.rm').forEach(b=>b.onclick=()=>{order.splice(+b.dataset.i,1);paintCart();});
+  const t=tot();
+  $('tot').style.display="block";
+  $('tHt').textContent=dt(t.brut);
+  $('lRem').style.display=S.premiere?"flex":"none"; $('tR').textContent="− "+dt(t.rem);
+  $('tF').textContent=dt(t.fo); $('tV2').textContent=dt(t.tva); $('tT').textContent=dt(t.ttc);
+  $('dkLab').textContent="Total TTC · "+order.length+" article"+(order.length>1?"s":"");
+  $('dkTot').textContent=dt(t.ttc); $('btn').classList.remove('mute');
+  majFichiers(); sync();
+}
+function tot(){
+  const brut=order.reduce((s,i)=>s+i.m,0);
+  const rem=S.premiere?brut*REM1:0, ht=brut-rem;
+  const fo=ht*.01, tva=(ht+fo)*.19;
+  return {brut,rem,ht,fo,tva,ttc:ht+fo+tva+1};
+}
+function sync(){
+  const t=tot();
+  $('hCmd').value = order.map(i=>"• "+i.t+" — "+i.s+" — "+i.m.toFixed(3)+" DT").join("\n")
+    +"\n\nTotal HT : "+t.brut.toFixed(3)+" DT"
+    +(S.premiere?"\nRemise première commande 10 % : −"+t.rem.toFixed(3)+" DT":"")
+    +"\nFODEC 1 % : "+t.fo.toFixed(3)+" DT\nTVA 19 % : "+t.tva.toFixed(3)
+    +" DT\nTimbre : 1,000 DT\nTOTAL TTC : "+t.ttc.toFixed(3)+" DT";
+  $('hTtc').value=t.ttc.toFixed(3)+" DT";
+}
+
+/* ═══════════ RENDU ═══════════ */
+function paint(){
+  /* en-têtes */
+  table('tE',[{v:1,t:"1 couleur"},{v:2,t:"2 couleurs"},{v:4,t:"Quadri"}],[1000,2000,3000,5000],
+    (c,q)=>ENTETE[c][q], S.e, (c,q)=>{S.e={c,q};paint();});
+  const eT=ENTETE[S.e.c][S.e.q]*S.e.q;
+  $('prE').textContent=dt(eT);
+  $('puE').innerHTML=u3(ENTETE[S.e.c][S.e.q])+" DT l'unité<br>"+nb(S.e.q)+" ex. · "
+    +(S.e.c===1?"1 couleur":S.e.c===2?"2 couleurs":"quadri");
+  $('addE').onclick=()=>{add("En-têtes A4",(S.e.c===1?"1 couleur":S.e.c===2?"2 couleurs":"quadri")+" · "+nb(S.e.q)+" ex.",eT);flash('addE');};
+
+  /* cartes */
+  table('tC',[{v:44,t:"Quadri recto-verso"}],[1000,2000,3000,5000],
+    (c,q)=>CARTE[c][q], S.c, (c,q)=>{S.c={c,q};paint();});
+  const cT=CARTE[S.c.c][S.c.q]*S.c.q;
+  $('prC').textContent=dt(cT);
+  $('puC').innerHTML=u3(CARTE[S.c.c][S.c.q])+" DT l'unité<br>"+nb(S.c.q)+" cartes";
+  $('addC').onclick=()=>{add("Cartes de visite","quadri recto-verso · "+nb(S.c.q)+" ex.",cT);flash('addC');};
+
+  /* enveloppes */
+  table('tV',[{v:"sf",t:"Sans fenêtre"},{v:"af",t:"Avec fenêtre"}],[1000,2000,3000,5000],
+    (c,q)=>ENVP[c][q], S.v, (c,q)=>{S.v={c,q};paint();});
+  const vLab={sf:"11 × 22 sans fenêtre",af:"11 × 22 avec fenêtre"}[S.v.c];
+  const vT=ENVP[S.v.c][S.v.q]*S.v.q;
+  $('prV').textContent=dt(vT);
+  $('puV').innerHTML=u3(ENVP[S.v.c][S.v.q])+" DT l'unité<br>"+nb(S.v.q)+" ex. · "+vLab;
+  $('addV').onclick=()=>{add("Enveloppes",vLab+" · "+nb(S.v.q)+" ex.",vT);flash('addV');};
+
+  /* carnets */
+  pills('sUs',USAGES,S.k.us,v=>{S.k.us=v;paint();});
+  pills('sKf',[{v:"A5"},{v:"A4"}],S.k.fmt,v=>{S.k.fmt=v;paint();});
+  pills('sKfac',[{v:1,t:"Numéroté + perforé"},{v:0,t:"Sans façonnage"}],S.k.fac,v=>{S.k.fac=v;paint();});
+  $('boxNum').style.display = S.k.fac ? "block" : "none";
+  $('numDep').required = false;   /* contrôlé à l'ajout, pas à l'envoi du formulaire */
+  $('hKfac').textContent = S.k.fac
+    ? "Numérotage et perforation se font en une seule opération : le second ne coûte rien de plus."
+    : "Ni numéro ni perforation : le carnet reste relié, on le détache au massicot.";
+  const kp=(c,q)=>KBASE[S.k.fmt][S.k.fac?"f":"n"][c]*KCOEF[q];
+  table('tK',[{v:2,t:"2 feuillets"},{v:3,t:"3 feuillets"},{v:4,t:"4 feuillets"}],
+    [100,200,300,500,1000,2000], kp, S.k, (c,q)=>{S.k.c=c;S.k.q=q;paint();});
+  if(S.k.tint.length!==S.k.c) S.k.tint=TDEF[S.k.c].slice();
+  drawTint();
+  const lia=KLIAS[S.k.c], kT=kp(S.k.c,S.k.q)*S.k.q;
+  $('prK').textContent=dt(kT);
+  $('puK').innerHTML=u3(kp(S.k.c,S.k.q))+" DT le carnet<br>"+nb(S.k.q)+" carnets · "+S.k.fmt
+    +"<br>"+lia+" liasses × "+S.k.c+" = "+lia*S.k.c+" feuilles";
+  $('addK').onclick=()=>{
+    if(S.k.fac && !$('numDep').value.trim()){
+      $('numDep').focus(); $('numDep').style.borderColor="var(--mg)";
+      alert("Indiquez le numéro de départ de vos carnets."); return; }
+    $('numDep').style.borderColor="";
+    add("Carnets — "+S.k.us,
+    S.k.fmt+" · "+lia+"×"+S.k.c+" ("+lia*S.k.c+" feuilles) · "
+    +S.k.tint.slice(0,S.k.c).map(t=>TINT[t].n.toLowerCase()).join("/")+" · "
+    +(S.k.fac?"numéroté perforé à partir du n° "+$('numDep').value.trim():"sans façonnage")
+    +" · "+nb(S.k.q)+" carnets",kT);flash('addK');};
+
+  /* chemises */
+  table('tH',[{v:4,t:"Quadri"}],[1000,2000,3000],
+    (c,q)=>CHEM[c][q], S.h, (c,q)=>{S.h={c,q};paint();});
+  const hT=CHEM[S.h.c][S.h.q]*S.h.q;
+  $('prH').textContent=dt(hT);
+  $('puH').innerHTML=u3(CHEM[S.h.c][S.h.q])+" DT l'unité<br>"+nb(S.h.q)+" chemises";
+  $('addH').onclick=()=>{add("Chemises à rabat","quadri · "+nb(S.h.q)+" ex.",hT);flash('addH');};
+
+}
+
+/* première commande */
+$('swP').onclick=()=>{ S.premiere=!S.premiere; $('swP').classList.toggle('on',S.premiere); paintCart(); };
+
+/* fichiers */
+function limite(){ return Math.min(12, Math.max(3, order.length*3)); }
+function majFichiers(){
+  const n=limite();
+  $('dropLim').textContent="AI, PDF, EPS, PNG, JPG · jusqu'à "+n+" fichiers";
+  $('fileHint').innerHTML="Joignez un fichier par support : votre logo, et si vous en avez, "
+    +"un exemplaire de chaque imprimé que vous utilisez aujourd'hui. Un pack demande plusieurs "
+    +"visuels — en-tête, carte, enveloppe — ne vous limitez pas à une seule photo, "
+    +"c'est ce qui nous évite de vous rappeler.<br><br>Le vectoriel (AI, EPS, PDF) donne le meilleur "
+    +"résultat. Vous n'avez qu'un ancien imprimé ? Photographiez-le à plat, bien éclairé : "
+    +"on le redresse, on le nettoie et on le reproduit à l'identique.";
+}
+$('drop').onclick=()=>$('file').click();
+$('file').onchange=e=>{
+  if(e.target.files.length>limite()){
+    alert("Vous pouvez joindre jusqu'à "+limite()+" fichiers pour cette commande.");
+    e.target.value=""; $('thumbs').innerHTML="";
+    $('drop').querySelector('.t1').textContent="Joindre logo, ancien modèle ou maquette"; return;
+  }
+  const c=$('thumbs'); c.innerHTML="";
+  [...e.target.files].forEach(f=>{
+    const d=document.createElement('div'); d.className="th";
+    if(f.type.startsWith('image/')){const i=document.createElement('img');i.src=URL.createObjectURL(f);d.appendChild(i);}
+    else d.innerHTML='<div class="fx">'+f.name.split('.').pop().toUpperCase()+'<br>'+f.name.slice(0,12)+'</div>';
+    c.appendChild(d);
+  });
+  $('drop').querySelector('.t1').textContent=e.target.files.length
+    ? e.target.files.length+" fichier(s) joint(s)":"Joindre logo, ancien modèle ou maquette";
+};
+/* ---- Envoi : verifications avant depart ----
+   POIDS_MAX : au-dela, l'hebergeur refuse l'envoi sans prevenir
+   le client, qui croit avoir commande. On bloque nous-memes. */
+const WA_SOC = "21624678721";
+const POIDS_MAX = 8 * 1024 * 1024;
+
+function erreur(msg){
+  const b=$('ferr'); b.textContent=msg; b.style.display="block";
+  b.scrollIntoView({behavior:"smooth",block:"center"});
+}
+function effacerErreur(){ $('ferr').style.display="none"; }
+
+function lienWhatsApp(){
+  let t="*COMMANDE — TECHNIC COMPO*\n\n";
+  order.forEach((i,n)=>{ t+=(n+1)+". "+i.t+" — "+i.s+" — "+i.m.toFixed(3)+" DT\n"; });
+  const soc=$('form').querySelector('[name=societe]');
+  if(soc && soc.value.trim()) t+="\nSociété : "+soc.value.trim();
+  t+="\nTotal TTC : "+$('hTtc').value;
+  return "https://wa.me/"+WA_SOC+"?text="+encodeURIComponent(t);
+}
+$('fwa').addEventListener('click',()=>{ $('fwa').href = lienWhatsApp(); });
+
+$('form').addEventListener('submit',e=>{
+  effacerErreur();
+  if(!order.length){ e.preventDefault();
+    erreur("Ajoutez au moins un article à votre commande avant de l'envoyer."); return; }
+
+  const manquant=[...$('form').querySelectorAll('[required]')].find(f=>!f.value.trim());
+  if(manquant){ e.preventDefault(); manquant.focus();
+    manquant.scrollIntoView({behavior:"smooth",block:"center"});
+    erreur("Il reste un champ à remplir pour que nous puissions vous répondre."); return; }
+
+  const tel=$('form').querySelector('[name=telephone]');
+  if(tel && (tel.value.replace(/\D/g,'').length < 8)){ e.preventDefault(); tel.focus();
+    erreur("Le numéro de téléphone doit comporter au moins 8 chiffres."); return; }
+
+  const fichiers=$('file').files;
+  let poids=0; [...fichiers].forEach(f=>poids+=f.size);
+  if(poids > POIDS_MAX){ e.preventDefault();
+    erreur("Vos fichiers pèsent "+(poids/1048576).toFixed(1)+" Mo, au-delà de la limite de 8 Mo. "
+      +"Retirez les plus lourds et envoyez la commande : nous vous recontacterons pour récupérer les fichiers, "
+      +"ou envoyez-les directement sur WhatsApp."); return; }
+
+  const b=$('btn');
+  b.disabled=true; b.textContent="Envoi en cours…";
+  setTimeout(()=>{ b.disabled=false; b.textContent="Envoyer"; }, 12000);
+});
+
+/* ---- Devis libre (hors catalogue) ---- */
+function erreurDevis(msg){
+  const b=$('derr'); b.textContent=msg; b.style.display="block";
+  b.scrollIntoView({behavior:"smooth",block:"center"});
+}
+function texteDevis(){
+  const g=n=>{const e=$('devisForm').querySelector('[name='+n+']'); return e?e.value.trim():"";};
+  let t="*DEMANDE DE DEVIS — TECHNIC COMPO*\n\n";
+  t+="Travail : "+(g('travail')||"—")+"\n";
+  if(g('format'))     t+="Format : "+g('format')+"\n";
+  t+="Quantité : "+(g('quantite')||"—")+"\n";
+  if(g('impression')) t+="Impression : "+g('impression')+"\n";
+  if(g('papier'))     t+="Papier : "+g('papier')+"\n";
+  if(g('delai'))      t+="Délai : "+g('delai')+"\n";
+  if(g('precisions')) t+="Précisions : "+g('precisions')+"\n";
+  if(g('societe_devis')) t+="\nSociété : "+g('societe_devis');
+  if(g('telephone_devis')) t+="\nTél : "+g('telephone_devis');
+  return "https://wa.me/"+WA_SOC+"?text="+encodeURIComponent(t);
+}
+$('dwa').addEventListener('click',()=>{ $('dwa').href = texteDevis(); });
+
+$('devisForm').addEventListener('submit',e=>{
+  $('derr').style.display="none";
+  const manquant=[...$('devisForm').querySelectorAll('[required]')].find(f=>!f.value.trim());
+  if(manquant){ e.preventDefault(); manquant.focus();
+    manquant.scrollIntoView({behavior:"smooth",block:"center"});
+    erreurDevis("Il reste un champ à remplir pour que nous puissions chiffrer."); return; }
+
+  const tel=$('devisForm').querySelector('[name=telephone_devis]');
+  if(tel.value.replace(/\D/g,'').length < 8){ e.preventDefault(); tel.focus();
+    erreurDevis("Le numéro de téléphone doit comporter au moins 8 chiffres."); return; }
+
+  let poids=0; [...$('devisFile').files].forEach(f=>poids+=f.size);
+  if(poids > POIDS_MAX){ e.preventDefault();
+    erreurDevis("Vos fichiers pèsent "+(poids/1048576).toFixed(1)+" Mo, au-delà de la limite de 8 Mo. "
+      +"Envoyez la demande sans les fichiers et transmettez-les sur WhatsApp."); return; }
+
+  const b=$('dbtn'); b.disabled=true; b.textContent="Envoi en cours…";
+  setTimeout(()=>{ b.disabled=false; b.textContent="Demander le devis"; }, 12000);
+});
+
+drawPacks(); paint(); paintCart();
+</script>
+</body>
+</html>

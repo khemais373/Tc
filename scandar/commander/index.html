@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:ital,wght@1,500;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Commander — Scandar</title>
+<style>
+/* ==========================================================================
+   SCANDAR — Bon de commande (ventes additionnelles)
+   Fichier unique autonome. À déposer sur Netlify (glisser-déposer).
+   >>> NUMÉRO WHATSAPP : constante NUMERO_WHATSAPP, en haut du script.
+   Police DejaVu Sans (identique à la fiche tarifaire) + logo officiel embarqués.
+   ========================================================================== */
+
+:root{
+  --nuit:#0A0B0D; --carte:#131519; --carte-b:#22262C;
+  --cyan:#22C8F5; --or:#FFD400;
+  --txt:#F4F5F7; --txt-2:#A3AAB5; --txt-3:#6B727D;
+  --vert:#25d366; --vert-d:#1eb457; --ligne:#2F343C;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:'Instrument Sans',system-ui,sans-serif;
+  background:var(--nuit);color:var(--txt);line-height:1.5;padding-bottom:112px;
+  font-size:15px;-webkit-text-size-adjust:100%}
+.wrap{max-width:740px;margin:0 auto;padding:0 16px}
+
+/* ---- En-tête ---- */
+header{background:linear-gradient(160deg,#0A0B0D 0%,#1B1E24 100%);
+  padding:26px 0 44px;position:relative;overflow:hidden}
+header::after{content:"";position:absolute;left:-6%;right:-6%;bottom:-2px;height:38px;
+  background:var(--nuit);border-radius:100% 100% 0 0/100% 100% 0 0}
+.logo{display:block;width:210px;max-width:62%;height:auto}
+.tagline{margin:24px 0 0;font-size:11px;letter-spacing:.22em;color:var(--cyan);font-weight:700;text-transform:uppercase}
+h1{margin:7px 0 10px;font-size:26px;line-height:1.18;font-weight:700}
+h1 .b{color:var(--cyan)}
+.lede{color:var(--txt-2);font-size:14.5px;max-width:540px;margin:0}
+
+/* ---- Sections ---- */
+section.blk{padding:26px 0 4px}
+.step{font-size:10.5px;letter-spacing:.19em;color:var(--cyan);font-weight:700;text-transform:uppercase}
+h2{font-size:20px;margin:5px 0 3px;font-weight:700}
+.sub{color:var(--txt-3);font-size:13px;margin:0 0 15px}
+
+/* ---- Cartes de choix ---- */
+.grid{display:grid;gap:12px}
+.grid.two{grid-template-columns:1fr 1fr}
+@media(max-width:600px){.grid.two{grid-template-columns:1fr}}
+.opt{position:relative;display:block;cursor:pointer;background:var(--carte);
+  border:1.5px solid var(--carte-b);border-radius:15px;padding:16px 15px;transition:.15s}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt .tick{position:absolute;top:14px;right:14px;width:22px;height:22px;border-radius:50%;
+  border:2px solid var(--carte-b);transition:.15s;display:flex;align-items:center;justify-content:center}
+.opt .tick::after{content:"";width:9px;height:9px;border-radius:50%;background:var(--cyan);
+  transform:scale(0);transition:.15s}
+.opt.gold .tick::after{background:var(--or)}
+.opt input:checked ~ .tick{border-color:var(--cyan)}
+.opt.gold input:checked ~ .tick{border-color:var(--or)}
+.opt input:checked ~ .tick::after{transform:scale(1)}
+.opt.on{border-color:var(--cyan);background:#1B1E24}
+.opt.gold.on{border-color:var(--or);background:#1B1E24}
+.opt .kicker{font-size:10px;letter-spacing:.15em;font-weight:700;color:var(--cyan);text-transform:uppercase}
+.opt.gold .kicker{color:var(--or)}
+.opt .ttl{font-size:18px;font-weight:700;margin:4px 0 2px;padding-right:26px}
+.opt .ttl.sm{font-size:16px}
+.opt .price{font-size:15px;font-weight:700}
+.opt .price small{color:var(--txt-3);font-weight:400;font-size:12px}
+.opt .desc{color:var(--txt-2);font-size:12.5px;margin-top:7px}
+.opt .shot{display:block;width:100%;aspect-ratio:1/.92;object-fit:cover;object-position:center top;border-radius:11px;margin:0 0 11px;border:1px solid var(--carte-b)}
+.opt .tick{background:rgba(9,16,36,.55)}
+.opt ul{margin:10px 0 0;padding:0;list-style:none}
+.opt li{font-size:12.5px;color:var(--txt-2);padding:2.5px 0 2.5px 19px;position:relative}
+.opt li::before{content:"\2713";position:absolute;left:0;color:var(--cyan);font-weight:700}
+.opt.gold li::before{content:"\2605";color:var(--or)}
+
+/* ---- Cartes / champs ---- */
+.card{background:var(--carte);border:1.5px solid var(--carte-b);border-radius:15px;padding:16px}
+.card.cfg{margin-top:12px;border-color:var(--cyan);background:#1B1E24}
+.card.cfg.gold{border-color:var(--or);background:#1B1E24}
+.cfg-ttl{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
+  color:var(--cyan);margin-bottom:12px}
+.card.cfg.gold .cfg-ttl{color:var(--or)}
+.rowq{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.rowq .lbl{font-size:14px;font-weight:700}
+.rowq .lbl small{display:block;font-weight:400;color:var(--txt-3);font-size:11.5px;margin-top:2px}
+.stepper{display:flex;align-items:center;border:1.5px solid var(--ligne);border-radius:11px;overflow:hidden}
+.stepper button{width:44px;height:44px;border:0;background:#22262C;color:var(--cyan);
+  font-size:22px;font-weight:700;cursor:pointer;line-height:1;font-family:inherit}
+.stepper button:active{background:#2F343C}
+.stepper input{width:58px;height:44px;border:0;background:transparent;color:var(--txt);
+  text-align:center;font-size:16px;font-weight:700;font-family:inherit}
+.numfield{width:120px;height:48px;background:#0b1636;border:1.5px solid var(--or);
+  border-radius:11px;color:var(--txt);text-align:center;font-size:19px;font-weight:700;
+  font-family:inherit;padding:0 8px}
+.numfield:focus{outline:none;border-color:#f3c469;box-shadow:0 0 0 3px rgba(224,169,74,.18)}
+input[type=number]{-moz-appearance:textfield}
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.live{margin-top:14px;padding-top:13px;border-top:1px dashed var(--ligne);
+  display:flex;justify-content:space-between;gap:10px;font-size:13.5px;color:var(--txt-2)}
+.live b{color:var(--cyan);font-size:15px;white-space:nowrap}
+.card.cfg.gold .live b{color:var(--or)}
+
+/* ---- Paliers stickers ---- */
+.seg-b input{display:none}
+.seg-b span{display:block;text-align:center;background:#22262C;border:1.5px solid var(--ligne);
+  border-radius:11px;padding:10px 6px;cursor:pointer;font-size:12.5px;color:var(--txt-2);transition:.15s}
+.seg-b span b{display:block;font-size:16px;color:var(--txt);margin-top:2px}
+.seg-b span i{display:block;font-style:normal;font-size:10.5px;color:var(--txt-3);margin-top:1px}
+.seg-b input:checked + span{border-color:var(--cyan);background:#1b3570}
+.seg-b input:checked + span b{color:var(--cyan)}
+.seg-b span em.gift{display:block;font-style:normal;font-size:10px;font-weight:700;
+  color:var(--or);margin-top:7px;padding-top:6px;line-height:1.35;
+  border-top:1px dashed rgba(224,169,74,.4)}
+.seg-b input:checked + span em.gift{color:#FFE87A}
+
+/* ---- Encart cadeau dynamique ---- */
+.offre-box{margin-top:14px;padding:13px 14px;border:1.6px solid var(--or);border-radius:12px;
+  background:linear-gradient(180deg,#2a2010,#1B1E24);display:flex;gap:11px;align-items:flex-start}
+.offre-box .gicon{font-size:24px;line-height:1;flex:0 0 auto}
+.offre-box .gtxt{font-size:13.5px;color:#f4e8cf;line-height:1.45}
+.offre-box .gtxt b{display:block;color:var(--or);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;margin-bottom:3px;font-weight:800}
+.cfg-sub{font-size:12px;color:var(--txt-2);margin:-6px 0 12px;line-height:1.45}
+.cfg-sub .or{color:var(--or);font-weight:700}
+
+/* ---- Champs texte ---- */
+.field{margin-bottom:13px}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:13px;font-weight:700;margin-bottom:6px;color:var(--txt-2)}
+.field input{width:100%;background:#0f1c42;border:1.5px solid var(--ligne);border-radius:11px;
+  color:var(--txt);font-size:15px;font-family:inherit;padding:12px 13px}
+.field input:focus{outline:none;border-color:var(--cyan)}
+.field input::placeholder{color:var(--txt-3)}
+.req{color:var(--or)}
+.err{color:#ff9a9a;font-size:12.5px;margin-top:10px;display:none}
+
+/* ---- Récap ---- */
+.recap{background:var(--carte);border:1.5px solid var(--carte-b);border-radius:15px;padding:18px 16px}
+.rline{display:flex;justify-content:space-between;gap:12px;font-size:13.5px;padding:5px 0;color:var(--txt-2)}
+.rline b{color:var(--txt);font-weight:700;white-space:nowrap}
+.rsep{height:1px;background:var(--ligne);margin:10px 0}
+.rgift{margin:9px 0 2px;padding:9px 11px;border:1px solid var(--or);border-radius:9px;
+  background:rgba(224,169,74,.09);color:#FFE87A;font-size:12.5px;font-weight:700;line-height:1.4}
+.rtot{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:8px}
+.rtot span{font-size:13px;font-weight:700;letter-spacing:.04em}
+.rtot b{font-size:24px;font-weight:700;color:var(--cyan);white-space:nowrap}
+.vide{color:var(--txt-3);font-size:13.5px;text-align:center;padding:6px 0;line-height:1.7}
+
+/* ---- Barre WhatsApp ---- */
+.bar{position:fixed;left:0;right:0;bottom:0;background:rgba(10,18,44,.94);
+  backdrop-filter:blur(10px);border-top:1px solid var(--ligne);padding:11px 16px;z-index:50}
+.bar .in{max-width:740px;margin:0 auto;display:flex;align-items:center;gap:10px}
+.bar .tot{flex:0 0 auto}
+.bar .tot small{display:block;font-size:10px;color:var(--txt-3);letter-spacing:.05em;text-transform:uppercase}
+.bar .tot b{font-size:18px;font-weight:700;white-space:nowrap}
+.bar .btns{flex:1;display:flex;gap:8px}
+.bar .act{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;
+  font-weight:700;font-size:14px;border:0;border-radius:13px;padding:13px 8px;
+  cursor:pointer;font-family:inherit}
+.bar .act svg{width:19px;height:19px;flex:0 0 auto}
+.bar .wa{background:var(--vert);color:#0B2415}
+.bar .wa:active{background:var(--vert-d)}
+.bar .wa svg{fill:#0B2415}
+.bar .mail{background:var(--cyan);color:#0E2430}
+.bar .mail:active{filter:brightness(.92)}
+.bar .mail svg{fill:none;stroke:#0E2430;stroke-width:2}
+
+.note{color:var(--txt-3);font-size:12px;margin-top:16px}
+footer{text-align:center;color:var(--txt-3);font-size:12px;padding:26px 0 8px;line-height:1.7}
+footer b{color:var(--cyan)}
+
+/* ---- En-tete aux couleurs du site ---- */
+.cmjn{display:flex;height:3px}.cmjn i{flex:1}
+.cmjn .c{background:#22C8F5}.cmjn .m{background:#FF3D9A}
+.cmjn .y{background:#FFD400}.cmjn .k{background:#F4F5F7}
+.tcbar{position:sticky;top:0;z-index:40;background:rgba(10,11,13,.82);backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);border-bottom:1px solid #22262C}
+.tcbar-in{max-width:620px;margin:0 auto;padding:11px 16px;display:flex;align-items:center;gap:11px}
+.tclogo{width:38px;height:38px;border-radius:9px;background:#F4F5F7;color:#0A0B0D;display:grid;
+  place-items:center;font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:13px;flex:none}
+.tcname{font-family:'Instrument Sans',sans-serif;font-weight:700;font-size:13.5px;letter-spacing:-.02em;line-height:1.2;color:#F4F5F7}
+.tcsub{font-family:'JetBrains Mono',monospace;font-size:10px;color:#6B727D;margin-top:3px;letter-spacing:.14em}
+.sig{font-family:'Playfair Display',serif;font-style:italic;font-weight:500;font-size:17px;
+  background:linear-gradient(95deg,#22C8F5,#FF3D9A);-webkit-background-clip:text;background-clip:text;
+  color:transparent;padding-left:3px}
+.price,.rtot,.numfield,.recap .or{font-family:'JetBrains Mono',monospace}
+
+/* ---- Typographie unifiée avec l'accueil ---- */
+h1,h2,h3,.h2,.hero h1,.logo-n,.tcname,.gate-t,.pn,.ttl,.cfg-ttl,.lbadge,.tclogo,.logo,.gate-logo,.badge,
+.sec-title,.dt,.est-t{font-family:'Unbounded',sans-serif;letter-spacing:-.03em}
+.tag,.kicker,.lab,.lt,.logo-s,.tcsub,.mono,.n,.inp.n,.pp,.price,.rtot,.numfield{font-family:'JetBrains Mono',ui-monospace,monospace}
+.sig{font-family:'Playfair Display',serif}
+
+/* ---- Menu de retour, identique sur toutes les pages ---- */
+.tcnav{position:relative;z-index:60;background:var(--nv-bg);border-bottom:1px solid var(--nv-line);
+  display:flex;align-items:center;gap:14px;padding:0 14px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none}
+.tcnav::-webkit-scrollbar{display:none}
+.tcnav a{flex:none;text-decoration:none;font-family:'Instrument Sans',system-ui,sans-serif;
+  font-size:12.5px;font-weight:500;color:var(--nv-mut);padding:12px 0;white-space:nowrap}
+.tcnav a:hover{color:var(--nv-ink)}
+.tcnav a.home{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--nv-ink);
+  padding-right:14px;margin-right:2px;border-right:1px solid var(--nv-line)}
+.tcnav .bdg{width:24px;height:24px;border-radius:7px;background:var(--nv-ink);color:var(--nv-bg);
+  display:grid;place-items:center;font-family:'Unbounded',sans-serif;font-size:9.5px;font-weight:700}
+.tcnav a.on{color:var(--nv-ink);font-weight:600}
+</style>
+</head>
+<body>
+<nav class="tcnav" style="--nv-bg:#131519;--nv-line:#22262C;--nv-ink:#F4F5F7;--nv-mut:#8B92A0">
+  <a class="home" href="/"><span class="bdg">TC</span> technic-compo.tn</a>
+  <a href="/medical/">Médical</a>
+  <a href="/medical/?espace=img">Imagerie</a>
+  <a href="/medical/?espace=labo">Laboratoires</a>
+  <a href="/societes/">Sociétés</a>
+  <a href="/scandar/">Scandar</a>
+  <a href="/scandar/commander/" class="on">Scandar Hôtel</a>
+  <a href="/tarifs/">Tarifs</a>
+  <a href="/partenaires/">Partenaires</a>
+</nav>
+
+<style>
+/* ====== CALAGE PRESSE — transition de page ====== */
+.tcload{position:fixed;inset:0;z-index:9999;background:var(--lo-bg);display:flex;align-items:center;
+  justify-content:center;transition:opacity .5s ease,visibility .5s}
+.tcload.done{opacity:0;visibility:hidden;pointer-events:none}
+.tcload .lpass{position:absolute;inset:0;transform:translateX(-102%);mix-blend-mode:var(--lo-blend);pointer-events:none}
+.tcload .lpass.c{background:var(--lo-a);animation:tclpass .5s cubic-bezier(.6,0,.3,1) .05s forwards}
+.tcload .lpass.m{background:var(--lo-b);animation:tclpass .5s cubic-bezier(.6,0,.3,1) .19s forwards}
+.tcload .lpass.y{background:var(--lo-c);animation:tclpass .5s cubic-bezier(.6,0,.3,1) .33s forwards}
+.tcload .lpass.k{background:var(--lo-ink);animation:tclpass .5s cubic-bezier(.6,0,.3,1) .47s forwards;mix-blend-mode:normal}
+@keyframes tclpass{0%{transform:translateX(-102%)}100%{transform:translateX(102%)}}
+.tcload .lcore{position:relative;text-align:center;z-index:2}
+.tcload .lbadge{position:relative;width:58px;height:58px;margin:0 auto 16px;background:var(--lo-ink);
+  color:var(--lo-bg);border-radius:16px;display:flex;align-items:center;justify-content:center;
+  font-family:'Instrument Sans',system-ui,sans-serif;font-weight:700;font-size:18px;letter-spacing:-.02em;overflow:hidden}
+.tcload .lbadge::after{content:'';position:absolute;bottom:0;left:0;right:0;height:6px;
+  background:linear-gradient(90deg,var(--lo-a) 33%,var(--lo-b) 33% 66%,var(--lo-c) 66%)}
+.tcload .lt{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:.7rem;font-weight:600;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--lo-mut)}
+.tcload .ld{display:flex;gap:8px;justify-content:center;margin-top:14px}
+.tcload .ld i{width:10px;height:10px;border-radius:2px;opacity:0;animation:tcldot .3s forwards}
+.tcload .ld i:nth-child(1){background:var(--lo-a);animation-delay:.12s}
+.tcload .ld i:nth-child(2){background:var(--lo-b);animation-delay:.26s}
+.tcload .ld i:nth-child(3){background:var(--lo-c);animation-delay:.40s}
+.tcload .ld i:nth-child(4){background:var(--lo-ink);animation-delay:.54s}
+@keyframes tcldot{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.tcload{display:none}}
+</style>
+<div class="tcload" id="tcload" aria-hidden="true"
+     style="--lo-bg:#0A0B0D;--lo-ink:#F4F5F7;--lo-mut:#6B727D;--lo-a:#FFD400;--lo-b:#22C8F5;--lo-c:#FF3D9A;--lo-blend:screen">
+  <span class="lpass c"></span><span class="lpass m"></span><span class="lpass y"></span><span class="lpass k"></span>
+  <div class="lcore">
+    <div class="lbadge">TC</div>
+    <div class="lt">Scandar Hôtel</div>
+    <div class="ld"><i></i><i></i><i></i><i></i></div>
+  </div>
+</div>
+<noscript><style>.tcload{display:none}</style></noscript>
+<script>
+(function(){
+  var l=document.getElementById('tcload'); if(!l) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){ l.style.display='none'; return; }
+  setTimeout(function(){ l.classList.add('done'); }, 950);
+  setTimeout(function(){ l.style.display='none'; }, 1500);
+})();
+</script>
+
+
+
+<header>
+  <div class="wrap">
+    <img class="logo" src="images/scandar-logo.png" alt="Scandar">
+    <p class="tagline">Bon de commande</p>
+    <h1>Complétez votre <span class="b">Scandar.</span></h1>
+    <p class="lede">Vos langues, vos pages et vos supports QR. Le total se calcule tout seul&nbsp;—
+      envoyez votre commande sur WhatsApp en un clic.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- 1. PACK -->
+  <section class="blk">
+    <div class="step">Étape 1 — La mise en place</div>
+    <h2>Votre pack de lancement</h2>
+    <p class="sub">Un prix unique, tout compris. Vous êtes en ligne en 48 heures. Le pack est facultatif&nbsp;: vous pouvez commander uniquement des langues ou des supports.</p>
+    <div class="grid two">
+      <label class="opt" data-group="pack">
+        <input type="radio" name="pack" value="restaurant" data-prix="50" data-label="Pack Restaurant">
+        <span class="tick"></span>
+        <div class="kicker">Restaurants · Cafés</div>
+        <div class="ttl">Pack Restaurant</div>
+        <div class="price">50 DT <small>· une seule fois</small></div>
+        <ul>
+          <li>Création de votre page et de votre QR</li>
+          <li>Vos onglets structurés avec vous</li>
+          <li>Traduction de 2 pages en 3 langues</li>
+          <li>Mise en place de votre première page</li>
+          <li>Test sur 3 téléphones</li>
+          <li>Formation de 30 minutes</li>
+          <li>Votre QR en fichier + 1 chevalet A5</li>
+        </ul>
+      </label>
+      <label class="opt gold" data-group="pack">
+        <input type="radio" name="pack" value="hotel" data-prix="150" data-label="Pack Hôtel">
+        <span class="tick"></span>
+        <div class="kicker">Hôtels · Maisons d'hôtes</div>
+        <div class="ttl">Pack Hôtel</div>
+        <div class="price">150 DT <small>· une seule fois</small></div>
+        <ul>
+          <li>Création de votre page et de votre QR</li>
+          <li>Vos onglets structurés avec vous</li>
+          <li>Traduction de 8 pages en 3 langues</li>
+          <li>Mise en place de votre première page</li>
+          <li>Test sur 3 téléphones</li>
+          <li>Formation de 30 minutes</li>
+          <li>Votre QR en fichier + 1 chevalet A5</li>
+        </ul>
+      </label>
+    </div>
+
+    <label class="opt" data-group="pack" style="margin-top:12px">
+      <input type="radio" name="pack" value="aucun" data-prix="0"
+             data-label="Sans pack de lancement" checked>
+      <span class="tick"></span>
+      <div class="ttl sm">Je ne prends pas de pack</div>
+      <div class="desc">Je suis déjà en place, ou je fais la mise en place moi-même.
+        Je commande seulement des langues, des pages ou des supports QR.</div>
+    </label>
+  </section>
+
+  <!-- 2. LANGUES / PAGES -->
+  <section class="blk">
+    <div class="step">Étape 2 — Vos langues</div>
+    <h2>Plus de langues, plus de pages ?</h2>
+    <p class="sub">5 DT la page, dans la langue de votre choix. Plus de 20 langues, arabe et russe compris. Optionnel.</p>
+    <div class="card">
+      <div class="rowq" style="margin-bottom:14px">
+        <div class="lbl">Pages supplémentaires</div>
+        <div class="stepper">
+          <button type="button" data-step="pages" data-d="-1" aria-label="moins">−</button>
+          <input id="pages" type="number" value="0" min="0" inputmode="numeric">
+          <button type="button" data-step="pages" data-d="1" aria-label="plus">+</button>
+        </div>
+      </div>
+      <div class="rowq">
+        <div class="lbl">Langues supplémentaires</div>
+        <div class="stepper">
+          <button type="button" data-step="langues" data-d="-1" aria-label="moins">−</button>
+          <input id="langues" type="number" value="0" min="0" inputmode="numeric">
+          <button type="button" data-step="langues" data-d="1" aria-label="plus">+</button>
+        </div>
+      </div>
+      <div class="live">
+        <span id="suppCalc">0 page × 0 langue × 5 DT</span>
+        <b id="suppTot">0 DT</b>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. SUPPORT QR -->
+  <section class="blk">
+    <div class="step">Étape 3 — Vos supports QR</div>
+    <h2>Deux gammes. Une seule pose.</h2>
+    <p class="sub">Le QR ne change jamais : vous posez une fois, votre contenu évolue en ligne.</p>
+
+    <div class="grid">
+      <label class="opt" data-group="support">
+        <input type="radio" name="support" value="none" checked>
+        <span class="tick"></span>
+        <div class="ttl sm">On en parle plus tard</div>
+        <div class="desc">Je choisis mon support avec vous après la mise en place.</div>
+      </label>
+
+      <label class="opt" data-group="support">
+        <input type="radio" name="support" value="sticker">
+        <span class="tick"></span>
+        <img class="shot" src="images/support-sticker.webp" alt="Sticker adhésif QR posé sur une table de restaurant">
+        <div class="kicker">Gamme 1</div>
+        <div class="ttl sm">Sticker adhésif protégé</div>
+        <div class="desc">7 × 7 cm, coins arrondis, quadrichromie. Un film vinyle transparent
+          déborde de 5 mm et vient sceller sur le support. Durée de vie 2 à 3 ans ·
+          pose autocollante immédiate · minimum 100 pièces.<br>
+          <b>Idéal pour les surfaces lisses et l'intérieur</b> — réception, vitrine, comptoir.</div>
+      </label>
+
+      <label class="opt gold" data-group="support">
+        <input type="radio" name="support" value="pvc">
+        <span class="tick"></span>
+        <img class="shot" src="images/support-pvc.webp" alt="Plaquette PVC 3 mm QR posée sur une table">
+        <div class="kicker">Gamme 2</div>
+        <div class="ttl sm">Plaquette PVC 3 mm</div>
+        <div class="desc">7 × 7 cm, PVC rigide de 3 mm, <b>collée à la colle silicone</b>.
+          Ne se décolle pas, ne se raye pas — <b>ultra-résistante</b>. Durée de vie 5 ans et plus ·
+          pose définitive · minimum 30 pièces.<br>
+          <b>Idéale pour l'extérieur et les surfaces dures</b> — terrasse, plage, bord de piscine.
+          <b>5 DT la pièce</b>, quelle que soit la quantité.</div>
+      </label>
+
+      <label class="opt" data-group="support">
+        <input type="radio" name="support" value="chevalet">
+        <span class="tick"></span>
+        <img class="shot" src="images/support-chevalet.webp" alt="Chevalet de table triangulaire QR sur une table de chevet d'hôtel">
+        <div class="kicker">Gamme 3</div>
+        <div class="ttl sm">Chevalet de table triangulaire</div>
+        <div class="desc">Carton 250 g <b>pelliculé</b>, quadrichromie, QR + logo sur les
+          <b>deux faces</b>. La bande se plie en un petit triangle debout qui se pose
+          directement sur la table — rien à coller au support. Face <b>7 × 7 cm</b>,
+          bande de <b>21 × 7 cm</b> à plat · minimum 100 pièces · sans pose.<br>
+          <b>Idéal pour les chambres d'hôtel et l'intérieur</b> — bar, réception, comptoir.</div>
+      </label>
+    </div>
+
+    <!-- Panneau de configuration : HORS des cartes, donc toujours utilisable -->
+    <div id="cfgSticker" class="card cfg" style="display:none">
+      <div class="cfg-ttl">Choisissez votre quantité de stickers</div>
+      <div class="grid two" style="gap:8px">
+        <label class="seg-b"><input type="radio" name="stickerQ" value="100" data-prix="300"><span>100 stickers<b>300 DT</b><i>3,000 DT / u</i></span></label>
+        <label class="seg-b"><input type="radio" name="stickerQ" value="200" data-prix="440"><span>200 stickers<b>440 DT</b><i>2,200 DT / u</i></span></label>
+        <label class="seg-b"><input type="radio" name="stickerQ" value="300" data-prix="570"><span>300 stickers<b>570 DT</b><i>1,900 DT / u</i></span></label>
+        <label class="seg-b"><input type="radio" name="stickerQ" value="500" data-prix="840" checked><span>500 stickers<b>840 DT</b><i>1,680 DT / u · le plus avantageux</i></span></label>
+      </div>
+    </div>
+
+    <div id="cfgPvc" class="card cfg gold" style="display:none">
+      <div class="cfg-ttl">Votre quantité de plaquettes</div>
+      <div class="rowq">
+        <div class="lbl">Nombre de plaquettes
+          <small>Minimum 30 · saisissez la quantité souhaitée</small></div>
+        <div class="stepper" style="border-color:var(--or)">
+          <button type="button" data-step="pvc" data-d="-10" aria-label="moins">−</button>
+          <input id="pvc" type="number" value="30" min="30" step="1" inputmode="numeric"
+                 class="numfield" style="border:0;width:96px;height:44px;font-size:18px">
+          <button type="button" data-step="pvc" data-d="10" aria-label="plus">+</button>
+        </div>
+      </div>
+      <div class="live">
+        <span id="pvcCalc">30 plaquettes × 5 DT</span>
+        <b id="pvcTot">150 DT</b>
+      </div>
+    </div>
+
+    <div id="cfgChevalet" class="card cfg" style="display:none">
+      <div class="cfg-ttl">Choisissez votre quantité de chevalets</div>
+      <p class="cfg-sub">Chaque palier vous <span class="or">offre un abonnement Scandar</span> :
+        plus vous en commandez, plus la gratuité est longue. Le QR reste le même — vous ne réimprimez jamais.</p>
+      <div class="grid two" style="gap:8px">
+        <label class="seg-b"><input type="radio" name="chevaletQ" value="100" data-prix="350"
+          data-offre="Offre Restaurant — 6 mois d'abonnement Standard offerts"><span>100 chevalets<b>350 DT</b><i>3,500 DT / u</i><em class="gift">🎁 Offre Resto · 6 mois Standard offerts</em></span></label>
+        <label class="seg-b"><input type="radio" name="chevaletQ" value="250" data-prix="500"
+          data-offre="Offre Restaurant — 1 an d'abonnement Standard offert"><span>250 chevalets<b>500 DT</b><i>2,000 DT / u</i><em class="gift">🎁 Offre Resto · 1 an Standard offert</em></span></label>
+        <label class="seg-b"><input type="radio" name="chevaletQ" value="500" data-prix="750" checked
+          data-offre="Offre Hôtel — 6 mois d'abonnement Premium offerts"><span>500 chevalets<b>750 DT</b><i>1,500 DT / u</i><em class="gift">🎁 Offre Hôtel · 6 mois Premium offerts</em></span></label>
+        <label class="seg-b"><input type="radio" name="chevaletQ" value="1000" data-prix="1200"
+          data-offre="Offre Hôtel — 1 an d'abonnement Premium offert"><span>1000 chevalets<b>1200 DT</b><i>1,200 DT / u · le plus avantageux</i><em class="gift">🎁 Offre Hôtel · 1 an Premium offert</em></span></label>
+      </div>
+      <div class="offre-box">
+        <span class="gicon">🎁</span>
+        <span class="gtxt"><b>Votre cadeau inclus</b><span id="chevaletOffre">6 mois d'abonnement Premium offerts</span></span>
+      </div>
+    </div>
+
+    <p class="note">La pose au silicone est permanente : le retrait de la plaquette peut endommager
+      la finition du support. Le séchage prend 24 h — nous posons le soir, après le service.</p>
+  </section>
+
+  <!-- 4. COORDONNÉES -->
+  <section class="blk">
+    <div class="step">Étape 4 — Vous</div>
+    <h2>Vos coordonnées</h2>
+    <p class="sub">Pour qu'on vous recontacte et prépare votre devis.</p>
+    <div class="card">
+      <div class="field">
+        <label>Nom de l'établissement <span class="req">*</span></label>
+        <input id="fNom" type="text" placeholder="Ex : Hôtel Dar El Medina">
+      </div>
+      <div class="field">
+        <label>Téléphone <span class="req">*</span></label>
+        <input id="fTel" type="tel" placeholder="Ex : 24 678 721" inputmode="tel">
+      </div>
+      <div class="err" id="errBox">Merci d'indiquer le nom de l'établissement et le téléphone.</div>
+    </div>
+  </section>
+
+  <!-- 5. RÉCAP -->
+  <section class="blk">
+    <h2>Votre devis</h2>
+    <p class="sub">Tous les prix sont HT. FODEC 1 % · TVA 19 % · timbre fiscal 1 DT.</p>
+    <div class="recap" id="recap"></div>
+    <p class="note">En envoyant, votre <b>demande de devis</b> part sur notre WhatsApp ou par
+      e-mail à hello@scandar.tn. Rien n'est débité : nous vous confirmons le devis avant tout démarrage.</p>
+  </section>
+
+  <footer>
+    <b>scandar.tn</b> · Un seul QR · Zéro réimpression<br>
+    Technic Compo · Tunis · 24 678 721
+  </footer>
+</div>
+
+<div class="bar">
+  <div class="in">
+    <div class="tot"><small>Total TTC</small><b id="barTot">—</b></div>
+    <div class="btns">
+      <button class="act wa" id="btnWA" type="button">
+        <svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.1-.6.2-.2.3-.7.9-.8 1-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5 0-.2 0-.4 0-.5 0-.1-.6-1.5-.9-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2"/></svg>
+        WhatsApp
+      </button>
+      <button class="act mail" id="btnMail" type="button">
+        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 7 8.5 6 8.5-6"/></svg>
+        E-mail
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ======================================================================
+   >>> NUMÉRO WHATSAPP QUI REÇOIT LES COMMANDES <<<
+   Format international sans "+" ni espaces. Tunisie = 216.
+   24 678 721  ->  "21624678721"
+   ====================================================================== */
+const NUMERO_WHATSAPP = "21624678721";
+
+/* >>> E-MAIL QUI REÇOIT LES DEMANDES DE DEVIS <<< */
+const EMAIL_SCANDAR = "hello@scandar.tn";
+
+/* Tarifs repris de la fiche tarifaire */
+const PRIX_PAGE_LANGUE = 5;   // DT par page et par langue
+const PRIX_PVC = 5;           // DT la plaquette
+const PVC_MIN = 30;
+const FODEC = 0.01, TVA = 0.19, TIMBRE = 1;
+
+const $  = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+
+function dt(n){ return n.toLocaleString('fr-FR',{minimumFractionDigits:3,maximumFractionDigits:3}) + ' DT'; }
+function dt0(n){ return n.toLocaleString('fr-FR') + ' DT'; }
+function pl(n,s){ return n + ' ' + s + (n>1?'s':''); }
+
+/* --- Boutons + / − --- */
+$$('[data-step]').forEach(b=>{
+  b.addEventListener('click', e=>{
+    e.preventDefault();
+    const el  = $('#'+b.dataset.step);
+    const min = parseInt(el.min) || 0;
+    let v = (parseInt(el.value)||min) + parseInt(b.dataset.d);
+    if(v < min) v = min;
+    el.value = v;
+    recalc();
+  });
+});
+
+/* --- Saisie clavier libre sur les trois champs --- */
+['pages','langues','pvc'].forEach(id=>{
+  const el = $('#'+id);
+  el.addEventListener('input', recalc);
+  el.addEventListener('blur', ()=>{
+    const min = parseInt(el.min) || 0;
+    let v = parseInt(el.value);
+    if(isNaN(v) || v < min) v = min;
+    el.value = v;
+    recalc();
+  });
+});
+
+/* --- Cartes cochées + panneaux de configuration --- */
+function refreshCards(){
+  $$('.opt[data-group]').forEach(o=>{
+    o.classList.toggle('on', o.querySelector('input').checked);
+  });
+  const v = document.querySelector('input[name="support"]:checked').value;
+  $('#cfgSticker').style.display  = (v === 'sticker')  ? 'block' : 'none';
+  $('#cfgPvc').style.display      = (v === 'pvc')      ? 'block' : 'none';
+  $('#cfgChevalet').style.display = (v === 'chevalet') ? 'block' : 'none';
+}
+
+let ETAT = {};
+function recalc(){
+  refreshCards();
+
+  /* Pack */
+  const pEl = document.querySelector('input[name="pack"]:checked');
+  const packPrix  = parseFloat(pEl.dataset.prix);
+  const packLabel = pEl.dataset.label;
+
+  /* Pages × langues */
+  const pages   = Math.max(0, parseInt($('#pages').value)   || 0);
+  const langues = Math.max(0, parseInt($('#langues').value) || 0);
+  const suppTot = pages * langues * PRIX_PAGE_LANGUE;
+  $('#suppCalc').textContent = pl(pages,'page') + ' × ' + pl(langues,'langue') + ' × 5 DT';
+  $('#suppTot').textContent  = dt0(suppTot);
+
+  /* Support QR */
+  const sup = document.querySelector('input[name="support"]:checked').value;
+  let supPrix = 0, supLabel = 'À définir plus tard', offre = '', supGamme = '';
+  if(sup === 'sticker'){
+    const s  = document.querySelector('input[name="stickerQ"]:checked');
+    supPrix  = parseFloat(s.dataset.prix);
+    supLabel = 'Stickers adhésifs × ' + s.value;
+    supGamme = 'Gamme 1';
+  } else if(sup === 'pvc'){
+    let q = parseInt($('#pvc').value);
+    if(isNaN(q) || q < PVC_MIN) q = PVC_MIN;
+    supPrix  = q * PRIX_PVC;
+    supLabel = 'Plaquettes PVC 3 mm × ' + q;
+    supGamme = 'Gamme 2';
+    $('#pvcCalc').textContent = pl(q,'plaquette') + ' × 5 DT';
+    $('#pvcTot').textContent  = dt0(supPrix);
+  } else if(sup === 'chevalet'){
+    const c  = document.querySelector('input[name="chevaletQ"]:checked');
+    supPrix  = parseFloat(c.dataset.prix);
+    supLabel = 'Chevalets de table triangulaires × ' + c.value;
+    supGamme = 'Gamme 3';
+    offre    = c.dataset.offre || '';
+    $('#chevaletOffre').textContent = offre.split('— ')[1] || offre;
+  }
+
+  /* Totaux */
+  const ht    = packPrix + suppTot + supPrix;
+  const fodec = ht * FODEC;
+  const tva   = (ht + fodec) * TVA;
+  const ttc   = ht + fodec + tva + TIMBRE;
+
+  ETAT = {packLabel, packPrix, pages, langues, suppTot, supLabel, supGamme, supPrix, offre, ht, fodec, tva, ttc};
+
+  let h = '';
+  if(packPrix > 0) h += line(packLabel, dt0(packPrix));
+  if(suppTot > 0) h += line(pl(pages,'page') + ' × ' + pl(langues,'langue'), dt0(suppTot));
+  h += line('Support QR — ' + supLabel, supPrix > 0 ? dt0(supPrix) : '—');
+  if(offre) h += '<div class="rgift">🎁 Cadeau inclus — ' + offre + '</div>';
+  h += '<div class="rsep"></div>';
+  h += line('Sous-total HT', dt(ht));
+  h += line('FODEC 1 %', dt(fodec));
+  h += line('TVA 19 %', dt(tva));
+  h += line('Timbre fiscal', dt(TIMBRE));
+  h += '<div class="rtot"><span>TOTAL TTC</span><b>' + dt(ttc) + '</b></div>';
+  if(ht === 0){
+    h = '<div class="vide">Votre commande est vide pour le moment.<br>'
+      + 'Choisissez un pack, des langues ou un support QR ci-dessus.</div>';
+    $('#barTot').textContent = '—';
+  } else {
+    $('#barTot').textContent = dt(ttc);
+  }
+  $('#recap').innerHTML = h;
+}
+function line(l, v){ return '<div class="rline"><span>'+l+'</span><b>'+v+'</b></div>'; }
+
+$$('input[name="pack"],input[name="support"],input[name="stickerQ"],input[name="chevaletQ"]')
+  .forEach(r => r.addEventListener('change', recalc));
+
+/* --- Demande de devis : WhatsApp + e-mail --- */
+function collecte(){
+  const nom = $('#fNom').value.trim();
+  const tel = $('#fTel').value.trim();
+  if(ETAT.ht === 0){
+    $('#errBox').textContent = "Votre demande est vide : choisissez un pack, des langues ou un support QR.";
+    $('#errBox').style.display = 'block';
+    $('#recap').scrollIntoView({behavior:'smooth', block:'center'});
+    return null;
+  }
+  if(!nom || !tel){
+    $('#errBox').textContent = "Merci d'indiquer le nom de l'établissement et le téléphone.";
+    $('#errBox').style.display = 'block';
+    $('#errBox').scrollIntoView({behavior:'smooth', block:'center'});
+    return null;
+  }
+  $('#errBox').style.display = 'none';
+  return {nom, tel};
+}
+
+/* Message commun. bold=true -> mise en gras WhatsApp (*...*) */
+function texteDemande(c, bold){
+  const e = ETAT, g = bold ? '*' : '';
+  const L = [];
+  L.push(g + 'Demande de devis — Scandar' + g);
+  L.push('');
+  L.push('Bonjour,');
+  L.push("J'aimerais souscrire à votre offre Scandar et recevoir un devis.");
+  L.push('');
+  L.push('Établissement : ' + c.nom);
+  L.push('Téléphone : ' + c.tel);
+  L.push('');
+  L.push('Ma sélection :');
+  L.push('- Pack de lancement : ' + (e.packPrix > 0 ? e.packLabel + ' — ' + dt0(e.packPrix) : 'aucun'));
+  if(e.suppTot > 0)
+    L.push('- Pages / langues : ' + pl(e.pages,'page') + ' × ' + pl(e.langues,'langue') + ' — ' + dt0(e.suppTot));
+  L.push('- Support QR : ' + (e.supGamme ? e.supGamme + ' — ' : '') + e.supLabel
+        + (e.supPrix > 0 ? ' — ' + dt0(e.supPrix) : ' (à définir)'));
+  if(e.offre)
+    L.push('- Cadeau inclus : ' + e.offre);
+  L.push('');
+  L.push('Détail du devis (prix HT) :');
+  L.push('- Sous-total HT : ' + dt(e.ht));
+  L.push('- FODEC 1 % : '     + dt(e.fodec));
+  L.push('- TVA 19 % : '      + dt(e.tva));
+  L.push('- Timbre fiscal : ' + dt(TIMBRE));
+  L.push('- ' + g + 'Total TTC : ' + dt(e.ttc) + g);
+  L.push('');
+  L.push('Merci de me confirmer le devis avant tout démarrage.');
+  L.push('Cordialement,');
+  L.push(c.nom);
+  return L.join('\n');
+}
+
+$('#btnWA').addEventListener('click', ()=>{
+  const c = collecte(); if(!c) return;
+  window.open('https://wa.me/' + NUMERO_WHATSAPP + '?text='
+    + encodeURIComponent(texteDemande(c, true)), '_blank');
+});
+
+async function envoyerDemande(c){
+  const e = ETAT, fd = new FormData();
+  fd.append('form-name','commande-scandar');
+  fd.append('destinataire', EMAIL_SCANDAR);
+  fd.append('etablissement', c.nom);
+  fd.append('telephone', c.tel);
+  fd.append('pack', e.packPrix > 0 ? e.packLabel + ' — ' + dt0(e.packPrix) : 'aucun');
+  fd.append('supplements', e.suppTot > 0 ? pl(e.pages,'page') + ' × ' + pl(e.langues,'langue') + ' — ' + dt0(e.suppTot) : '—');
+  fd.append('support', (e.supGamme ? e.supGamme + ' — ' : '') + e.supLabel + (e.supPrix > 0 ? ' — ' + dt0(e.supPrix) : ' (à définir)'));
+  fd.append('cadeau', e.offre || '—');
+  fd.append('total_ht', dt(e.ht));
+  fd.append('total_ttc', dt(e.ttc));
+  fd.append('details', texteDemande(c, false));
+  const r = await fetch('/', { method:'POST', body: fd });
+  if(!r.ok) throw new Error(r.status);
+}
+
+$('#btnMail').addEventListener('click', async ()=>{
+  const c = collecte(); if(!c) return;
+  const b = $('#btnMail'), libelle = b.textContent;
+  b.disabled = true; b.textContent = 'Envoi en cours…';
+  try {
+    await envoyerDemande(c);
+    window.location.href = '/merci/';
+  } catch(err){
+    console.error('Envoi impossible :', err);
+    b.disabled = false; b.textContent = libelle;
+    const sujet = 'Demande de devis Scandar — ' + c.nom;
+    window.location.href = 'mailto:' + EMAIL_SCANDAR
+      + '?subject=' + encodeURIComponent(sujet)
+      + '&body='    + encodeURIComponent(texteDemande(c, false));
+  }
+});
+
+recalc();
+</script>
+<!-- Formulaire declare pour la reception par mail. Ne s'affiche jamais. -->
+<form name="commande-scandar" data-netlify="true" netlify-honeypot="bot-field-sc" hidden>
+  <input name="bot-field-sc"><input name="destinataire"><input name="etablissement">
+  <input name="telephone"><input name="pack"><input name="supplements"><input name="support">
+  <input name="cadeau"><input name="total_ht"><input name="total_ttc"><textarea name="details"></textarea>
+</form>
+
+</body>
+</html>
