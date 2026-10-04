@@ -254,7 +254,7 @@
 
 
       <!-- Quantité -->
-      <label class="text-sm font-semibold mb-2 mt-6 block">Quantité <span class="font-normal text-slate-400">(prix HT)</span></label>
+      <label class="text-sm font-semibold mb-2 mt-6 block">Quantité <span class="font-normal text-slate-400">(prix unitaire HT)</span></label>
       <div class="grid grid-cols-3 gap-2" id="qty-row"></div>
 
       <!-- Reliure : avec / sans colle (Ordonnances, Certificats) -->
@@ -311,7 +311,7 @@
           <div class="font-semibold">Total estimé <span class="text-[11px] font-bold text-slate-400">HT</span></div>
           <div class="text-[11px] text-slate-400">Hors taxes • confirmé après validation du visuel</div>
         </div>
-        <span id="total-price" class="mono heading text-2xl text-[#003087]"></span>
+        <div class="text-right"><span id="total-price" class="mono heading text-2xl text-[#003087]"></span><div id="total-gain" class="hidden mono text-[11px] font-bold text-emerald-600 mt-0.5"></div></div>
       </div>
 
       <button onclick="addToCart()" class="mt-4 w-full py-4 bg-[#003087] text-white font-bold rounded-3xl active:bg-[#002266] flex items-center justify-center gap-x-2">
@@ -503,22 +503,22 @@ const GOUVERNORATS = ["Tunis","Ariana","Ben Arous","Manouba","Nabeul","Bizerte",
 
 const PRODUCTS = [
   // Prix HORS TAXES (HT) — grille tarifaire officielle. wcm/hcm : format réel pour le calcul de qualité (DPI).
-  { pub:['med'], name:"Ordonnances personnalisées", img:"p-carnet-ordonnances", icon:"fa-file-medical",   desc:"Blocs de 100 feuilles, offset",  format:"A5 (14,8 × 21 cm)", wcm:14.8, hcm:21,   glueChoice:true, qtys:[1000,2000,3000], prices:{1000:70,  2000:125, 3000:180}  },
-  { pub:['med'], name:"Certificats médicaux", img:"p-certificats-bloc",       icon:"fa-file-signature", desc:"Blocs de 100 feuilles, offset",      format:"A5 (14,8 × 21 cm)", wcm:14.8, hcm:21,   glueChoice:true, qtys:[1000,2000,3000], prices:{1000:70,  2000:125, 3000:180}  },
-  { pub:['med','labo','img'], name:"Carte visite 1 couleur", img:"p-carte-1-couleur",     icon:"fa-id-card",        desc:"Bleu réflexe, noir ou rouge", format:"8,5 × 5,5 cm", wcm:8.5, hcm:5.5, photos:2, colorChoice:true, cardText:true, qtys:[1000,2000,3000], prices:{1000:70,  2000:125, 3000:180} },
-  { pub:['med','labo','img'], name:"Carte visite 4 couleurs", img:"p-cartes-quadri",    icon:"fa-id-card-clip",   desc:"Quadrichromie, couché 350g",  format:"8,5 × 5,5 cm", wcm:8.5, hcm:5.5, photos:2, qtys:[1000,2000,3000], prices:{1000:168, 2000:294, 3000:420}  },
-  { pub:['med'], name:"Enveloppes imprimées", img:"p-enveloppes-imprimees",       icon:"fa-envelope",       desc:"Avec votre logo",        format:"11 × 22 cm", wcm:11, hcm:22, qtys:[1000,2000,3000], prices:{1000:200, 2000:370, 3000:540}  },
-  { pub:['med','labo','img'], name:"Enveloppes vierges", img:"p-enveloppes-vierges",         icon:"fa-envelope-open",  desc:"Formats standards",      format:"11 × 22 cm", wcm:11, hcm:22, qtys:[1000,2000,3000], prices:{1000:100, 2000:185, 3000:270}  },
-  { pub:['med','labo','img'], name:"En-têtes de lettre", img:"p-entetes",         icon:"fa-heading",        desc:"Papier à lettre",        format:"A4 (21 × 29,7 cm)", wcm:21, hcm:29.7, qtys:[1000,2000,3000], prices:{1000:150, 2000:270, 3000:390}  },
-  { pub:['med'], name:"Pochettes patients", img:"p-pochette-patients",         icon:"fa-folder-open",    desc:"Carton rigide",          format:"A3 (29,7 × 42 cm)", wcm:29.7, hcm:42, qtys:[500,1000,2000],  prices:{500:260, 1000:450, 2000:830} },
-  { pub:['med','labo','img'], name:"Fiches patients", img:"p-fiches-patients",            icon:"fa-file-lines",     desc:"Fiches de suivi",        format:"A5 (14,8 × 21 cm)", wcm:14.8, hcm:21, qtys:[500,1000,2000],  prices:{500:120, 1000:170, 2000:320}  },
+  { pub:['med'], name:"Ordonnances personnalisées", img:"p-carnet-ordonnances", icon:"fa-file-medical",   desc:"Blocs de 100 feuilles, offset",  format:"A5 (14,8 × 21 cm)", wcm:14.8, hcm:21,   glueChoice:true, qtys:[1000,2000,3000], prices:{1000:70,  2000:129, 3000:179}  },
+  { pub:['med'], name:"Certificats médicaux", img:"p-certificats-bloc",       icon:"fa-file-signature", desc:"Blocs de 100 feuilles, offset",      format:"A5 (14,8 × 21 cm)", wcm:14.8, hcm:21,   glueChoice:true, qtys:[1000,2000,3000], prices:{1000:70,  2000:129, 3000:179}  },
+  { pub:['med','labo','img'], name:"Carte visite 1 couleur", img:"p-carte-1-couleur",     icon:"fa-id-card",        desc:"Bleu réflexe, noir ou rouge", format:"8,5 × 5,5 cm", wcm:8.5, hcm:5.5, photos:2, colorChoice:true, cardText:true, qtys:[1000,2000,3000], prices:{1000:70,  2000:129, 3000:179} },
+  { pub:['med','labo','img'], name:"Carte visite 4 couleurs", img:"p-cartes-quadri",    icon:"fa-id-card-clip",   desc:"Quadrichromie, couché 350g",  format:"8,5 × 5,5 cm", wcm:8.5, hcm:5.5, photos:2, qtys:[1000,2000,3000], prices:{1000:168, 2000:309, 3000:428}  },
+  { pub:['med'], name:"Enveloppes imprimées", img:"p-enveloppes-imprimees",       icon:"fa-envelope",       desc:"Avec votre logo",        format:"11 × 22 cm", wcm:11, hcm:22, qtys:[1000,2000,3000], prices:{1000:200, 2000:368, 3000:510}  },
+  { pub:['med','labo','img'], name:"Enveloppes vierges", img:"p-enveloppes-vierges",         icon:"fa-envelope-open",  desc:"Formats standards",      format:"11 × 22 cm", wcm:11, hcm:22, qtys:[1000,2000,3000], prices:{1000:100, 2000:184, 3000:255}  },
+  { pub:['med','labo','img'], name:"En-têtes de lettre", img:"p-entetes",         icon:"fa-heading",        desc:"Papier à lettre",        format:"A4 (21 × 29,7 cm)", wcm:21, hcm:29.7, qtys:[1000,2000,3000], prices:{1000:150, 2000:276, 3000:382}  },
+  { pub:['med'], name:"Pochettes patients", img:"p-pochette-patients",         icon:"fa-folder-open",    desc:"Carton rigide",          format:"A3 (29,7 × 42 cm)", wcm:29.7, hcm:42, qtys:[500,1000,2000],  prices:{500:260, 1000:478, 2000:884} },
+  { pub:['med','labo','img'], name:"Fiches patients", img:"p-fiches-patients",            icon:"fa-file-lines",     desc:"Fiches de suivi",        format:"A5 (14,8 × 21 cm)", wcm:14.8, hcm:21, qtys:[500,1000,2000],  prices:{500:120, 1000:221, 2000:408}  },
   { pub:['med'], name:"Offre spéciale — Pack médical", plein:{1:250, 2:370, 3:538}, defq:2, detail:{
       1:["3 000 ordonnances personnalisées","1 000 certificats médicaux","250 DT de produits pour 229 DT"],
       2:["3 000 ordonnances personnalisées","1 000 certificats médicaux","500 fiches patients — 90 DT au lieu de 120","30 DT d'avantage"],
       3:["3 000 ordonnances personnalisées","1 000 certificats médicaux","500 fiches patients — 90 DT au lieu de 120","1 000 cartes de visite quadri — 100 DT au lieu de 168","98 DT d'avantage"]},
     qlab:{1:"Essentiel",2:"Cabinet",3:"Complet"},
     icon:"fa-gift", desc:"Trois niveaux, de l'essentiel au cabinet équipé", format:"A5 (14,8 × 21 cm)", wcm:14.8, hcm:21, glueChoice:true, photos:2, badge:"OFFRE", img:"p-pack-medical", qtys:[1,2,3], prices:{1:229, 2:319, 3:419} },
-  { pub:['labo'], name:"Enveloppes à fenêtre", img:"p-enveloppes-fenetre", icon:"fa-envelope-circle-check", desc:"Fenêtre transparente, résultats", format:"11 × 22 cm", wcm:11, hcm:22, qtys:[1000,2000,3000], prices:{1000:215, 2000:400, 3000:585} },
+  { pub:['labo'], name:"Enveloppes à fenêtre", img:"p-enveloppes-fenetre", icon:"fa-envelope-circle-check", desc:"Fenêtre transparente, résultats", format:"11 × 22 cm", wcm:11, hcm:22, qtys:[1000,2000,3000], prices:{1000:215, 2000:396, 3000:548} },
   { pub:['labo'], name:"Pack Laboratoire", defq:4000,
     plein:{2000:670, 3000:975, 4000:1290, 5000:1605, 6000:1920},
     detail:{
@@ -530,9 +530,9 @@ const PRODUCTS = [
     icon:"fa-flask", desc:"En-têtes + enveloppes à fenêtre", format:"A4 + 11 × 22 cm", wcm:21, hcm:29.7,
     photos:2, badge:"PACK", img:"p-entetes", qtys:[2000,3000,4000,5000,6000],
     prices:{2000:500, 3000:660, 4000:800, 5000:950, 6000:1080} },
-  { pub:['img'], name:"Pochettes 25 × 35", img:"p-pochette-imagerie", icon:"fa-folder-closed", desc:"Films et CD", format:"25 × 35 cm", wcm:25, hcm:35, qtys:[1000,2000,3000], prices:{1000:380, 2000:720, 3000:1020} },
-  { pub:['img'], name:"Pochettes 30 × 40", img:"p-pochette-imagerie", icon:"fa-folder-closed", desc:"Grands films", format:"30 × 40 cm", wcm:30, hcm:40, qtys:[1000,2000,3000], prices:{1000:450, 2000:860, 3000:1230} },
-  { pub:['img'], name:"Pochettes 22,9 × 32,4", img:"p-pochette-imagerie", icon:"fa-folder-closed", desc:"Compte rendu à plat", format:"22,9 × 32,4 cm", wcm:22.9, hcm:32.4, qtys:[1000,2000,3000], prices:{1000:350, 2000:660, 3000:930} },
+  { pub:['img'], name:"Pochettes 25 × 35", img:"p-pochette-imagerie", icon:"fa-folder-closed", desc:"Films et CD", format:"25 × 35 cm", wcm:25, hcm:35, qtys:[1000,2000,3000], prices:{1000:380, 2000:699, 3000:969} },
+  { pub:['img'], name:"Pochettes 30 × 40", img:"p-pochette-imagerie", icon:"fa-folder-closed", desc:"Grands films", format:"30 × 40 cm", wcm:30, hcm:40, qtys:[1000,2000,3000], prices:{1000:450, 2000:828, 3000:1148} },
+  { pub:['img'], name:"Pochettes 22,9 × 32,4", img:"p-pochette-imagerie", icon:"fa-folder-closed", desc:"Compte rendu à plat", format:"22,9 × 32,4 cm", wcm:22.9, hcm:32.4, qtys:[1000,2000,3000], prices:{1000:350, 2000:644, 3000:892} },
   { pub:['img'], name:"Pack Imagerie grand format", plein:{1000:600, 2000:1130, 3000:1720}, defq:2000, detail:{
       1000:["1 000 pochettes 30 × 40 — 0,440 l'unité","1 000 en-têtes A4 — 0,110 l'unité"],
       2000:["2 000 pochettes 30 × 40 — 0,385 l'unité","2 000 en-têtes A4 — 0,100 l'unité"],
@@ -910,16 +910,30 @@ function renderDetail(q){
   }).join('');
 }
 
+/* Prix unitaire (3 décimales, virgule) et gain affichés sur chaque bouton.
+   Produit simple : gain = ce qu'on économise par rapport au prix unitaire du 1er palier.
+   Pack : gain = ce qu'on économise par rapport aux produits achetés séparément. */
+const fmtU = v => v.toFixed(3).replace('.', ',');
+function qtyGain(q){
+  const P = currentProduct, prix = P.prices[q];
+  if (P.plein && P.plein[q]) return P.plein[q] - prix;
+  const q0 = P.qtys[0];
+  return Math.round(P.prices[q0] / q0 * q - prix);
+}
 function renderQtyButtons(){
-  const base = currentProduct.prices[currentProduct.qtys[0]];
-  document.getElementById('qty-row').innerHTML = currentProduct.qtys.map((q,n) => {
-    const ecart = currentProduct.prices[q] - base;
-    const libelle = (currentProduct.qlab && currentProduct.qlab[q]) || (q===1 ? 'Pack' : q.toLocaleString('fr-FR'));
-    const sup = n===0
-      ? `<div class="text-[10.5px] qty-price mono">${currentProduct.prices[q]} HT</div>`
-      : `<div class="text-[10.5px] mono font-bold text-[#EC008C] qty-ecart">+${ecart} DT</div>`;
-    return `<button onclick="setQuantity(${q})" id="qty-${q}" class="py-3 rounded-2xl text-center">
-      <div class="font-bold mono text-[13px]">${libelle}</div>${sup}</button>`;
+  const P = currentProduct;
+  document.getElementById('qty-row').innerHTML = P.qtys.map(q => {
+    const prix = P.prices[q], gain = qtyGain(q);
+    const libelle = (P.qlab && P.qlab[q]) || (q===1 ? 'Pack' : q.toLocaleString('fr-FR'));
+    const unite = q < 100
+      ? `${prix} DT`
+      : `${fmtU(prix / q)} <span class="qty-u">/${P.plein ? 'lot' : 'u'}</span>`;
+    const bas = gain > 0
+      ? `<div class="text-[11px] mono font-bold qty-ecart">−${gain} DT</div>`
+      : `<div class="text-[10.5px] qty-price mono">${prix} DT</div>`;
+    return `<button type="button" onclick="setQuantity(${q})" id="qty-${q}" class="py-2.5 rounded-2xl text-center">
+      <div class="text-[10px] mono qty-unit">${unite}</div>
+      <div class="font-bold mono text-[13px] leading-tight my-0.5">${libelle}</div>${bas}</button>`;
   }).join('');
 }
 
@@ -928,13 +942,18 @@ function setQuantity(q){
   renderDetail(q);
   currentProduct.qtys.forEach(x => {
     const btn = document.getElementById('qty-'+x), active = x===q;
-    btn.className = 'py-3 rounded-2xl text-center border ' + (active ? 'bg-[#003087] border-[#003087] text-white' : 'bg-white border-slate-200');
+    btn.className = 'py-2.5 rounded-2xl text-center border ' + (active ? 'bg-[#003087] border-[#003087] text-white' : 'bg-white border-slate-200');
+    const unit  = btn.querySelector('.qty-unit');
     const prix  = btn.querySelector('.qty-price');
     const ecart = btn.querySelector('.qty-ecart');
-    if (prix)  prix.className  = 'text-[10.5px] font-semibold qty-price mono ' + (active ? 'text-blue-200' : 'text-emerald-600');
-    if (ecart) ecart.className = 'text-[10.5px] mono font-bold qty-ecart ' + (active ? 'text-white' : 'text-[#EC008C]');
+    if (unit)  unit.className  = 'text-[10px] mono qty-unit ' + (active ? 'text-blue-200' : 'text-slate-400');
+    if (prix)  prix.className  = 'text-[10.5px] font-semibold qty-price mono ' + (active ? 'text-blue-200' : 'text-slate-500');
+    if (ecart) ecart.className = 'text-[11px] mono font-bold qty-ecart ' + (active ? 'text-emerald-300' : 'text-emerald-600');
   });
+  const g = qtyGain(q);
   document.getElementById('total-price').innerText = currentProduct.prices[q] + " TND HT";
+  const tg = document.getElementById('total-gain');
+  if (tg){ tg.textContent = g > 0 ? `Vous économisez ${g} DT` : ''; tg.classList.toggle('hidden', !(g > 0)); }
 }
 
 /* ============================================================
