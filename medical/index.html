@@ -153,7 +153,7 @@ html.lock,html.lock body{overflow:hidden}
 </head>
 <body>
 <nav class="tcnav" style="--nv-bg:#F7F5EF;--nv-line:#E7E3D8;--nv-ink:#12151A;--nv-mut:#6E747C">
-  <a class="home" href="/"><span class="bdg">TC</span> technic-compo.tn</a>
+  <a class="home" href="/"><span class="bdg">TC</span> techniccompo.tn</a>
   <a href="/medical/" class="on">Médical</a>
   <a href="/medical/?espace=img">Imagerie</a>
   <a href="/medical/?espace=labo">Laboratoires</a>
@@ -529,7 +529,7 @@ const WHATSAPP_NUMBER = "21624678721"; // WhatsApp Technic Compo
 const ENVOI = {
   MODE: 'netlify',
   CLE_WEB3FORMS: '',
-  EMAIL_IMPRIMERIE: 'hello@technic-compo.tn',
+  EMAIL_IMPRIMERIE: 'hello@techniccompo.tn',
   COPIE_CLIENT: true
 };
 
@@ -555,7 +555,7 @@ const PRODUCTS = [
   { pub:['med','labo','img'], name:"En-têtes de lettre", img:"p-entetes",         icon:"fa-heading",        desc:"Papier à lettre",        format:"A4 (21 × 29,7 cm)", wcm:21, hcm:29.7, qtys:[1000,2000,3000], prices:{1000:150, 2000:276, 3000:382}  },
   { pub:['med'], name:"Pochettes patients", img:"p-pochette-patients",         icon:"fa-folder-open",    desc:"Carton rigide",          format:"A3 (29,7 × 42 cm)", wcm:29.7, hcm:42, qtys:[500,1000,2000],  prices:{500:260, 1000:478, 2000:884} },
   { pub:['med','labo','img'], name:"Fiches patients", img:"p-fiches-patients",            icon:"fa-file-lines",     desc:"Fiches de suivi",        format:"A5 (14,8 × 21 cm)", wcm:14.8, hcm:21, qtys:[500,1000,2000],  prices:{500:120, 1000:221, 2000:408}  },
-  { pub:['med'], name:"Offre spéciale — Pack médical", plein:{1:250, 2:370, 3:538}, defq:2, detail:{
+  { pub:['med'], name:"Offre spéciale — Pack médical", plein:{1:249, 2:369, 3:537}, defq:2, detail:{
       // Prix unitaires dans le pack : 3000 × 0,055 + 1000 × 0,064 = 229 ; + 500 × 0,180 = 319 ; + 1000 × 0,100 = 419.
       1:["3 000 ordonnances — 0,055 l'unité (seules : 0,060)","1 000 certificats — 0,064 l'unité (seuls : 0,070)"],
       2:["3 000 ordonnances — 0,055 l'unité (seules : 0,060)","1 000 certificats — 0,064 l'unité (seuls : 0,070)","500 fiches patients — 0,180 l'unité (seules : 0,240)"],
@@ -563,8 +563,10 @@ const PRODUCTS = [
     qlab:{1:"Essentiel",2:"Cabinet",3:"Complet"},
     icon:"fa-gift", desc:"Trois niveaux, de l'essentiel au cabinet équipé", format:"A5 (14,8 × 21 cm)", wcm:14.8, hcm:21, glueChoice:true, photos:2, badge:"OFFRE", img:"p-pack-medical", qtys:[1,2,3], prices:{1:229, 2:319, 3:419} },
   { pub:['labo'], name:"Enveloppes à fenêtre", img:"p-enveloppes-fenetre", icon:"fa-envelope-circle-check", desc:"Fenêtre transparente, résultats", format:"11 × 22 cm", wcm:11, hcm:22, qtys:[1000,2000,3000], prices:{1000:215, 2000:396, 3000:548} },
+  /* « plein » = prix « séparément » : le total le moins cher en achetant les mêmes articles au catalogue
+     (au-delà de 3 000, combinaison de paliers : 4 000 = 3 000 + 1 000, 6 000 = 3 000 + 3 000). */
   { pub:['labo'], name:"Pack Laboratoire", defq:4000, uMul:2,
-    plein:{2000:670, 3000:975, 4000:1290, 5000:1605, 6000:1920},
+    plein:{2000:672, 3000:930, 4000:1295, 5000:1602, 6000:1860},
     detail:{
       2000:["2 000 en-têtes A4 — 0,125 l'unité","2 000 enveloppes à fenêtre — 0,125 l'unité"],
       3000:["3 000 en-têtes A4 — 0,110 l'unité","3 000 enveloppes à fenêtre — 0,110 l'unité"],
@@ -577,15 +579,15 @@ const PRODUCTS = [
   { pub:['img'], name:"Pochettes 25 × 35", img:"p-pochette-imagerie", icon:"fa-folder-closed", desc:"Films et CD", format:"25 × 35 cm", wcm:25, hcm:35, qtys:[1000,2000,3000], prices:{1000:380, 2000:699, 3000:969} },
   { pub:['img'], name:"Pochettes 30 × 40", img:"p-pochette-imagerie", icon:"fa-folder-closed", desc:"Grands films", format:"30 × 40 cm", wcm:30, hcm:40, qtys:[1000,2000,3000], prices:{1000:450, 2000:828, 3000:1148} },
   { pub:['img'], name:"Pochettes 22,9 × 32,4", img:"p-pochette-imagerie", icon:"fa-folder-closed", desc:"Compte rendu à plat", format:"22,9 × 32,4 cm", wcm:22.9, hcm:32.4, qtys:[1000,2000,3000], prices:{1000:350, 2000:644, 3000:892} },
-  { pub:['img'], name:"Pack Imagerie grand format", plein:{1000:600, 2000:1130, 3000:1720}, defq:2000, detail:{
+  { pub:['img'], name:"Pack Imagerie grand format", plein:{1000:600, 2000:1104, 3000:1698}, defq:2000, detail:{
       1000:["1 000 pochettes 30 × 40 — 0,440 l'unité","1 000 en-têtes A4 — 0,110 l'unité"],
       2000:["2 000 pochettes 30 × 40 — 0,385 l'unité","2 000 en-têtes A4 — 0,100 l'unité"],
-      3000:["3 000 pochettes 30 × 40 — 0,370 l'unité","3 000 en-têtes A4 — 0,090 l'unité","1 000 cartes de visite offertes"]},
+      3000:["3 000 pochettes 30 × 40 — 0,370 l'unité","3 000 en-têtes A4 — 0,090 l'unité","1 000 cartes de visite quadri offertes"]},
     icon:"fa-x-ray", desc:"Grands films IRM + comptes rendus", format:"30 × 40 + A4", wcm:30, hcm:40, photos:2, badge:"PACK", img:"p-pochette-imagerie", qtys:[1000,2000,3000], prices:{1000:550, 2000:970, 3000:1380} },
-  { pub:['img'], name:"Pack Imagerie", plein:{1000:530, 2000:990, 3000:1510}, defq:2000, detail:{
+  { pub:['img'], name:"Pack Imagerie", plein:{1000:530, 2000:975, 3000:1519}, defq:2000, detail:{
       1000:["1 000 pochettes 25 × 35 — 0,380 l'unité","1 000 en-têtes A4 — 0,110 l'unité"],
       2000:["2 000 pochettes 25 × 35 — 0,325 l'unité","2 000 en-têtes A4 — 0,100 l'unité"],
-      3000:["3 000 pochettes 25 × 35 — 0,315 l'unité","3 000 en-têtes A4 — 0,090 l'unité","1 000 cartes de visite offertes"]}, img:"p-pochette-imagerie", icon:"fa-x-ray", desc:"Pochettes 25 × 35 + comptes rendus", format:"25 × 35 + A4", wcm:25, hcm:35, photos:2, badge:"PACK", qtys:[1000,2000,3000], prices:{1000:490, 2000:850, 3000:1215} },
+      3000:["3 000 pochettes 25 × 35 — 0,315 l'unité","3 000 en-têtes A4 — 0,090 l'unité","1 000 cartes de visite quadri offertes"]}, img:"p-pochette-imagerie", icon:"fa-x-ray", desc:"Pochettes 25 × 35 + comptes rendus", format:"25 × 35 + A4", wcm:25, hcm:35, photos:2, badge:"PACK", qtys:[1000,2000,3000], prices:{1000:490, 2000:850, 3000:1215} },
 ];
 
 /* ============================================================

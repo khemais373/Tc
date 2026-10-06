@@ -1,4 +1,4 @@
-# Site unifié Technic Compo — technic-compo.tn
+# Site unifié Technic Compo — techniccompo.tn
 
 ## Arborescence
 
@@ -20,7 +20,7 @@ sitemap.xml       les quatre pages publiques
 
 ## Adresse e-mail
 
-Les demandes du site partent vers **hello@technic-compo.tn**, sauf les deux pages Scandar
+Les demandes du site partent vers **hello@techniccompo.tn**, sauf les deux pages Scandar
 qui gardent leur propre adresse, **hello@scandar.tn**.
 
 Neuf formulaires au total :
@@ -41,8 +41,8 @@ Le champ `destinataire` est présent dans chaque formulaire, mais **il ne suffit
 l'hébergeur du formulaire qui décide où le mail part. Concrètement :
 
 - **Aujourd'hui (Netlify)** : tableau de bord Netlify → Forms → Form notifications →
-  Email notification → hello@technic-compo.tn. À faire pour les neuf formulaires.
-- **Après migration sur .tn** : créer un compte Web3Forms avec hello@technic-compo.tn,
+  Email notification → hello@techniccompo.tn. À faire pour les neuf formulaires.
+- **Après migration sur .tn** : créer un compte Web3Forms avec hello@techniccompo.tn,
   coller la clé et passer le mode dans chaque page (bloc `ENVOI` sur la page médicale,
   attribut `action` sur les autres).
 
@@ -59,7 +59,7 @@ par l'hébergeur. Sans identifiant, le serveur ne livre pas la page du tout.
 
 1. Déposer tout le contenu de ce dossier à la racine du site.
 2. Vérifier que le certificat SSL est actif.
-3. Activer les notifications de formulaires vers hello@technic-compo.tn.
+3. Activer les notifications de formulaires vers hello@techniccompo.tn.
 4. Demander à l'hébergeur d'activer le verrou sur `/partenaires/`.
 5. Créer les redirections 301 depuis les anciennes adresses Netlify.
 6. Déclarer le site dans Google Search Console.
