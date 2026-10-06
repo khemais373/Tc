@@ -1046,7 +1046,7 @@ a:focus-visible,button:focus-visible,.chip:focus-visible,input:focus-visible,sel
       </div>
     </div>
     <div class="cform reveal" id="envoyer-demande">
-      <form id="fbody" name="demande-devis" method="POST" action="/merci/" data-netlify="true" netlify-honeypot="bot-field">
+      <form id="fbody" name="demande-devis" method="POST" action="/envoi.php" data-netlify="true" netlify-honeypot="bot-field">
         <input type="hidden" name="form-name" value="demande-devis">
         <input type="hidden" name="destinataire" value="hello@techniccompo.tn">
         <p style="display:none"><label>Ne pas remplir : <input name="bot-field"></label></p>
@@ -1219,7 +1219,7 @@ a:focus-visible,button:focus-visible,.chip:focus-visible,input:focus-visible,sel
     window.open('https://wa.me/'+WA_NUMBER+'?text='+msg,'_blank');
   };
 
-  // formulaire Netlify
+  // formulaire : envoi par /envoi.php (hébergement .tn)
   const fbody=document.getElementById('fbody');
   fbody.addEventListener('submit',e=>{
     e.preventDefault();
@@ -1227,7 +1227,7 @@ a:focus-visible,button:focus-visible,.chip:focus-visible,input:focus-visible,sel
     req.forEach(id=>{const i=document.getElementById(id),m=i.parentElement.querySelector('.em');if(!i.value.trim()){i.classList.add('bad');m.classList.add('show');ok=0}else{i.classList.remove('bad');m.classList.remove('show')}});
     if(!ok)return;
     const data=new FormData(fbody);
-    fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(data).toString()})
+    fetch('/envoi.php',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(data).toString()})
       .then(r=>{ if(!r.ok) throw new Error(r.status);
         fbody.style.display='none';document.getElementById('ok').classList.add('show'); })
       .catch(()=>{ window.open(lienDevisWA(),'_blank'); });

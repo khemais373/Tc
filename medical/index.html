@@ -515,6 +515,8 @@ const WHATSAPP_NUMBER = "21624678721"; // WhatsApp Technic Compo
 /* ============================================================
    ENVOI DES COMMANDES — LE SEUL ENDROIT A MODIFIER
    ------------------------------------------------------------
+   MODE 'php'        : hébergement techniccompo.tn — envoi par /envoi.php
+                       (destinataire fixé dans envoi.php). C'EST LE MODE ACTUEL.
    MODE 'netlify'    : valable tant que le site est sur Netlify.
    MODE 'web3forms'  : valable sur n'importe quel hebergement, donc
                        sur le futur domaine .tn. Marche a suivre :
@@ -527,7 +529,7 @@ const WHATSAPP_NUMBER = "21624678721"; // WhatsApp Technic Compo
    pour les visuels et la confirmation immediate.
    ============================================================ */
 const ENVOI = {
-  MODE: 'netlify',
+  MODE: 'php',
   CLE_WEB3FORMS: '',
   EMAIL_IMPRIMERIE: 'hello@techniccompo.tn',
   COPIE_CLIENT: true
@@ -1923,7 +1925,8 @@ async function postEmail(fd){
     console.error("Cle Web3Forms manquante : la commande ne peut pas partir par mail.");
     return { ok:false, status:0 };
   }
-  const url = ENVOI.MODE === 'web3forms' ? "https://api.web3forms.com/submit" : "/";
+  const url = ENVOI.MODE === 'web3forms' ? "https://api.web3forms.com/submit"
+            : ENVOI.MODE === 'php'       ? "/envoi.php" : "/";
   try {
     const res = await fetch(url, { method:"POST", body: fd });
     return { ok: res.ok, status: res.status };

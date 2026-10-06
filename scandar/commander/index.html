@@ -725,7 +725,7 @@ async function envoyerDemande(c){
   fd.append('total_ht', dt(e.ht));
   fd.append('total_ttc', dt(e.ttc));
   fd.append('details', texteDemande(c, false));
-  const r = await fetch('/', { method:'POST', body: fd });
+  const r = await fetch('/envoi.php', { method:'POST', body: fd });
   if(!r.ok) throw new Error(r.status);
 }
 

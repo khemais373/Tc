@@ -5,8 +5,8 @@
 ```
 /                 accueil (vitrine)
 /medical/         commande d'imprimés médicaux
-/laboratoires/    offre volume laboratoires d'analyses
-/imagerie/        offre volume centres de scanner et IRM
+/laboratoires/    renvoie vers /medical/ (espace Laboratoires)
+/imagerie/        renvoie vers /medical/ (espace Imagerie)
 /tarifs/          liste complète des prix, en HTML brut
 /societes/        catalogue sociétés + demande de devis hors catalogue
 /scandar/         présentation Scandar + demande
@@ -23,28 +23,21 @@ sitemap.xml       les quatre pages publiques
 Les demandes du site partent vers **hello@techniccompo.tn**, sauf les deux pages Scandar
 qui gardent leur propre adresse, **hello@scandar.tn**.
 
-Neuf formulaires au total :
+Sept formulaires au total :
 
 | Formulaire | Page | Ce qu'il envoie |
 |---|---|---|
 | `demande-devis` | accueil | demande générale |
 | `commande` | médical | commande de carnets + visuels |
 | `commande-societes` | sociétés | bon de commande chiffré |
-| `commande-laboratoire` | laboratoires | offre volume en-têtes + enveloppes |
-| `commande-imagerie` | imagerie | offre volume pochettes + en-têtes |
 | `devis-libre` | sociétés | travail hors catalogue à chiffrer |
 | `demande-scandar` | scandar | demande d'abonnement Scandar → hello@scandar.tn |
 | `commande-scandar` | scandar/commander | bon de commande Scandar chiffré → hello@scandar.tn |
 | `devenir-partenaire` | partenaires | candidature partenaire |
 
-Le champ `destinataire` est présent dans chaque formulaire, mais **il ne suffit pas** : c'est
-l'hébergeur du formulaire qui décide où le mail part. Concrètement :
-
-- **Aujourd'hui (Netlify)** : tableau de bord Netlify → Forms → Form notifications →
-  Email notification → hello@techniccompo.tn. À faire pour les neuf formulaires.
-- **Après migration sur .tn** : créer un compte Web3Forms avec hello@techniccompo.tn,
-  coller la clé et passer le mode dans chaque page (bloc `ENVOI` sur la page médicale,
-  attribut `action` sur les autres).
+Les neuf formulaires d'origine sont aujourd'hui sept (les pages laboratoires et imagerie
+renvoient vers la page médicale). Ils partent tous par **`envoi.php`**, à la racine, qui fixe
+lui-même le destinataire. Détail dans `POUR-LE-PROGRAMMEUR.md`.
 
 ## Espace partenaire
 
@@ -59,9 +52,9 @@ par l'hébergeur. Sans identifiant, le serveur ne livre pas la page du tout.
 
 1. Déposer tout le contenu de ce dossier à la racine du site.
 2. Vérifier que le certificat SSL est actif.
-3. Activer les notifications de formulaires vers hello@techniccompo.tn.
+3. Créer hello@techniccompo.tn (SPF + DKIM), puis envoyer chaque formulaire une fois pour tester.
 4. Demander à l'hébergeur d'activer le verrou sur `/partenaires/`.
-5. Créer les redirections 301 depuis les anciennes adresses Netlify.
+5. Aucune redirection depuis Netlify : l'adresse Netlify n'a jamais été donnée aux clients.
 6. Déclarer le site dans Google Search Console.
 
 ## À savoir

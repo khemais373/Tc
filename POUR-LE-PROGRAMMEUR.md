@@ -17,49 +17,36 @@ Aucune base de données, aucun compte utilisateur.
 Prévoir SPF et DKIM sur les deux domaines. Sans eux, un domaine neuf part en spam
 et les demandes se perdent sans que personne s'en aperçoive.
 
-### Les sept formulaires
+### Les formulaires — déjà branchés sur `envoi.php`
+
+Tous les formulaires du site envoient vers **`/envoi.php`** (à la racine), qui part par la
+fonction `mail()` de PHP. Il n'y a **rien à brancher** : il suffit que l'hébergement exécute
+PHP et que l'adresse **hello@techniccompo.tn** existe, avec SPF et DKIM sur le domaine.
 
 | `form-name` | Page | Destinataire | Pièces jointes |
 |---|---|---|---|
 | `demande-devis` | `/` | hello@techniccompo.tn | non |
-| `commande` | `/medical/` | hello@techniccompo.tn | **oui** — jusqu'à 6 visuels |
+| `commande` | `/medical/` (médecins, laboratoires, imagerie) | hello@techniccompo.tn | **oui** — visuels |
 | `commande-societes` | `/societes/` | hello@techniccompo.tn | oui — logos, maquettes |
 | `devis-libre` | `/societes/` | hello@techniccompo.tn | oui |
-| `commande-laboratoire` | `/laboratoires/` | hello@techniccompo.tn | oui |
-| `commande-imagerie` | `/imagerie/` | hello@techniccompo.tn | oui |
+| `devenir-partenaire` | `/partenaires/` | hello@techniccompo.tn | non |
 | `demande-scandar` | `/scandar/` | hello@scandar.tn | non |
 | `commande-scandar` | `/scandar/commander/` | hello@scandar.tn | non |
-| `devenir-partenaire` | `/partenaires/` | hello@techniccompo.tn | non |
 
-Chaque formulaire porte un champ caché `destinataire` : c'est une indication,
-il ne route rien. C'est le backend qui décide.
+- Le destinataire est fixé **dans `envoi.php`** ; le champ caché `destinataire` des pages est ignoré.
+- Tous les champs reçus sont recopiés dans le mail, l'adresse du client est mise en « Répondre à ».
+- Pièces jointes : images et PDF, 10 Mo au total. Régler si possible `upload_max_filesize = 10M`
+  et `post_max_size = 12M` dans PHP.
+- Robots : un champ piège rempli = rien n'est envoyé.
+- Formulaire classique → redirection vers `/merci/` ; envoi par JavaScript → réponse JSON `{ok:true}`.
 
-### Aujourd'hui : Netlify Forms
+**Si `mail()` est désactivé chez l'hébergeur** : remplacer l'appel `mail()` en fin de fichier par
+PHPMailer en SMTP authentifié avec le compte hello@techniccompo.tn. C'est le seul endroit à changer.
 
-Les formulaires sont déclarés en `data-netlify="true"`. Il reste à créer une
-notification e-mail **pour chacun des neuf**, dans Forms → Form notifications.
-Une seule notification ne couvre pas les autres.
+**Tester après mise en ligne** : envoyer chaque formulaire une fois et vérifier la réception
+(pensez à regarder les indésirables).
 
-### Après migration sur l'hébergement .tn
-
-Netlify Forms ne fonctionne plus. Deux voies :
-
-**Web3Forms** (aucun serveur à gérer) — créer un compte par adresse, puis :
-- `/medical/` : bloc `ENVOI` en haut du script → `MODE: 'web3forms'` + `CLE_WEB3FORMS`
-- les autres pages : remplacer l'`action` du formulaire par `https://api.web3forms.com/submit`
-  et ajouter un champ caché `access_key`
-
-**PHP** (si l'hébergement le permet) — un `envoi.php` avec PHPMailer en SMTP authentifié,
-et l'`action` de chaque formulaire pointée dessus. À privilégier pour le formulaire médical :
-il envoie des visuels haute définition, jusqu'à 7 Mo, et les offres gratuites de
-services tiers plafonnent souvent plus bas.
-
-Les champs de chaque formulaire sont déclarés dans le HTML — pour le médical, dans un
-formulaire caché en bas de page. **Tout champ non déclaré est perdu à la réception.**
-
-### Redirection après envoi
-
-Tous les formulaires redirigent vers `/merci/`. À conserver quelle que soit la solution retenue.
+Les attributs `data-netlify` restés dans le HTML ne gênent pas hors Netlify.
 
 ---
 
@@ -113,7 +100,7 @@ quel visiteur atteint la page et n'a plus que l'écran de code entre lui et les 
 - `_headers` ne sert que sur Netlify ; les deux fichiers peuvent cohabiter.
 - Images du site dans `/images/`, celles du bon de commande Scandar dans
   `/scandar/commander/images/`. Ne pas renommer.
-- Prévoir les redirections 301 depuis les anciennes adresses Netlify.
+- Pas de redirection à prévoir depuis Netlify : l'adresse n'a jamais été donnée aux clients.
 - Les grilles de prix sont en dur dans chaque page (constantes en haut de script).
   **Ne jamais les modifier sans accord écrit du gérant.**
 - Aucune mention de matériel de production nulle part, y compris dans les attributs `alt`.
