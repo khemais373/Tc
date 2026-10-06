@@ -3,4 +3,4 @@ Disallow: /partenaires/
 Disallow: /merci/
 Allow: /
 
-Sitemap: https://technic-compo.tn/sitemap.xml
+Sitemap: https://techniccompo.tn/sitemap.xml

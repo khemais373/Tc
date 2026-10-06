@@ -11,7 +11,7 @@ Aucune base de données, aucun compte utilisateur.
 
 | Adresse | Reçoit |
 |---|---|
-| `hello@technic-compo.tn` | accueil, médical, sociétés, partenaires |
+| `hello@techniccompo.tn` | accueil, médical, sociétés, partenaires |
 | `hello@scandar.tn` | les deux pages Scandar |
 
 Prévoir SPF et DKIM sur les deux domaines. Sans eux, un domaine neuf part en spam
@@ -21,15 +21,15 @@ et les demandes se perdent sans que personne s'en aperçoive.
 
 | `form-name` | Page | Destinataire | Pièces jointes |
 |---|---|---|---|
-| `demande-devis` | `/` | hello@technic-compo.tn | non |
-| `commande` | `/medical/` | hello@technic-compo.tn | **oui** — jusqu'à 6 visuels |
-| `commande-societes` | `/societes/` | hello@technic-compo.tn | oui — logos, maquettes |
-| `devis-libre` | `/societes/` | hello@technic-compo.tn | oui |
-| `commande-laboratoire` | `/laboratoires/` | hello@technic-compo.tn | oui |
-| `commande-imagerie` | `/imagerie/` | hello@technic-compo.tn | oui |
+| `demande-devis` | `/` | hello@techniccompo.tn | non |
+| `commande` | `/medical/` | hello@techniccompo.tn | **oui** — jusqu'à 6 visuels |
+| `commande-societes` | `/societes/` | hello@techniccompo.tn | oui — logos, maquettes |
+| `devis-libre` | `/societes/` | hello@techniccompo.tn | oui |
+| `commande-laboratoire` | `/laboratoires/` | hello@techniccompo.tn | oui |
+| `commande-imagerie` | `/imagerie/` | hello@techniccompo.tn | oui |
 | `demande-scandar` | `/scandar/` | hello@scandar.tn | non |
 | `commande-scandar` | `/scandar/commander/` | hello@scandar.tn | non |
-| `devenir-partenaire` | `/partenaires/` | hello@technic-compo.tn | non |
+| `devenir-partenaire` | `/partenaires/` | hello@techniccompo.tn | non |
 
 Chaque formulaire porte un champ caché `destinataire` : c'est une indication,
 il ne route rien. C'est le backend qui décide.

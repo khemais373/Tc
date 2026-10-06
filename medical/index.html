@@ -153,7 +153,7 @@ html.lock,html.lock body{overflow:hidden}
 </head>
 <body>
 <nav class="tcnav" style="--nv-bg:#F7F5EF;--nv-line:#E7E3D8;--nv-ink:#12151A;--nv-mut:#6E747C">
-  <a class="home" href="/"><span class="bdg">TC</span> technic-compo.tn</a>
+  <a class="home" href="/"><span class="bdg">TC</span> techniccompo.tn</a>
   <a href="/medical/" class="on">Médical</a>
   <a href="/medical/?espace=img">Imagerie</a>
   <a href="/medical/?espace=labo">Laboratoires</a>
@@ -354,7 +354,7 @@ html.lock,html.lock body{overflow:hidden}
           <div class="font-semibold">Total estimé <span class="text-[11px] font-bold text-slate-400">HT</span></div>
           <div class="text-[11px] text-slate-400">Hors taxes • confirmé après validation du visuel</div>
         </div>
-        <div class="text-right"><span id="total-price" class="mono heading text-2xl text-[#003087]"></span><div id="total-gain" class="hidden mono text-[11px] font-bold text-emerald-600 mt-0.5"></div></div>
+        <div class="text-right"><span id="total-price" class="mono heading text-2xl text-[#003087]"></span><div id="total-unit" class="hidden mono text-[11px] text-slate-500 mt-0.5"></div><div id="total-gain" class="hidden mono text-[11px] font-bold text-emerald-600 mt-0.5"></div></div>
       </div>
 
       <button onclick="addToCart()" class="mt-4 w-full py-4 bg-[#003087] text-white font-bold rounded-3xl active:bg-[#002266] flex items-center justify-center gap-x-2">
@@ -529,7 +529,7 @@ const WHATSAPP_NUMBER = "21624678721"; // WhatsApp Technic Compo
 const ENVOI = {
   MODE: 'netlify',
   CLE_WEB3FORMS: '',
-  EMAIL_IMPRIMERIE: 'hello@technic-compo.tn',
+  EMAIL_IMPRIMERIE: 'hello@techniccompo.tn',
   COPIE_CLIENT: true
 };
 
@@ -555,15 +555,18 @@ const PRODUCTS = [
   { pub:['med','labo','img'], name:"En-têtes de lettre", img:"p-entetes",         icon:"fa-heading",        desc:"Papier à lettre",        format:"A4 (21 × 29,7 cm)", wcm:21, hcm:29.7, qtys:[1000,2000,3000], prices:{1000:150, 2000:276, 3000:382}  },
   { pub:['med'], name:"Pochettes patients", img:"p-pochette-patients",         icon:"fa-folder-open",    desc:"Carton rigide",          format:"A3 (29,7 × 42 cm)", wcm:29.7, hcm:42, qtys:[500,1000,2000],  prices:{500:260, 1000:478, 2000:884} },
   { pub:['med','labo','img'], name:"Fiches patients", img:"p-fiches-patients",            icon:"fa-file-lines",     desc:"Fiches de suivi",        format:"A5 (14,8 × 21 cm)", wcm:14.8, hcm:21, qtys:[500,1000,2000],  prices:{500:120, 1000:221, 2000:408}  },
-  { pub:['med'], name:"Offre spéciale — Pack médical", plein:{1:250, 2:370, 3:538}, defq:2, detail:{
-      1:["3 000 ordonnances personnalisées","1 000 certificats médicaux","250 DT de produits pour 229 DT"],
-      2:["3 000 ordonnances personnalisées","1 000 certificats médicaux","500 fiches patients — 90 DT au lieu de 120","51 DT d'économie sur l'achat séparé"],
-      3:["3 000 ordonnances personnalisées","1 000 certificats médicaux","500 fiches patients — 90 DT au lieu de 120","1 000 cartes de visite quadri — 100 DT au lieu de 168","119 DT d'économie sur l'achat séparé"]},
+  { pub:['med'], name:"Offre spéciale — Pack médical", plein:{1:249, 2:369, 3:537}, defq:2, detail:{
+      // Prix unitaires dans le pack : 3000 × 0,055 + 1000 × 0,064 = 229 ; + 500 × 0,180 = 319 ; + 1000 × 0,100 = 419.
+      1:["3 000 ordonnances — 0,055 l'unité (seules : 0,060)","1 000 certificats — 0,064 l'unité (seuls : 0,070)"],
+      2:["3 000 ordonnances — 0,055 l'unité (seules : 0,060)","1 000 certificats — 0,064 l'unité (seuls : 0,070)","500 fiches patients — 0,180 l'unité (seules : 0,240)"],
+      3:["3 000 ordonnances — 0,055 l'unité (seules : 0,060)","1 000 certificats — 0,064 l'unité (seuls : 0,070)","500 fiches patients — 0,180 l'unité (seules : 0,240)","1 000 cartes de visite quadri — 0,100 l'unité (seules : 0,168)"]},
     qlab:{1:"Essentiel",2:"Cabinet",3:"Complet"},
     icon:"fa-gift", desc:"Trois niveaux, de l'essentiel au cabinet équipé", format:"A5 (14,8 × 21 cm)", wcm:14.8, hcm:21, glueChoice:true, photos:2, badge:"OFFRE", img:"p-pack-medical", qtys:[1,2,3], prices:{1:229, 2:319, 3:419} },
   { pub:['labo'], name:"Enveloppes à fenêtre", img:"p-enveloppes-fenetre", icon:"fa-envelope-circle-check", desc:"Fenêtre transparente, résultats", format:"11 × 22 cm", wcm:11, hcm:22, qtys:[1000,2000,3000], prices:{1000:215, 2000:396, 3000:548} },
-  { pub:['labo'], name:"Pack Laboratoire", defq:4000,
-    plein:{2000:670, 3000:975, 4000:1290, 5000:1605, 6000:1920},
+  /* « plein » = prix « séparément » : le total le moins cher en achetant les mêmes articles au catalogue
+     (au-delà de 3 000, combinaison de paliers : 4 000 = 3 000 + 1 000, 6 000 = 3 000 + 3 000). */
+  { pub:['labo'], name:"Pack Laboratoire", defq:4000, uMul:2,
+    plein:{2000:672, 3000:930, 4000:1295, 5000:1602, 6000:1860},
     detail:{
       2000:["2 000 en-têtes A4 — 0,125 l'unité","2 000 enveloppes à fenêtre — 0,125 l'unité"],
       3000:["3 000 en-têtes A4 — 0,110 l'unité","3 000 enveloppes à fenêtre — 0,110 l'unité"],
@@ -576,15 +579,15 @@ const PRODUCTS = [
   { pub:['img'], name:"Pochettes 25 × 35", img:"p-pochette-imagerie", icon:"fa-folder-closed", desc:"Films et CD", format:"25 × 35 cm", wcm:25, hcm:35, qtys:[1000,2000,3000], prices:{1000:380, 2000:699, 3000:969} },
   { pub:['img'], name:"Pochettes 30 × 40", img:"p-pochette-imagerie", icon:"fa-folder-closed", desc:"Grands films", format:"30 × 40 cm", wcm:30, hcm:40, qtys:[1000,2000,3000], prices:{1000:450, 2000:828, 3000:1148} },
   { pub:['img'], name:"Pochettes 22,9 × 32,4", img:"p-pochette-imagerie", icon:"fa-folder-closed", desc:"Compte rendu à plat", format:"22,9 × 32,4 cm", wcm:22.9, hcm:32.4, qtys:[1000,2000,3000], prices:{1000:350, 2000:644, 3000:892} },
-  { pub:['img'], name:"Pack Imagerie grand format", plein:{1000:600, 2000:1130, 3000:1720}, defq:2000, detail:{
+  { pub:['img'], name:"Pack Imagerie grand format", plein:{1000:600, 2000:1104, 3000:1698}, defq:2000, detail:{
       1000:["1 000 pochettes 30 × 40 — 0,440 l'unité","1 000 en-têtes A4 — 0,110 l'unité"],
       2000:["2 000 pochettes 30 × 40 — 0,385 l'unité","2 000 en-têtes A4 — 0,100 l'unité"],
-      3000:["3 000 pochettes 30 × 40 — 0,370 l'unité","3 000 en-têtes A4 — 0,090 l'unité","1 000 cartes de visite offertes"]},
+      3000:["3 000 pochettes 30 × 40 — 0,370 l'unité","3 000 en-têtes A4 — 0,090 l'unité","1 000 cartes de visite quadri offertes"]},
     icon:"fa-x-ray", desc:"Grands films IRM + comptes rendus", format:"30 × 40 + A4", wcm:30, hcm:40, photos:2, badge:"PACK", img:"p-pochette-imagerie", qtys:[1000,2000,3000], prices:{1000:550, 2000:970, 3000:1380} },
-  { pub:['img'], name:"Pack Imagerie", plein:{1000:530, 2000:990, 3000:1510}, defq:2000, detail:{
+  { pub:['img'], name:"Pack Imagerie", plein:{1000:530, 2000:975, 3000:1519}, defq:2000, detail:{
       1000:["1 000 pochettes 25 × 35 — 0,380 l'unité","1 000 en-têtes A4 — 0,110 l'unité"],
       2000:["2 000 pochettes 25 × 35 — 0,325 l'unité","2 000 en-têtes A4 — 0,100 l'unité"],
-      3000:["3 000 pochettes 25 × 35 — 0,315 l'unité","3 000 en-têtes A4 — 0,090 l'unité","1 000 cartes de visite offertes"]}, img:"p-pochette-imagerie", icon:"fa-x-ray", desc:"Pochettes 25 × 35 + comptes rendus", format:"25 × 35 + A4", wcm:25, hcm:35, photos:2, badge:"PACK", qtys:[1000,2000,3000], prices:{1000:490, 2000:850, 3000:1215} },
+      3000:["3 000 pochettes 25 × 35 — 0,315 l'unité","3 000 en-têtes A4 — 0,090 l'unité","1 000 cartes de visite quadri offertes"]}, img:"p-pochette-imagerie", icon:"fa-x-ray", desc:"Pochettes 25 × 35 + comptes rendus", format:"25 × 35 + A4", wcm:25, hcm:35, photos:2, badge:"PACK", qtys:[1000,2000,3000], prices:{1000:490, 2000:850, 3000:1215} },
 ];
 
 /* ============================================================
@@ -775,7 +778,23 @@ function renderProducts(){
       <div class="pl-grid">${groups[c].map(([p,i]) => productCard(p,i)).join('')}</div>`).join('');
 }
 
+/* Prix unitaire : affiché partout (catalogue, quantités, panier, envoi).
+   Un pack n'a de prix unitaire unique que si tous ses articles ont le même (uMul = nb d'articles par lot). */
+function isPack(p){ return !!(p && (p.plein || p.qlab)); }
+function u3(v){ return v.toFixed(3).replace('.', ','); }
+function unitPrice(p, q){
+  if (!p || !q || q < 100 || (isPack(p) && !p.uMul)) return null;
+  return p.prices[q] / (q * (p.uMul || 1));
+}
+function bestUnit(p){
+  const us = p.qtys.map(q => unitPrice(p, q)).filter(v => v != null);
+  return us.length ? Math.min(...us) : null;
+}
 function productCard(p,i){
+  const u = bestUnit(p), q0 = p.qtys[0];
+  const sousLigne = !isPack(p)
+    ? `${q0.toLocaleString('fr-FR')} ex. : ${p.prices[q0]} DT HT`
+    : (u != null ? `Pack dès ${p.prices[q0]} DT HT` : '');
   return `
     <button onclick="openOrder(${i})" class="app-card w-full text-left bg-white border border-[#E7E7DE] rounded-2xl p-3.5 flex gap-x-3.5 items-center">
       ${paperPreview(p)}
@@ -783,11 +802,15 @@ function productCard(p,i){
         <div class="font-semibold text-[15px] leading-snug">${p.badge ? `<span class="mono text-[8px] font-bold bg-[#EC008C] text-white px-1.5 py-0.5 rounded align-middle mr-1.5 tracking-wider">${p.badge}</span>` : ''}${p.name}</div>
         <div class="text-[12.5px] text-slate-400 truncate">${p.desc}</div>
         <div class="mono text-[10px] text-slate-400 mt-1 tracking-wide">${p.format || ''}</div>
+        ${sousLigne ? `<div class="mono text-[10.5px] text-slate-500 mt-0.5">${sousLigne}</div>` : ''}
       </div>
       <div class="text-right flex-shrink-0 pl-1">
         <div class="text-[10px] uppercase tracking-wider text-slate-400 mb-0.5">dès</div>
-        <div class="mono font-bold text-[#003087] text-[16px] leading-none">${p.prices[p.qtys[0]]}</div>
-        <div class="mono text-[9px] text-slate-400 mt-0.5">TND HT</div>
+        ${u != null
+          ? `<div class="mono font-bold text-[#003087] text-[16px] leading-none">${u3(u)}</div>
+             <div class="mono text-[9px] text-slate-400 mt-0.5">DT HT / unité</div>`
+          : `<div class="mono font-bold text-[#003087] text-[16px] leading-none">${p.prices[q0]}</div>
+             <div class="mono text-[9px] text-slate-400 mt-0.5">TND HT le pack</div>`}
       </div>
     </button>`;
 }
@@ -839,7 +862,8 @@ function renderOrders(){
                        : `<div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0"><i class="fa-solid fa-print text-[#003087] text-sm"></i></div>`}
             <div class="flex-1 min-w-0">
               <div class="font-semibold text-[14px] leading-tight">${it.product}</div>
-              <div class="text-[12px] text-slate-500">${qtyText(it)}${it.color ? ' • '+it.color : ''}${it.glue ? ' • '+it.glue : ''} • ${it.total} TND HT</div>
+              <div class="text-[12px] text-slate-500">${qtyText(it)}${itemUnitText(it) ? ' à '+itemUnitText(it) : ''}${it.color ? ' • '+it.color : ''}${it.glue ? ' • '+it.glue : ''} • ${it.total} TND HT</div>
+              ${itemPackLines(it).map(l => `<div class="text-[11px] text-slate-400 leading-snug">${l}</div>`).join('')}
               ${it.format ? `<div class="text-[12px] text-slate-400">${it.format}${itemPhotos(it).length>1 ? ' • '+itemPhotos(it).length+' visuels' : ''}</div>` : ''}
               ${it.cardText ? `<div class="text-[12px] text-slate-400 truncate"><i class="fa-solid fa-font text-[10px]"></i> ${it.cardText}</div>` : ''}
               ${it.notes ? `<div class="text-[12px] text-slate-400 truncate"><i class="fa-solid fa-pen text-[10px]"></i> ${it.notes}</div>` : ''}
@@ -962,9 +986,26 @@ function qtyText(it){
   const q = it.quantity || 0, P = PRODUCTS.find(x => x.name === it.product);
   if (P && P.qlab && P.qlab[q]) return 'Pack ' + P.qlab[q];
   if (q === 1) return 'Pack';
+  if (P && P.uMul) return Array(P.uMul).fill(q.toLocaleString('fr-FR')).join(' + ') + ' ex.';
   return q.toLocaleString('fr-FR') + ' ex.';
 }
 const fmtU = v => v.toFixed(3).replace('.', ',');
+/* Prix unitaire d'une ligne de panier ou de commande.
+   Calculé sur le montant réellement facturé (un complément de pack garde son tarif réduit). */
+function itemUnit(it){
+  const P = PRODUCTS.find(x => x.name === it.product), q = it.quantity || 0;
+  if (!q || q < 100 || isPack(P)) return null;   // un pack détaille ses prix unitaires ligne par ligne
+  return it.total / q;
+}
+function itemUnitText(it){
+  const u = itemUnit(it);
+  return u != null ? `${fmtU(u)} DT/u` : '';
+}
+function itemPackLines(it){
+  const P = PRODUCTS.find(x => x.name === it.product);
+  const d = P && P.detail && P.detail[it.quantity];
+  return d ? d.filter(l => /l'unité|offert/i.test(l)) : [];
+}
 function qtyGain(q){
   const P = currentProduct, prix = P.prices[q];
   if (P.plein && P.plein[q]) return P.plein[q] - prix;
@@ -976,9 +1017,10 @@ function renderQtyButtons(){
   document.getElementById('qty-row').innerHTML = P.qtys.map(q => {
     const prix = P.prices[q], gain = qtyGain(q);
     const libelle = (P.qlab && P.qlab[q]) || (q===1 ? 'Pack' : q.toLocaleString('fr-FR'));
-    const unite = q < 100
-      ? `${prix} DT`
-      : `${fmtU(prix / q)} <span class="qty-u">/${P.plein ? 'lot' : 'u'}</span>`;
+    const pu = unitPrice(P, q);
+    const unite = pu != null
+      ? `${fmtU(pu)} <span class="qty-u">/u</span>`
+      : `${prix} DT`;
     const bas = gain > 0
       ? `<div class="text-[11px] mono font-bold qty-ecart">−${gain} DT</div>`
       : `<div class="text-[10.5px] qty-price mono">${prix} DT</div>`;
@@ -1003,6 +1045,13 @@ function setQuantity(q){
   });
   const g = qtyGain(q);
   document.getElementById('total-price').innerText = currentProduct.prices[q] + " TND HT";
+  const tu = document.getElementById('total-unit'), pu = unitPrice(currentProduct, q);
+  if (tu){
+    tu.textContent = pu != null
+      ? `${q.toLocaleString('fr-FR')}${currentProduct.uMul ? ' + ' + q.toLocaleString('fr-FR') : ''} × ${fmtU(pu)} DT l'unité`
+      : (isPack(currentProduct) ? "Prix unitaire de chaque article ci-dessus" : '');
+    tu.classList.toggle('hidden', !tu.textContent);
+  }
   const tg = document.getElementById('total-gain');
   if (tg){ tg.textContent = g > 0 ? `Vous économisez ${g} DT` : ''; tg.classList.toggle('hidden', !(g > 0)); }
 }
@@ -1599,7 +1648,7 @@ function renderSuggestions(){
         <div class="text-[12px] mt-0.5">
           <span class="font-bold text-[#EC008C] mono">${c.prix} DT</span>
           <span class="text-slate-400 line-through mono ml-1.5">${c.plein}</span>
-          <span class="text-slate-500 ml-1">soit ${c.plein-c.prix} DT de moins</span>
+          <span class="text-slate-500 ml-1">${u3(c.prix/c.qte)} DT/u · ${c.plein-c.prix} DT de moins</span>
         </div>
       </div>
       <span class="w-9 h-9 rounded-full bg-[#003087] text-white flex items-center justify-center flex-none">
@@ -1644,7 +1693,8 @@ function renderCartSheet(){
       <img src="${it.photo}" class="w-12 h-12 rounded-xl object-cover bg-white flex-shrink-0" alt="">
       <div class="flex-1 min-w-0">
         <div class="font-semibold text-sm leading-tight">${it.product}</div>
-        <div class="text-[12px] text-slate-500">${qtyText(it)}${it.color ? ' • '+it.color : ''}${it.glue ? ' • '+it.glue : ''} • <b class="text-[#003087]">${it.total} TND HT</b></div>
+        <div class="text-[12px] text-slate-500">${qtyText(it)}${itemUnitText(it) ? ' à '+itemUnitText(it) : ''}${it.color ? ' • '+it.color : ''}${it.glue ? ' • '+it.glue : ''} • <b class="text-[#003087]">${it.total} TND HT</b></div>
+        ${itemPackLines(it).map(l => `<div class="text-[11px] text-slate-400 leading-snug">${l}</div>`).join('')}
         ${it.format ? `<div class="text-[11px] text-slate-400">${it.format}${itemPhotos(it).length>1 ? ' • '+itemPhotos(it).length+' visuels' : ''}</div>` : ''}
       </div>
       <button onclick="removeCartItem(${i})" class="w-9 h-9 rounded-full bg-white text-red-500 flex items-center justify-center flex-shrink-0" aria-label="Retirer"><i class="fa-solid fa-trash-can text-sm"></i></button>
@@ -1825,7 +1875,9 @@ async function buildEmailForm(order, withFiles){
   fd.append("reference", order.ref);
   fd.append("date", order.date);
   const lines = items.map((it, idx) => {
-    let line = `${idx+1}) ${it.product} — ${qtyText(it)} — ${it.total} TND HT`;
+    let line = `${idx+1}) ${it.product} — ${qtyText(it)}${itemUnitText(it) ? ' à '+itemUnitText(it) : ''} — ${it.total} TND HT`;
+    const pl = itemPackLines(it);
+    if (pl.length) line += ` — Détail : ${pl.join(' ; ')}`;
     if (it.format)    line += ` — Format : ${it.format}`;
     if (it.glue)      line += ` — Reliure : ${it.glue}`;
     if (it.color)     line += ` — Couleur : ${it.color}`;
@@ -2015,7 +2067,8 @@ function sendWhatsApp(order){
   const u = order.user || store.get('technic_user') || {};
   const items = orderItems(order);
   const lines = items.map((it,i) =>
-    `${i+1}. ${it.product} — ${qtyText(it)} — ${it.total} TND HT` +
+    `${i+1}. ${it.product} — ${qtyText(it)}${itemUnitText(it) ? ' à '+itemUnitText(it) : ''} — ${it.total} TND HT` +
+    itemPackLines(it).map(l => `\n   • ${l}`).join('') +
     (it.format ? `\n   📐 ${it.format}` : '') +
     (it.glue ? `\n   📕 ${it.glue}` : '') +
     (it.color ? `\n   🎨 ${it.color}` : '') +
