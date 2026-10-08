@@ -79,7 +79,7 @@ WhatsApp, et le client les joint lui-même.
 
 ## 3. Espace partenaire
 
-`/partenaires/` affiche un écran de code (actuellement `666`, stocké en empreinte
+`/partenaires/` affiche un écran de code (stocké uniquement en empreinte
 SHA-256 dans la constante `EMPREINTE`). **C'est un rideau, pas une serrure** : la page
 est déjà chargée derrière.
 

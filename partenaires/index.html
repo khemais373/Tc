@@ -301,7 +301,7 @@ h1,h2,h3,.h2,.hero h1,.logo-n,.tcname,.gate-t,.pn,.ttl,.cfg-ttl,.lbadge,.tclogo,
      serveur (.htaccess avec mot de passe sur le dossier).
      Pour changer le mot de passe : remplacer EMPREINTE par
      l'empreinte SHA-256 du nouveau mot de passe.
-     Mot de passe actuel : 666
+     Le mot de passe en clair n'est ecrit nulle part dans le site.
      ============================================================ -->
 <div id="gate">
   <div class="gate-box">
@@ -312,7 +312,7 @@ h1,h2,h3,.h2,.hero h1,.logo-n,.tcname,.gate-t,.pn,.ttl,.cfg-ttl,.lbadge,.tclogo,
     <p class="gate-s">Cet espace et ses tarifs sont réservés aux agences partenaires de Technic Compo.</p>
 
     <label class="lab" for="gPass">Mot de passe</label>
-    <input class="inp n" id="gPass" type="password" inputmode="numeric" autocomplete="current-password" placeholder="•••">
+    <input class="inp n" id="gPass" type="password" inputmode="numeric" autocomplete="current-password" placeholder="••••">
     <button class="gate-go" id="gBtn">Entrer</button>
     <p class="gate-err" id="gErr"></p>
 
@@ -491,7 +491,7 @@ const WA = "21624678721";
 /* ============================================================
    PORTAIL PARTENAIRE
    ============================================================ */
-const EMPREINTE = "c7e616822f366fb1b5e0756af498cc11d2c0862edcb32ca65882f622ff39de1b";  // 666
+const EMPREINTE = "158a323a7ba44870f23d96f1516dd70aa48e9a72db4ebb026b0a89e212a208ab";
 const CLE_ACCES = "tc_partenaire_ok";
 
 async function empreinte(txt){

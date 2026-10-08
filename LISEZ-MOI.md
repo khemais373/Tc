@@ -11,7 +11,7 @@
 /societes/        catalogue sociétés + demande de devis hors catalogue
 /scandar/         présentation Scandar + demande
 /scandar/commander/  bon de commande Scandar (packs, supports QR)
-/partenaires/     tarifs partenaires — accès par code (666)
+/partenaires/     tarifs partenaires — accès par code
 /merci/           page de confirmation après envoi d'un formulaire
 .htaccess         HTTPS, redirections, cache
 robots.txt        /partenaires/ exclu de Google
@@ -41,7 +41,7 @@ lui-même le destinataire. Détail dans `POUR-LE-PROGRAMMEUR.md`.
 
 ## Espace partenaire
 
-Code actuel : **666**. Il n'est pas écrit en clair dans le fichier, seule son empreinte
+Le code n'est pas écrit en clair dans le fichier, seule son empreinte
 SHA-256 y figure (`partenaires/index.html`, constante `EMPREINTE`).
 
 Ce code est un rideau, pas une serrure : la page est déjà chargée derrière l'écran.
