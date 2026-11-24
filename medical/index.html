@@ -150,11 +150,24 @@ html.lock,html.lock body{overflow:hidden}
 .gain-rem{font-style:normal;font-size:12.5px;font-weight:700;color:#fff;background:#EC008C;
   border-radius:999px;padding:3px 10px}
 </style>
+<style>
+.tc-studio{margin-top:20px;display:flex;align-items:center;gap:12px;padding:16px;border-radius:24px;background:#12151A;color:#fff;text-decoration:none;box-shadow:0 14px 30px -16px rgba(18,21,26,.45)}
+.tc-studio.petit{margin:0 0 12px;padding:13px 14px;border-radius:18px}
+.tc-studio-ic{width:44px;height:44px;flex:none;border-radius:14px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:#5FE0CC;font-size:18px}
+.tc-studio.petit .tc-studio-ic{width:36px;height:36px;font-size:15px}
+.tc-studio-tx{flex:1;min-width:0}.tc-studio-tx b{display:block;font-size:15px;line-height:1.25}.tc-studio.petit .tc-studio-tx b{font-size:13.5px}
+.tc-studio-tx small{display:block;margin-top:3px;font-size:12px;line-height:1.4;color:rgba(255,255,255,.72)}
+.tc-studio-go{font-size:18px;color:rgba(255,255,255,.85)}
+.tc-eco{margin-top:8px;display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:18px;border:1px solid #E2E8F0;background:#fff;color:#12151A;font-size:13px;text-decoration:none}
+.tc-eco-tag{flex:none;font:700 10px/1 'JetBrains Mono',monospace;letter-spacing:.1em;padding:6px 8px;border-radius:8px;background:#0B7F71;color:#fff}
+.tc-eco span:nth-child(2){flex:1}.tc-eco-go{color:#94A3B8;font-size:16px}
+</style>
 </head>
 <body>
 <nav class="tcnav" style="--nv-bg:#F7F5EF;--nv-line:#E7E3D8;--nv-ink:#12151A;--nv-mut:#6E747C">
   <a class="home" href="/"><span class="bdg">TC</span> techniccompo.tn</a>
   <a href="/medical/" class="on">Médical</a>
+  <a href="/conception/?metier=medical">Design studio</a>
   <a href="/medical/?espace=img">Imagerie</a>
   <a href="/medical/?espace=labo">Laboratoires</a>
   <a href="/societes/">Sociétés</a>
@@ -236,6 +249,15 @@ html.lock,html.lock body{overflow:hidden}
 
     <h1 class="heading text-[23px] leading-snug">Vos imprimés,<br>en quelques secondes.</h1>
     <p class="text-slate-500 mt-2">Photographiez votre modèle, choisissez la quantité — Technic Compo s’occupe du reste.</p>
+
+    <a href="/conception/?metier=medical&amp;produit=ordonnances" class="tc-studio">
+      <span class="tc-studio-ic"><i class="fa-solid fa-pen-ruler"></i></span>
+      <span class="tc-studio-tx"><b>Pas de modèle ? Créez votre design</b><small>Ordonnances, certificats, cartes, en-têtes : votre logo et vos textes, en français et en arabe, prix immédiat.</small></span>
+      <span class="tc-studio-go">→</span>
+    </a>
+    <a href="/conception/?metier=medical&amp;produit=ordonnances&amp;style=eco" class="tc-eco">
+      <span class="tc-eco-tag">ÉCO</span><span><b>Pack médical éco</b> — 1 000 ordonnances dès 50 DT HT</span><span class="tc-eco-go">→</span>
+    </a>
 
     <div class="mt-5 flex items-center gap-x-4 text-[13px] text-slate-500">
       <span class="flex items-center gap-x-1.5"><i class="fa-solid fa-bolt text-amber-500"></i> Devis instantané</span>
@@ -327,6 +349,11 @@ html.lock,html.lock body{overflow:hidden}
 
             <!-- Photo(s) -->
       <label id="photo-label" class="text-sm font-semibold mb-2 mt-6 block">Votre modèle ou visuel <span class="text-red-500">*</span> <span class="font-normal text-slate-400">(obligatoire)</span></label>
+      <a id="lien-studio" href="/conception/?metier=medical" class="tc-studio petit">
+        <span class="tc-studio-ic"><i class="fa-solid fa-pen-ruler"></i></span>
+        <span class="tc-studio-tx"><b>Pas d’ancien modèle ?</b><small>Créez votre design en ligne : il nous arrive prêt à imprimer.</small></span>
+        <span class="tc-studio-go">→</span>
+      </a>
       <div id="upload-zone" class="border-2 border-dashed border-slate-200 rounded-3xl p-6 text-center">
         <i class="fa-solid fa-wand-magic-sparkles text-3xl text-[#003087] mb-2"></i>
         <p id="upload-hint" class="text-sm text-slate-500">Photographiez votre ancien imprimé :<br>notre IA le transforme en scan propre</p>
@@ -905,8 +932,21 @@ const PRINT_COLORS = [
 ];
 let currentColor = null;
 
+/* Raccourci vers le Design studio, sur le bon produit */
+function lienStudio(p){
+  const n = (p.name || '').toLowerCase(); let q = 'metier=medical';
+  if (/pack|offre/.test(n)) q += '&produit=ordonnances&style=eco';
+  else if (/ordonnance/.test(n)) q += '&produit=ordonnances';
+  else if (/certificat/.test(n)) q += '&produit=certificats';
+  else if (/carte visite 1 couleur/.test(n)) q += '&produit=cartes&style=eco';
+  else if (/carte visite/.test(n)) q += '&produit=cartes';
+  else if (/enveloppes imprim/.test(n)) q += '&produit=enveloppes';
+  else if (/en-t[eê]te/.test(n)) q += '&produit=entetes';
+  return '/conception/?' + q;
+}
 function openOrder(i){
   currentProduct = PRODUCTS[i]; uploadedPhotos = [];
+  { const l = document.getElementById('lien-studio'); if (l) { l.href = lienStudio(currentProduct); l.style.display = /vierge/i.test(currentProduct.name) ? 'none' : ''; } }
   document.getElementById('modal-product-name').innerText = currentProduct.name;
   document.getElementById('modal-product-format').innerText = currentProduct.format ? "Format : " + currentProduct.format : "";
   document.getElementById('modal-product-icon').innerHTML = `<i class="fa-solid ${currentProduct.icon} text-xl"></i>`;

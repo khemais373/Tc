@@ -419,6 +419,10 @@ h1,h2,h3{letter-spacing:-.02em}
 
 .top nav.liens{gap:28px}
 @media(hover:none){.produits button:hover{transform:none;border-color:var(--line)}.produits button[aria-pressed=true]:hover{border-color:var(--ink)}.tuile:hover{transform:none}}
+.bat{display:flex;gap:12px;align-items:flex-start;margin:14px 0 4px;padding:14px 16px;border:1.5px solid var(--ink);border-radius:14px;background:#fff;font-size:.86rem;line-height:1.5;color:var(--ink2);cursor:pointer}
+.bat input{width:20px;height:20px;flex:none;margin-top:2px;accent-color:var(--ink)}
+.bat b{color:var(--ink)}
+.choix.polices button{font-size:1rem}
 </style>
 </head>
 <body>
@@ -1073,7 +1077,7 @@ const VERSOS = {
 };
 
 /* ---------- Bibliothèque complète, du plus simple au plus travaillé ---------- */
-const STYLES = {tous:'Tous', eco:'Éco · 1 couleur', simple:'Simples', moderne:'Modernes', couleur:'Couleur', prestige:'Prestige', creatif:'Créatifs', signature:'Signature', sante:'Santé premium'};
+const STYLES = {tous:'Tous', eco:'Pack médical éco', simple:'Simples', moderne:'Modernes', couleur:'Couleur', prestige:'Prestige', creatif:'Créatifs', signature:'Signature', sante:'Santé premium'};
 const versoSimple = (f,c) => fond(c) + logo(f, CW/2-9, CH/2-13, 18, c, c) + txt(CW/2, CH/2+13, f.societe, 3.4, {bold:true, anchor:'middle', fill:'#fff', ls:0.3, max:LU});
 /* ============ Série Signature : 50 designs premium, faisables en offset (aplats, filets ≥ 0,15 mm, deux tons) ============
    Chaque design = un motif dessiné (patrimoine tunisien, haute facture, géométrie, cartographie, métiers)
@@ -1801,25 +1805,25 @@ const versSig = ([nom, m, r, v, p, ff, metiers]) => ({nom, metiers, motif:m,
 const SANTE = SANTE_LISTE.map(versSig);
 const AVOCATS = AVOCAT_LISTE.map(versSig);
 
-/* ============ Gamme Éco : 1 seule encre en aplat 100 %, police au choix (français et arabe), prix au plus juste ============ */
+/* ============ Pack médical éco : 1 seule encre en aplat 100 %, police au choix (français et arabe), prix au plus juste ============ */
 const ECO_COULEURS = ['#16181D','#1B2A4A','#1D4E9E','#0B6E79','#0B7F71','#2E6B30','#7A1F2B','#B3261E','#5B2A86','#8A5A14'];
 const ECO_FR = [['montserrat','Montserrat'],['poppins','Poppins'],['raleway','Raleway'],['josefin','Josefin'],['oswald','Oswald'],['playfair','Playfair'],['lora','Lora'],['baskerville','Baskerville'],['cormorant','Cormorant'],['cinzel','Cinzel']];
 const ECO_AR = [['cairo','Cairo'],['tajawal','Tajawal'],['almarai','Almarai'],['changa','Changa'],['kufi','Kufi'],['reemkufi','Reem Kufi'],['amiri','Amiri'],['messiri','El Messiri']];
 const ECO = {fr:'montserrat', ar:'cairo'};   // police choisie par le client (gardée avec ses textes)
 const ecoFF = () => POLICES[ECO.fr] || MS;
-const PRIX_ECO = {"cartes": {"r": {"1000": 36, "2000": 48, "3000": 61, "5000": 86}, "rv": {"1000": 53, "2000": 67, "3000": 81, "5000": 109}}, "entetes": {"1000": 56, "2000": 89, "3000": 123, "5000": 189}, "enveloppes": {"1000": 87, "2000": 158, "3000": 229, "5000": 371}, "ordonnances": {"1000": 50, "2000": 76, "3000": 103}, "chemises": {"1000": 1760, "2000": 3520, "3000": 5280}, "fiches": {"350": {"500": 232, "1000": 425}, "170": {"500": 138, "1000": 237}}, "blocs": {"A4": {"50": {"50": 180.0, "100": 330.0, "200": 640.0, "500": 1550.0}, "100": {"50": 280.0, "100": 540.0, "200": 1040.0, "500": 2600.0}}, "A5": {"50": {"50": 115.0, "100": 200.0, "200": 380.0, "500": 900.0}, "100": {"50": 170.0, "100": 310.0, "200": 600.0, "500": 1450.0}}, "A6": {"50": {"50": 80.0, "100": 140.0, "200": 260.0, "500": 600.0}, "100": {"50": 110.0, "100": 200.0, "200": 380.0, "500": 900.0}}}};   // HT, coût de revient + 10 % (outil de devis, papier au prorata), calculé le 24/11/2026
+const PRIX_ECO = {"cartes": {"r": {"1000": 50, "2000": 63, "3000": 75, "5000": 101}, "rv": {"1000": 70, "2000": 85, "3000": 99, "5000": 127}}, "entetes": {"1000": 79, "2000": 113, "3000": 146, "5000": 213}, "enveloppes": {"1000": 99, "2000": 171, "3000": 242, "5000": 384}, "ordonnances": {"1000": 50, "2000": 77, "3000": 104}, "fiches": {"350": {"500": 250, "1000": 444}, "170": {"500": 138, "1000": 237}}, "blocs": {"A4": {"50": {"50": 180.0, "100": 330.0, "200": 640.0, "500": 1550.0}, "100": {"50": 280.0, "100": 540.0, "200": 1040.0, "500": 2600.0}}, "A5": {"50": {"50": 115.0, "100": 200.0, "200": 380.0, "500": 900.0}, "100": {"50": 170.0, "100": 310.0, "200": 600.0, "500": 1450.0}}, "A6": {"50": {"50": 80.0, "100": 140.0, "200": 260.0, "500": 600.0}, "100": {"50": 110.0, "100": 200.0, "200": 380.0, "500": 900.0}}}};   // HT, prix fixés par Khemais le 24/11/2026 à 1 000 ex. (500 pour les fiches), puis dégressifs au coût + 10 %. Ancienne note :, coût de revient + 10 % (outil de devis, papier au prorata), calculé le 24/11/2026
 const ECO_LISTE = [
   {nom:'Éco · Classique', metiers:['medical','conseil','commerce','avocat','beaute','restaurant','transport','btp','auto','informatique','agriculture'],
     recto:(f,c) => { const ff = ecoFF(); return logo(f, CW/2-5, 5.5, 10, c)
       + tc(CW/2, 23.5, f.nom, 4.3, {ff, w:700, fill:c, anchor:'middle', max:CW-12}) + tc(CW/2, 27.6, maj(f.fonction), 1.7, {ff, w:600, ls:0.5, fill:c, anchor:'middle', max:CW-14})
       + `<rect x="${CW/2-6}" y="30.4" width="12" height="0.3" fill="${c}"/>` + tc(CW/2, 36.6, f.societe, 2.3, {ff, w:600, fill:c, anchor:'middle', max:CW-14})
       + tc(CW/2, 42.4, [f.tel, f.email].filter(Boolean).join('   ·   '), 1.8, {ff, fill:c, anchor:'middle', max:CW-10}) + tc(CW/2, 46, f.adresse, 1.7, {ff, fill:c, anchor:'middle', max:CW-10}); }},
-  {nom:'Éco · Filet', metiers:['conseil','avocat','medical','commerce','informatique','btp','transport','auto','beaute','restaurant','agriculture'],
+  {nom:'Éco · Filet', metiers:['medical','conseil','avocat','commerce','beaute','restaurant','transport','btp','auto','informatique','agriculture'],
     recto:(f,c) => { const ff = ecoFF(); return logo(f, M, M, 9, c) + tc(CW-M, M+3.4, maj(f.societe), 1.7, {ff, w:700, ls:0.5, fill:c, anchor:'end', max:46})
       + `<rect x="${M}" y="19" width="0.5" height="${CH-19-M}" fill="${c}"/>`
       + tc(M+3.5, 23.5, f.nom, 4.3, {ff, w:700, fill:c, max:CW-2*M-6}) + tc(M+3.5, 27.6, maj(f.fonction), 1.65, {ff, w:600, ls:0.45, fill:c, max:CW-2*M-6})
       + coord(f, M+3.5, 34.5, {lettre:c, fill:c, quoi:['tel','email','site','adresse'], taille:1.75, pas:3.55, max:CW-2*M-12}); }},
-  {nom:'Éco · Bandeau', metiers:['commerce','restaurant','transport','btp','auto','medical','conseil','avocat','beaute','informatique','agriculture'],
+  {nom:'Éco · Bandeau', metiers:['medical','conseil','avocat','commerce','beaute','restaurant','transport','btp','auto','informatique','agriculture'],
     recto:(f,c) => { const ff = ecoFF(); return logo(f, M, M, 11, c) + tc(M+14, M+5, f.nom, 4.1, {ff, w:700, fill:c, max:CW-2*M-14}) + tc(M+14, M+9.4, maj(f.fonction), 1.6, {ff, w:600, ls:0.45, fill:c, max:CW-2*M-14})
       + tc(M, 29.5, f.societe, 2.4, {ff, w:700, fill:c, max:CW-2*M}) + tc(M, 33.4, f.adresse, 1.7, {ff, fill:c, max:CW-2*M})
       + `<rect y="${CH-12}" width="${CW}" height="12" fill="${c}"/>` + tc(CW/2, CH-5.3, [f.tel, f.email].filter(Boolean).join('   ·   '), 1.9, {ff, w:600, fill:'#ffffff', anchor:'middle', max:CW-10}); }},
@@ -2109,7 +2113,7 @@ function faceChemise(cfg, face, fmt, fondCouleur) {
     return k === 1 ? s : `<g transform="scale(${k})">${s}</g>`;
   };
 }
-const CHEMISES = ENTETES.map(d => ({id:'h'+d.id.slice(1), nom:d.nom, style:d.style, metiers:d.metiers, cfg:d.cfg}));
+const CHEMISES = ENTETES.filter(d => d.style !== 'eco').map(d => ({id:'h'+d.id.slice(1), nom:d.nom, style:d.style, metiers:d.metiers, cfg:d.cfg}));
 const PRIX_CHEMISES_A4 = {1000:2500, 2000:4600, 3000:6600};   // A4, pelliculage mat ou brillant compris
 
 /* ============ Ordonnances A5 bilingues : même identité que la carte, l'en-tête, l'enveloppe et la chemise ============
@@ -2117,6 +2121,16 @@ const PRIX_CHEMISES_A4 = {1000:2500, 2000:4600, 3000:6600};   // A4, pelliculage
    Français à gauche, arabe à droite, logo au centre ou à gauche selon le modèle. */
 const OW = 148, OH = 210, OK = OW / PW;
 const AR_DE = {playfair:'amiri', cormorant:'amiri', lora:'amiri', baskerville:'amiri', dmserif:'amiri', cinzel:'amiri', montserrat:'tajawal', poppins:'tajawal', raleway:'tajawal', josefin:'tajawal', oswald:'changa'};
+/* Découpe un texte libre en lignes (retours à la ligne du client respectés) */
+function coupeLignes(txt, maxCar){
+  const L = []; if (!txt) return L;
+  for (const para of txt.split(/\r?\n/)) { if (!para.trim()) { L.push(''); continue; } let cur = '';
+    for (const w of para.split(/\s+/)) { if (cur && (cur + ' ' + w).length > maxCar) { L.push(cur); cur = w; } else cur = cur ? cur + ' ' + w : w; }
+    L.push(cur); }
+  return L;
+}
+const CERT_FR_DEF = 'Je soussigné(e), Docteur ......................................\ncertifie avoir examiné ce jour M. / Mme ......................................\net que son état de santé nécessite un repos de ...... jours à compter du ................\n\nCertificat délivré pour servir et valoir ce que de droit.';
+const CERT_AR_DEF = 'أنا الممضي(ة) أسفله، الدكتور(ة) ......................................\nأشهد أنني فحصت اليوم السيد(ة) ......................................\nوأن حالته الصحية تستوجب راحة لمدة ...... أيام ابتداء من ................\n\nسلمت هذه الشهادة للإدلاء بها عند الحاجة.';
 function pageOrdonnance(cfg, doc) {
   return (f, c, a) => {
     const z = {h:0, g:0, d:0, b:0, ...(cfg.zone||{})}, x0 = PM + z.g, x1 = PW - PM - z.d, ff = POLICES[cfg.ff] || MS, ffa = cfg.ffa || AR_DE[cfg.ff] || 'cairo', aT = lisible(a);
@@ -2144,6 +2158,17 @@ function pageOrdonnance(cfg, doc) {
     s += tc(PW/2, yR + 25, cert ? 'CERTIFICAT MÉDICAL' : 'ORDONNANCE', 5.4, {ff, w:600, anchor:'middle', fill:c, ls:cert ? 1.6 : 2.2})
       + ar(PW/2, yR + 33, cert ? 'شهادة طبية' : 'وصفة طبية', 5.4, {ffa, anchor:'middle', fill:aT});
     if (!cert) s += tc(x0, yR + 46, 'Nom et prénom', 3.4, {fill:'#444'}) + pts(x0 + 25, x1 - 25, yR + 46.4) + ar(x1, yR + 46, 'الاسم واللقب', 4, {fill:'#444', ffa});
+    else if (f.cert_mode === 'libre' && ((f.cert_fr || '').trim() || (f.cert_ar || '').trim())) {
+      /* Texte écrit par le médecin : français à gauche, arabe à droite ; une seule langue = toute la largeur */
+      const fr = (f.cert_fr || '').trim(), arb = (f.cert_ar || '').trim(), deux = fr && arb, mil = (x0 + x1) / 2, yT = yR + 50, lh = 6.4;
+      const lFr = coupeLignes(fr, Math.floor((deux ? mil - 5 - x0 : x1 - x0) / 1.55)), lAr = coupeLignes(arb, Math.floor((deux ? x1 - mil - 5 : x1 - x0) / 1.75));
+      const yMax = PH - 44 - z.b, n = Math.min(Math.max(lFr.length, lAr.length), Math.floor((yMax - 18 - yT) / lh) + 1);
+      lFr.slice(0, n).forEach((t, i) => { s += tc(x0, yT + i * lh, t, 3.6, {fill:'#222'}); });
+      lAr.slice(0, n).forEach((t, i) => { s += ar(x1, yT + i * lh, t, 4.1, {fill:'#222', ffa}); });
+      if (deux) s += `<rect x="${mil - 0.15}" y="${yT - 6}" width="0.3" height="${n * lh + 2}" fill="${c}" fill-opacity=".18"/>`;
+      const yS = Math.min(yMax, yT + n * lh + 12);
+      s += (fr || !arb ? tc(x0, yS, 'Signature et cachet', 3.2, {fill:aT, it:true}) : '') + (arb || !fr ? ar(x1, yS, 'الإمضاء والختم', 3.8, {fill:aT, ffa}) : '');
+    }
     else {
       /* Texte du certificat : français dans la colonne de gauche, arabe dans celle de droite, lignes à compléter */
       const mil = (x0 + x1) / 2, xg = mil - 5, xd = mil + 5, pas = 11, yT = yR + 50;
@@ -2174,7 +2199,7 @@ function pageOrdonnance(cfg, doc) {
 const ORDO_FIX = {'Angle':{zone:{d:0}, piedD:62}, 'Ondes':{zone:{b:26}}};   // décors du bas qui gêneraient le pied en A5
 const ORDONNANCES = ENTETES.map(d => { const cfg = {...d.cfg, ...(ORDO_FIX[d.nom] || {})}; return {id:'o'+d.id.slice(1), nom:d.nom, style:d.style, metiers:['medical', ...d.metiers.filter(m => m !== 'medical')], cfg, page:pageOrdonnance(cfg, 'ordonnance')}; });
 const CERTIFICATS = ORDONNANCES.map(d => ({...d, id:'k'+d.id.slice(1), page:pageOrdonnance(d.cfg, 'certificat')}));
-const PRIX_ORDO_1C = {1000:70, 2000:129, 3000:179};   // tarif du site (ordonnances et certificats), 1 couleur ; quadri : à fixer
+const PRIX_ORDO_1C = {1000:70, 2000:129, 3000:179};   // tarif de la page médicale (ordonnances et certificats, hors packs), 1 couleur et quadri
 
 /* ============ Fiches patients : chemise 44 × 31 cm pliée en 22 × 31, sans rabat ============
    Extérieur : face (médecin + cases du patient) et dos. Intérieur en option : fiche du patient et tableau Date / Observations. */
@@ -2389,20 +2414,20 @@ const PRODUITS = {
     quoi:(e) => `Enveloppes 11 × 22 cm · modèle ${e.design.id.slice(1)} « ${e.design.nom} »`,
     icone:'<svg viewBox="0 0 44 44"><rect x="3" y="11" width="38" height="22" rx="1.5" fill="#fff" stroke="#12151A" stroke-width="1.6"/><rect x="6" y="14" width="4" height="4" rx=".8" fill="#0BA894"/><rect x="12" y="14.5" width="10" height="1.4" fill="#12151A"/><rect x="12" y="17.5" width="7" height="1" fill="#9AA0A8"/><rect x="24" y="24" width="13" height="1.2" fill="#C8CCD2"/><rect x="24" y="27" width="10" height="1.2" fill="#C8CCD2"/></svg>'},
   chemises: {nom:'Chemises à rabat', unite:'chemises', parUnite:' / chemise', designs:CHEMISES, duo:true, styles:STYLES, principal:'societe', champs:['societe','activite','adresse','tel','email','site','mf'], faces:['couverture','dos'],
-    quantites:() => [1000,2000,3000], prix:(e,q) => estEco(e) ? PRIX_ECO.chemises[q] : PRIX_CHEMISES_A4[q],
+    quantites:() => [1000,2000,3000], prix:(e,q) => PRIX_CHEMISES_A4[q],
     note:(e) => 'Carton 300 g, quadri, pelliculage ' + (e.pellic === 'brillant' ? 'brillant' : 'mat') + ', découpe, pliage et collage compris. Intérieur et rabat non imprimés.',
     quoi:(e) => `Chemises à rabat ${FMT_CHEMISE[e.format] ? FMT_CHEMISE[e.format].nom : 'A4'} (${(FMT_CHEMISE[e.format]||FMT_CHEMISE.A4).d.toLowerCase()}), carton 300 g quadri, couverture ${e.fond === 'blanc' ? 'sur fond blanc' : 'en couleur'}, ${(e.pellic === 'brillant' ? 'pelliculage brillant' : 'pelliculage mat')} · modèle ${e.design.id.slice(1)} « ${e.design.nom} »`,
     icone:'<svg viewBox="0 0 44 44"><path d="M7 6h24l6 6v26H7z" fill="#fff" stroke="#12151A" stroke-width="1.6"/><path d="M7 26h30v12H7z" fill="#0BA894"/><path d="M7 26l4-4h22l4 4" fill="none" stroke="#12151A" stroke-width="1.2"/><rect x="12" y="11" width="9" height="2" fill="#12151A"/><rect x="12" y="15" width="6" height="1.4" fill="#9AA0A8"/></svg>'},
   ordonnances: {nom:'Ordonnances', unite:'ordonnances', parUnite:' / ordonnance', designs:ORDONNANCES, duo:true, styles:STYLES, principal:'nom', bilingue:true,
     champs:['nom','fonction','societe','adresse','tel','site'], ar:['nom_ar','fonction_ar','societe_ar','adresse_ar'],
-    quantites:() => [1000,2000,3000], prix:(e,q) => estEco(e) ? PRIX_ECO.ordonnances[q] : e.encre === 'mono' ? PRIX_ORDO_1C[q] : null,
-    note:(e) => 'A5, offset 80 g, en blocs de 100 collés en tête. ' + (e.encre === 'mono' ? 'Impression 1 couleur.' : 'Quadri : prix confirmé par notre commercial avec le BAT.'),
+    quantites:() => [1000,2000,3000], prix:(e,q) => estEco(e) ? PRIX_ECO.ordonnances[q] : PRIX_ORDO_1C[q],
+    note:(e) => 'A5, offset 80 g, en blocs de 100 collés en tête. ' + (e.encre === 'mono' ? 'Impression 1 couleur.' : 'Impression quadri, même prix que la 1 couleur.'),
     quoi:(e) => `Ordonnances A5 bilingues, offset 80 g, blocs de 100 collés, ${e.encre === 'mono' ? '1 couleur' : 'quadri'} · modèle ${e.design.id.slice(1)} « ${e.design.nom} »`,
     icone:'<svg viewBox="0 0 44 44"><rect x="10" y="4" width="24" height="36" rx="1.5" fill="#fff" stroke="#12151A" stroke-width="1.6"/><rect x="13" y="8" width="7" height="1.8" fill="#12151A"/><rect x="24" y="8" width="7" height="1.8" fill="#12151A"/><rect x="13" y="11.5" width="5" height="1.2" fill="#9AA0A8"/><rect x="26" y="11.5" width="5" height="1.2" fill="#9AA0A8"/><rect x="13" y="15" width="18" height="0.8" fill="#0BA894"/><path d="M15 21h3.2a2 2 0 0 1 0 4H15v-4zm0 4l4 4" fill="none" stroke="#0BA894" stroke-width="1.4"/><rect x="13" y="34" width="18" height="1" fill="#9AA0A8"/></svg>'},
   certificats: {nom:'Certificats médicaux', unite:'certificats', parUnite:' / certificat', designs:CERTIFICATS, duo:true, styles:STYLES, principal:'nom', bilingue:true,
     champs:['nom','fonction','societe','adresse','tel','site'], ar:['nom_ar','fonction_ar','societe_ar','adresse_ar'],
-    quantites:() => [1000,2000,3000], prix:(e,q) => estEco(e) ? PRIX_ECO.ordonnances[q] : e.encre === 'mono' ? PRIX_ORDO_1C[q] : null,
-    note:(e) => 'A5, offset 80 g, en blocs de 100 collés en tête. ' + (e.encre === 'mono' ? 'Impression 1 couleur.' : 'Quadri : prix confirmé par notre commercial avec le BAT.'),
+    quantites:() => [1000,2000,3000], prix:(e,q) => estEco(e) ? PRIX_ECO.ordonnances[q] : PRIX_ORDO_1C[q],
+    note:(e) => 'A5, offset 80 g, en blocs de 100 collés en tête. ' + (e.encre === 'mono' ? 'Impression 1 couleur.' : 'Impression quadri, même prix que la 1 couleur.'),
     quoi:(e) => `Certificats médicaux A5 bilingues, offset 80 g, blocs de 100 collés, ${e.encre === 'mono' ? '1 couleur' : 'quadri'} · modèle ${e.design.id.slice(1)} « ${e.design.nom} »`,
     icone:'<svg viewBox="0 0 44 44"><rect x="10" y="4" width="24" height="36" rx="1.5" fill="#fff" stroke="#12151A" stroke-width="1.6"/><rect x="13" y="8" width="7" height="1.8" fill="#12151A"/><rect x="24" y="8" width="7" height="1.8" fill="#12151A"/><rect x="15" y="15" width="14" height="1.6" fill="#0BA894"/><rect x="13" y="20" width="8" height="1" fill="#9AA0A8"/><rect x="23" y="20" width="8" height="1" fill="#9AA0A8"/><rect x="13" y="23.5" width="8" height="1" fill="#9AA0A8"/><rect x="23" y="23.5" width="8" height="1" fill="#9AA0A8"/><rect x="13" y="27" width="8" height="1" fill="#9AA0A8"/><rect x="23" y="27" width="8" height="1" fill="#9AA0A8"/><circle cx="27" cy="33.5" r="2.6" fill="none" stroke="#0BA894" stroke-width="1.2"/></svg>'},
   fiches: {nom:'Fiches patients', unite:'fiches', parUnite:' / fiche', designs:FICHES, duo:true, styles:STYLES, principal:'nom', bilingue:true,
@@ -2425,18 +2450,17 @@ const PRODUITS = {
 };
 const nomPolice = (k, L) => (L.find(x => x[0] === k) || [k, k])[1];
 const NOTE_ECO = {
-  cartes:(e) => 'Gamme Éco : couché 350 g, 1 couleur, sans pelliculage. ' + (e.verso === 'blanc' ? 'Recto seul.' : 'Recto-verso.'),
-  entetes:() => 'Gamme Éco : A4, offset 80 g, 1 couleur.',
-  enveloppes:() => 'Gamme Éco : 11 × 22 cm blanches, 1 couleur, zone d’adresse laissée libre.',
-  chemises:() => 'Gamme Éco : A4, face et dos en 1 couleur, pelliculage mat ou brillant compris.',
-  blocs:(e) => `Gamme Éco : ${fmtBloc(e)}, offset 80 g, ${REGLES[e.regle] || 'lignes'}, ${e.feuilles || 50} feuilles, 1 couleur, collé en tête avec carton au dos.`,
-  ordonnances:() => 'Gamme Éco : A5, offset 80 g, 1 couleur, blocs de 100 collés en tête.',
-  certificats:() => 'Gamme Éco : A5, offset 80 g, 1 couleur, blocs de 100 collés en tête.',
-  fiches:(e) => `Gamme Éco : 44 × 31 cm pliée, 4 pages en 1 couleur, couché ${e.papier || 350} g.`,
+  cartes:(e) => 'Pack médical éco : couché 350 g, 1 couleur, sans pelliculage. ' + (e.verso === 'blanc' ? 'Recto seul.' : 'Recto-verso.'),
+  entetes:() => 'Pack médical éco : A4, offset 80 g, 1 couleur.',
+  enveloppes:() => 'Pack médical éco : 11 × 22 cm blanches, 1 couleur, zone d’adresse laissée libre.',
+  blocs:(e) => `Pack médical éco : ${fmtBloc(e)}, offset 80 g, ${REGLES[e.regle] || 'lignes'}, ${e.feuilles || 50} feuilles, 1 couleur, collé en tête avec carton au dos.`,
+  ordonnances:() => 'Pack médical éco : A5, offset 80 g, 1 couleur, blocs de 100 collés en tête.',
+  certificats:() => 'Pack médical éco : A5, offset 80 g, 1 couleur, blocs de 100 collés en tête.',
+  fiches:(e) => `Pack médical éco : 44 × 31 cm pliée, 4 pages en 1 couleur, couché ${e.papier || 350} g.`,
 };
 for (const [k, P] of Object.entries(PRODUITS)) { if (!NOTE_ECO[k]) continue; const q0 = P.quoi, n0 = P.note;
   P.note = (e) => estEco(e) ? NOTE_ECO[k](e) : n0(e);
-  P.quoi = (e) => estEco(e) ? q0(e).replace(/quadri, pelliculées|quadri/g, '1 couleur') + ` · gamme Éco, 1 encre ${String(e.couleur||'').split('|')[0]} · police ${nomPolice(ECO.fr, ECO_FR)} / ${nomPolice(ECO.ar, ECO_AR)}` : q0(e); }
+  P.quoi = (e) => estEco(e) ? q0(e).replace(/quadri, pelliculées|quadri/g, '1 couleur') + ` · pack médical éco, 1 encre ${String(e.couleur||'').split('|')[0]} · police ${nomPolice(ECO.fr, ECO_FR)} / ${nomPolice(ECO.ar, ECO_AR)}` : q0(e); }
 /* Textes affichés : ceux du client, sinon l'exemple du métier choisi */
 function textes(metier, champs, logoClient){
   const ex = (METIERS[metier] && METIERS[metier].exemple) || METIERS.transport.exemple;
@@ -2577,10 +2601,10 @@ function ouvrirStudio(design, couleur, met){
       scene.replaceChildren(n); }
     titre(); rendreTrio(); };
   const rendreTrio = () => {
-    const box = $('#trio');
+    const box = $('#trio'), lesK = trioDe(prod, e.metier).filter(k => k === prod || assorti(k, e.design));
     if (!TRIO.includes(prod) || e.design.bilingue) { box.hidden = true; return; }
     box.hidden = false;
-    box.replaceChildren(el('h4',{}, 'La même identité · modèle ' + numDe(e.design)), el('div',{class:'rang'+(trioDe(prod, e.metier).length > 4 ? ' beaucoup' : ''), style:'grid-template-columns:repeat('+trioDe(prod, e.metier).length+',1fr)'}, trioDe(prod, e.metier).map(k => {
+    box.replaceChildren(el('h4',{}, 'La même identité · modèle ' + numDe(e.design)), el('div',{class:'rang'+(lesK.length > 4 ? ' beaucoup' : ''), style:'grid-template-columns:repeat('+lesK.length+',1fr)'}, lesK.map(k => {
       const d = k === prod ? e.design : assorti(k, e.design); if (!d) return null;
       const mini = el('span',{class:'mini'}, noeud(dessin(k, d, {...e, verso:'assorti', format: k==='chemises' ? (e.format in FMT_CHEMISE ? e.format : 'A4') : e.format}, k==='chemises'?'couverture':'recto')));
       return el('button',{type:'button', 'aria-pressed':String(k===prod), title: k===prod ? '' : 'Ouvrir le même modèle en '+NOMS_COURTS[k].toLowerCase(),
@@ -2591,6 +2615,15 @@ function ouvrirStudio(design, couleur, met){
   const choixPolice = (liste, cle) => { const box = el('div',{class:'choix polices'}); const r = () => box.replaceChildren(...liste.map(([k,l]) => el('button',{type:'button', 'aria-pressed':String(ECO[cle]===k), style:'font-family:'+POLICES[k],
       onclick:()=>{ ECO[cle] = k; r(); sauverMemo(); rendu(); rendreAutres(); majEtapes(); }}, cle === 'ar' ? 'الياسمين' : l, el('small',{style:'font-family:inherit'}, cle === 'ar' ? l : 'Aa 123')))); r(); return box; };
   window.rerendreStudio = () => { rendu(); rendreAutres(); };
+  const texteCertificat = () => {
+    const box = el('div');
+    const zone = (cle, lib, def, attrs) => { const t = el('textarea',{rows:6, ...attrs, placeholder:'Laissez vide pour ne pas écrire dans cette langue', oninput:(ev)=>{ e.champs[cle] = ev.target.value; rendu(); majEtapes(); }}); t.value = e.champs[cle] || ''; return el('label',{class:'champ large'}, el('span',{}, lib), t); };
+    const r = () => { const libre = e.champs.cert_mode === 'libre';
+      box.replaceChildren(
+        el('div',{class:'choix'}, ...[['modele','Texte proposé','Français et arabe, à compléter à la main'],['libre','Mon texte','Je l’écris moi-même, comme dans Word']].map(([v,l,d]) => el('button',{type:'button','aria-pressed':String((e.champs.cert_mode || 'modele') === v), onclick:()=>{ e.champs.cert_mode = v; if (v === 'libre' && !(e.champs.cert_fr || '').trim() && !(e.champs.cert_ar || '').trim()) { e.champs.cert_fr = CERT_FR_DEF; e.champs.cert_ar = CERT_AR_DEF; } r(); rendu(); majEtapes(); }}, l, el('small',{}, d)))),
+        libre ? el('div',{class:'champs', style:'margin-top:12px'}, zone('cert_fr', 'Texte en français', CERT_FR_DEF, {}), zone('cert_ar', 'Texte en arabe', CERT_AR_DEF, {dir:'rtl', lang:'ar'})) : null,
+        el('p',{class:'note'}, libre ? 'Écrivez en français, en arabe ou dans les deux langues. Une seule langue occupe toute la largeur de la page. Les points (.....) laissent la place pour écrire à la main.' : 'Le texte bilingue habituel, avec les lignes à compléter à la main.')); };
+    r(); return box; };
   const memeStyle = () => P.styles ? P.designs.filter(d => d.style===e.design.style) : P.designs;
   const rendreAutres = () => autres.replaceChildren(...memeStyle().map(d => { const b = el('button',{type:'button', title:d.nom, 'aria-pressed':String(d===e.design), onclick:()=>{ e.design=d; face='recto'; rendreAutres(); rendreFaces(); rendu(); }}); b.append(noeud(dessin(prod, d, e, 'recto'))); return b; }));
   const choix = (opts, cle, apres) => { const box = el('div',{class:'choix'}); const r = () => box.replaceChildren(...opts.map(([v,l,d]) => el('button',{type:'button','aria-pressed':String(e[cle]===v), onclick:()=>{ e[cle]=v; r(); apres && apres(); rendu(); rendreAutres(); majEtapes(); }}, l, d? el('small',{},d):null))); r(); return box; };
@@ -2650,15 +2683,16 @@ function ouvrirStudio(design, couleur, met){
       choix([['A4','A4','21 × 29,7 cm'],['A5','A5','14,8 × 21 cm'],['A6','A6','10,5 × 14,8 cm']], 'fmtBloc', () => { rendreQte(); rendreExtras(); }),
       el('div',{style:'height:10px'}), choix([['lignes','Lignes','Pour les notes'],['pointilles','Pointillés','Plus discret'],['blanc','Sans lignes','Page libre, pour une lettre']], 'regle'),
       el('div',{style:'height:10px'}), choix([[50,'50 feuilles par bloc'],[100,'100 feuilles par bloc']], 'feuilles', () => { rendreQte(); rendreExtras(); }),
-      el('div',{style:'height:10px'}), (estEco(e) ? el('p',{class:'note'}, 'Gamme Éco : impression 1 couleur, dans l’encre choisie.') : choix([['quadri','Quadri','Toutes les couleurs du modèle'],['mono','1 couleur','La couleur principale seule']], 'encre', () => { rendreQte(); rendreExtras(); })),
+      el('div',{style:'height:10px'}), (estEco(e) ? el('p',{class:'note'}, 'Pack médical éco : impression 1 couleur, dans l’encre choisie.') : choix([['quadri','Quadri','Toutes les couleurs du modèle'],['mono','1 couleur','La couleur principale seule']], 'encre', () => { rendreQte(); rendreExtras(); })),
       el('p',{class:'note'}, 'Offset 80 g, collé en tête avec un carton au dos. En A4 sans lignes, le bloc sert aussi de papier à lettre.')]}] : []),
     ...(prod === 'fiches' ? [{t:'Papier et impression', resume:()=> e.papier + ' g · ' + (e.encre === 'mono' ? '1 couleur' : 'quadri'), corps:()=>[
       choix([[350,'Couché mat 350 g','Rainée et pliée'],[170,'Couché mat 170 g','Pliée']], 'papier', () => { rendreQte(); rendreExtras(); }),
-      el('div',{style:'height:10px'}), (estEco(e) ? el('p',{class:'note'}, 'Gamme Éco : impression 1 couleur, dans l’encre choisie.') : choix([['quadri','Quadri','Toutes les couleurs du modèle'],['mono','1 couleur','La couleur principale seule']], 'encre', () => { rendreQte(); rendreExtras(); })),
+      el('div',{style:'height:10px'}), (estEco(e) ? el('p',{class:'note'}, 'Pack médical éco : impression 1 couleur, dans l’encre choisie.') : choix([['quadri','Quadri','Toutes les couleurs du modèle'],['mono','1 couleur','La couleur principale seule']], 'encre', () => { rendreQte(); rendreExtras(); })),
       el('p',{class:'note'}, 'Format ouvert 44 × 31 cm, plié en 22 × 31 cm, sans rabat. 4 pages imprimées : la face (page 1), le grand tableau à l’intérieur (pages 2 et 3) et le dos (page 4).')]}] : []),
+    ...(prod === 'certificats' ? [{t:'Texte du certificat', resume:()=> e.champs.cert_mode === 'libre' ? 'Mon texte' : 'Texte proposé', corps:()=>[ texteCertificat() ]}] : []),
     ...(prod === 'fiches' ? [{t:'Tableau des pages 2 et 3', resume:()=> e.cols.map(k => k.fr || k.ar || '…').join(' · '), corps:()=>[ tableauCols ]}] : []),
     ...(MEDICAL.includes(prod) && prod !== 'fiches' ? [{t:'Impression', resume:()=> 'A5 · ' + (e.encre === 'mono' ? '1 couleur' : 'quadri'), corps:()=>[
-      (estEco(e) ? el('p',{class:'note'}, 'Gamme Éco : impression 1 couleur, dans l’encre choisie.') : choix([['quadri','Quadri','Toutes les couleurs du modèle'],['mono','1 couleur','La couleur principale seule']], 'encre', () => { rendreQte(); rendreExtras(); })),
+      (estEco(e) ? el('p',{class:'note'}, 'Pack médical éco : impression 1 couleur, dans l’encre choisie.') : choix([['quadri','Quadri','Toutes les couleurs du modèle'],['mono','1 couleur','La couleur principale seule']], 'encre', () => { rendreQte(); rendreExtras(); })),
       el('p',{class:'note'}, 'Format A5 (14,8 × 21 cm), offset 80 g, blocs de 100 feuilles collés en tête. Français à gauche, arabe à droite : remplissez les deux dans « Vos textes et logo ».')]}] : []),
     ...(prod === 'chemises' ? [{t:'Finition', resume:()=> 'A4 · ' + (e.fond === 'blanc' ? 'fond blanc' : 'couleur') + ' · ' + (e.pellic === 'brillant' ? 'pelliculage brillant' : 'pelliculage mat'), corps:()=>[
       choix([['couleur','Couverture en couleur'],['blanc','Couverture sur fond blanc']], 'fond'),
@@ -2669,10 +2703,10 @@ function ouvrirStudio(design, couleur, met){
       el('div',{style:'height:10px'}), choix([['A5','A5'],['A4','A4'],['A6','A6']], 'format', rendreQte),
       el('div',{style:'height:10px'}), choix([['2','2 feuillets'],['3','3 feuillets'],['4','4 feuillets']], 'plis', rendreQte),
       el('label',{class:'champ', style:'margin-top:10px'}, el('span',{},'N° de départ'), el('input',{inputmode:'numeric', placeholder:'0001', value:e.numero, oninput:(ev)=>{ e.numero=ev.target.value; rendu(); }}))]}] : []),
-    {t:'Couleur', resume:()=> estEco(e) ? '1 encre' : '', pastille:true, corps:()=>[teintes, estEco(e) ? el('p',{class:'note'}, 'Gamme Éco : tout le modèle, logo compris, est imprimé dans cette seule encre, en aplat.') : null]},
+    {t:'Couleur', resume:()=> estEco(e) ? '1 encre' : '', pastille:true, corps:()=>[teintes, estEco(e) ? el('p',{class:'note'}, 'Pack médical éco : tout le modèle, logo compris, est imprimé dans cette seule encre, en aplat.') : null]},
     ...(estEco(e) ? [{t:'Police', resume:()=> nomPolice(ECO.fr, ECO_FR) + ' · ' + nomPolice(ECO.ar, ECO_AR), corps:()=>[
       el('p',{class:'etiquette'}, 'Français'), choixPolice(ECO_FR, 'fr'), el('p',{class:'etiquette'}, 'Arabe'), choixPolice(ECO_AR, 'ar'),
-      el('p',{class:'note'}, 'La police choisie passe sur tous vos imprimés Éco : carte, en-tête, enveloppe, ordonnance…')]}] : []),
+      el('p',{class:'note'}, 'La police choisie passe sur tous vos imprimés du pack médical éco : carte, en-tête, enveloppe, ordonnance…')]}] : []),
     {t:'Vos textes et logo', resume:()=> (e.champs[P.principal]||'').trim() || 'Exemple', corps:()=>[ el('p',{class:'partout'}, el('b',{},'Écrit une fois, repris partout.'), ' Vos textes et votre logo passent automatiquement sur la carte, l’en-tête, l’enveloppe et tous les autres imprimés.'), el('div',{class:'champs'}, P.champs.map(c => champ(c))), champsArEnv, zoneLogo ]},
     ...(prod === 'cartes' ? [{t:'Verso', resume:()=> VERSOS[e.verso].nom, corps:()=>[ choix(Object.entries(VERSOS).map(([v,x]) => [v, x.nom, v==='blanc'?'−10 DT / 1 000':null]), 'verso', () => { champsAr.hidden = e.verso!=='arabe'; }), champsAr ]}] : []),
     {t:'Quantité', resume:()=> { const T = totalCommande(prod, e); return e.quantite ? (T.L.length > 1 ? T.L.length+' produits · ' : nb(e.quantite)+' · ')+dt(T.total)+' HT' : ''; }, corps:()=>[ qte, el('p',{class:'note'}, P.note(e)), blocExtras ]},
@@ -2692,9 +2726,25 @@ function ouvrirStudio(design, couleur, met){
 }
 
 /* ============ Envoi ============ */
+/* Les polices du site, intégrées dans le dessin exporté (sinon le navigateur les remplace par des polices par défaut) */
+const CACHE_POLICES = {};
+async function policesIntegrees(svg){
+  try {
+    const lien = [...document.querySelectorAll('link[href*="fonts.googleapis.com/css"]')].map(l => l.href)[0]; if (!lien) return '';
+    if (!CACHE_POLICES.css) CACHE_POLICES.css = await (await fetch(lien)).text();
+    const utilisees = new Set([...svg.matchAll(/font-family="([^"]+)"/g)].map(m => m[1].split(',')[0].replace(/['"]/g, '').trim()));
+    const blocs = CACHE_POLICES.css.match(/@font-face\s*{[^}]*}/g) || []; let out = '';
+    for (const b of blocs) { const fam = (b.match(/font-family:\s*'?([^;']+)'?/) || [])[1]; if (!fam || !utilisees.has(fam)) continue;
+      const url = (b.match(/url\(([^)]+)\)/) || [])[1]; if (!url) continue;
+      if (!CACHE_POLICES[url]) { const bl = await (await fetch(url)).blob(); CACHE_POLICES[url] = await new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(bl); }); }
+      out += b.replace(url, CACHE_POLICES[url]); }
+    return out ? `<style>${out}</style>` : '';
+  } catch(err) { return ''; }
+}
 async function enPng(d, nom){
-  const im = new Image(); im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(enSvg(d, 1)); await im.decode();
-  const ech = 1400 / Math.max(d.W, d.H), cv = document.createElement('canvas'); cv.width = Math.round(d.W*ech); cv.height = Math.round(d.H*ech);
+  const st = await policesIntegrees(d.svg);
+  const im = new Image(); im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(enSvg({...d, svg: st + d.svg}, 1)); await im.decode();
+  const dpi = Math.max(d.W, d.H) < 100 ? 600 : 300, ech = dpi / 25.4, cv = document.createElement('canvas'); cv.width = Math.round(d.W*ech); cv.height = Math.round(d.H*ech);
   const ctx = cv.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0,0,cv.width,cv.height); ctx.drawImage(im, 0, 0, cv.width, cv.height);
   return new File([await new Promise(r => cv.toBlob(r, 'image/png'))], nom, {type:'image/png'});
 }
@@ -2702,7 +2752,7 @@ async function poster(fd){ try { const r = await fetch('/envoi.php', {method:'PO
 function merci(ok, texte, avecFichiers){
   const lien = 'mailto:'+EMAIL+'?subject='+encodeURIComponent('Demande — page Conception')+'&body='+encodeURIComponent(texte);
   return el('div',{class:'ok'}, el('b',{}, ok ? 'Merci, c’est envoyé.' : 'L’envoi n’a pas abouti.'),
-    el('p',{}, ok ? 'Notre designer vous répond par e-mail avec le BAT.' : 'Envoyez-nous la demande par e-mail : le message est prêt'+(avecFichiers?' (joignez vos fichiers)':'')+'.'),
+    el('p',{}, ok ? (texte.includes('BAT VALIDÉ') ? 'Votre BAT et vos fichiers sont chez nous. Notre commercial vous appelle pour le confirmer, puis nous lançons l’impression.' : 'Notre designer vous répond par e-mail avec sa proposition.') : 'Envoyez-nous la demande par e-mail : le message est prêt'+(avecFichiers?' (joignez vos fichiers)':'')+'.'),
     ok ? null : el('a',{class:'gros', href:lien}, 'Envoyer par e-mail'));
 }
 function formulaire(prod, e){
@@ -2713,12 +2763,16 @@ function formulaire(prod, e){
     msg.textContent = '';
     if (!v.nom.trim() || !/^\S+@\S+\.\S+$/.test(v.email.trim())) { msg.textContent = 'Nom et e-mail, s’il vous plaît.'; return; }
     if (!auDesigner && !e.quantite) { msg.textContent = 'Choisissez la quantité (étape « Quantité »).'; return; }
+    if (!auDesigner && !(v.telephone || '').replace(/\D/g, '').match(/\d{8,}/)) { msg.textContent = 'Votre téléphone, s’il vous plaît : notre commercial vous appelle pour confirmer le BAT.'; return; }
+    if (!auDesigner && !bat.checked) { msg.textContent = 'Cochez la validation du BAT pour commander.'; return; }
     const P = PRODUITS[prod], f = textes(e.metier, e.champs, null);
     const T = totalCommande(prod, e), prix = e.quantite ? T.total : null;
     const devisTxt = T.devis ? ' (+ articles sur devis)' : '';
     const quoi = [P.quoi(e) + (e.quantite ? ' · ' + nb(e.quantite) + ' ' + P.unite : '')].concat(Object.entries(e.extras).filter(([,x]) => x.actif).map(([k,x]) => PRODUITS[k].quoi({...e, design:assorti(k, e.design), verso:'assorti', format:'A4', pellic:'mat'}) + ' · ' + nb(x.q) + ' ' + PRODUITS[k].unite)).join('\n') + (T.pack ? '\nPack identité appliqué' : '');
     const lesTextes = P.champs.concat(prod==='cartes' && e.verso==='arabe' ? ['nom_ar','fonction_ar','societe_ar','adresse_ar'] : []).concat(P.ar && (e.design.bilingue || P.bilingue) ? P.ar : []).map(c => `${CHAMPS[c]} : ${(e.champs[c]||'').trim() || '(exemple non remplacé : '+(f[c]||'')+')'}`).join('\n');
-    const resume = `${auDesigner ? 'À AMÉLIORER PAR LE DESIGNER' : 'COMMANDE DEPUIS LE STUDIO'}\n${quoi}\nMétier : ${METIERS[e.metier].nom} · Couleur : ${e.couleur}\n${e.quantite ? 'Total : '+dt(prix)+' HT'+devisTxt : 'Quantité : à définir'}\n\n${lesTextes}${v.remarques.trim() ? '\n\nRemarques : '+v.remarques.trim() : ''}\n\nClient : ${v.nom} · ${v.email}${v.telephone?' · '+v.telephone:''}`;
+    const texteCert = (prod === 'certificats' || e.extras.certificats?.actif) && e.champs.cert_mode === 'libre' ? `\n\nTEXTE DU CERTIFICAT (écrit par le client)\nFrançais :\n${(e.champs.cert_fr || '').trim() || '(aucun)'}\nArabe :\n${(e.champs.cert_ar || '').trim() || '(aucun)'}` : '';
+    const quand = new Date().toLocaleString('fr-FR', {dateStyle:'short', timeStyle:'short'});
+    const resume = `${auDesigner ? 'À AMÉLIORER PAR LE DESIGNER' : 'COMMANDE DEPUIS LE STUDIO — BAT VALIDÉ PAR LE CLIENT le ' + quand + ' (à confirmer par téléphone par le commercial avant impression)'}\n${quoi}\nMétier : ${METIERS[e.metier].nom} · Couleur : ${e.couleur}\n${e.quantite ? 'Total : '+dt(prix)+' HT'+devisTxt : 'Quantité : à définir'}\n\n${lesTextes}${texteCert}${v.remarques.trim() ? '\n\nRemarques : '+v.remarques.trim() : ''}\n\nFichiers joints : fichiers finis au format, 300 dpi (600 dpi pour les cartes), prêts pour la production.\n\nClient : ${v.nom} · ${v.email}${v.telephone?' · '+v.telephone:''}`;
     zone.querySelectorAll('button').forEach(b => b.disabled = true);
     const fd = new FormData();
     fd.append('form-name','conception'); fd.append('bot-field',''); fd.append('nom', v.nom); fd.append('email', v.email); fd.append('telephone', v.telephone); fd.append('demande', resume);
@@ -2731,11 +2785,13 @@ function formulaire(prod, e){
     if (memo.logoFichier && e.logo) fd.append('fichiers[]', memo.logoFichier, 'logo-'+memo.logoFichier.name);
     else if (e.logo) { try { const bl = await (await fetch(e.logo)).blob(); fd.append('fichiers[]', bl, 'logo.' + ((bl.type.split('/')[1] || 'png').replace('jpeg','jpg').replace('svg+xml','svg'))); } catch(err) {} }
     const ok = await poster(fd);
-    zone.replaceChildren(merci(ok, 'Bonjour, voici ma création (page Conception) :\n\n'+resume, !!e.logo));
+    zone.replaceChildren(merci(ok, 'Bonjour, voici ma création (Design studio) :\n\n'+resume, !!e.logo));
   };
-  zone.append(el('div',{class:'champs'}, champ('nom','Nom *',{autocomplete:'name'}), champ('email','E-mail *',{type:'email', autocomplete:'email'}), champ('telephone','Téléphone (facultatif)',{type:'tel', autocomplete:'tel'}), champ('remarques','Remarque (facultatif)',{rows:2})),
-    el('div',{class:'actions'}, el('button',{class:'gros', type:'button', onclick:()=>envoyer(false)}, 'Commander · recevoir mon BAT'), el('button',{class:'gros contour', type:'button', onclick:()=>envoyer(true)}, 'Faire améliorer par le designer')),
-    msg, el('p',{class:'note'}, 'Rien à payer en ligne. Vous recevez le BAT avant impression.'));
+  const bat = el('input',{type:'checkbox'});
+  zone.append(el('div',{class:'champs'}, champ('nom','Nom *',{autocomplete:'name'}), champ('email','E-mail *',{type:'email', autocomplete:'email'}), champ('telephone','Téléphone * (pour confirmer le BAT)',{type:'tel', autocomplete:'tel'}), champ('remarques','Remarque (facultatif)',{rows:2})),
+    el('label',{class:'bat'}, bat, el('span',{}, el('b',{}, 'Ce design est mon BAT (bon à tirer). '), 'J’ai vérifié les textes, l’orthographe, les numéros, le logo et les couleurs : il sera imprimé tel qu’il apparaît ici. Notre commercial m’appelle pour le confirmer de vive voix avant l’impression.')),
+    el('div',{class:'actions'}, el('button',{class:'gros', type:'button', onclick:()=>envoyer(false)}, 'Valider mon BAT et commander'), el('button',{class:'gros contour', type:'button', onclick:()=>envoyer(true)}, 'Faire améliorer par le designer')),
+    msg, el('p',{class:'note'}, 'Rien à payer en ligne. Vos fichiers finis nous parviennent par e-mail ; votre validation vaut BAT, confirmée par téléphone avant l’impression.'));
   return zone;
 }
 
