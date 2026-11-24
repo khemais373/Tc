@@ -637,6 +637,51 @@ a:focus-visible,button:focus-visible,.chip:focus-visible,input:focus-visible,sel
 .qcard p{margin:0 22px}
 .qcard .more{margin:14px 22px 22px;display:inline-block}
 .qcard .tagpill{position:absolute;top:14px;left:14px;z-index:2;backdrop-filter:blur(6px)}
+
+/* ====== DESIGN STUDIO ====== */
+.hero-qr{display:inline-flex;gap:8px;margin:-22px 0 34px;font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--teal-dk);border-bottom:1.5px solid currentColor;padding-bottom:3px}
+.hero-qr:hover{color:var(--ink)}
+.nlinks a.nstudio{display:inline-flex;align-items:center;gap:8px;padding:8px 16px 8px 11px;border-radius:100px;border:1.5px solid var(--ink);color:var(--ink);font-weight:600;font-size:.85rem;background:var(--card);transition:transform .15s,box-shadow .25s}
+.nlinks a.nstudio::after{display:none}
+.nstudio i,.mmenu a.m-studio i{width:16px;height:16px;border-radius:5px;background:conic-gradient(var(--cyan) 0 25%,var(--magenta) 0 50%,var(--yellow) 0 75%,var(--ink) 0);flex:none}
+.nlinks a.nstudio:hover{transform:translateY(-1px);box-shadow:0 8px 24px -10px rgba(18,21,26,.4)}
+@media(max-width:1240px){.nlinks{gap:20px}.nlinks a{font-size:.86rem}}
+.mmenu a.m-studio{display:flex;align-items:center;gap:12px;color:var(--ink)}
+.mmenu a.m-studio i{width:22px;height:22px;border-radius:7px}
+.mmenu a.m-studio small{font-family:'JetBrains Mono',monospace;font-size:.6rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--teal-dk);margin-left:auto}
+.studio-sec{background:linear-gradient(180deg,var(--paper) 0,var(--paper2) 100%);border-top:1px solid var(--line);border-bottom:1px solid var(--line);scroll-margin-top:70px}
+.studio-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.st-tile{position:relative;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;color:inherit;transition:transform .28s,box-shadow .28s,border-color .28s}
+.st-tile:hover{transform:translateY(-6px);border-color:var(--ink);box-shadow:0 24px 50px -22px rgba(18,21,26,.28)}
+.st-tile.x2{grid-column:span 2}
+.st-vis{position:relative;height:250px;display:flex;align-items:center;justify-content:center;padding:22px;background:radial-gradient(circle at 50% 40%,#fff 0,var(--paper2) 75%);overflow:hidden}
+.st-vis::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(18,21,26,.07) 1px,transparent 1.2px);background-size:14px 14px}
+.st-vis img{position:relative;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.st-tile:hover .st-vis img{transform:scale(1.05) rotate(-.6deg)}
+.st-num{position:absolute;top:12px;right:12px;z-index:2;font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:600;letter-spacing:.1em;background:var(--ink);color:var(--paper);padding:5px 9px;border-radius:100px}
+.st-tx{padding:16px 18px 18px;display:flex;flex-direction:column;gap:4px;flex:1}
+.st-tx b{font-family:'Unbounded';font-size:.9rem;font-weight:600}
+.st-tx>span{font-size:.84rem;color:var(--ink2);line-height:1.5}
+.st-tx .st-go,.st-tile .st-go{margin-top:auto;padding-top:10px;font-family:'JetBrains Mono',monospace;font-size:.66rem;font-weight:600;color:var(--teal-dk);letter-spacing:.1em;text-transform:uppercase;display:inline-flex;gap:7px}
+.st-go .ar{transition:transform .2s}.st-tile:hover .st-go .ar{transform:translateX(4px)}
+.st-tile.fonce{background:var(--ink);color:var(--paper);border-color:var(--ink);justify-content:flex-end;padding:26px;min-height:250px}
+.st-tile.fonce .ic{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.08);color:var(--teal);font-size:1.3rem;margin-bottom:auto}
+.st-tile.fonce b{font-family:'Unbounded';font-size:1.05rem;font-weight:600;line-height:1.3;margin:18px 0 8px}
+.st-tile.fonce span{color:#B9BFC9;font-size:.86rem;line-height:1.55}
+.st-tile.fonce .st-go{color:var(--teal)}
+.studio-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px}
+.studio-steps div{display:flex;gap:14px;align-items:flex-start;padding:18px 20px;border:1px dashed var(--line2);border-radius:16px;background:rgba(255,255,255,.55)}
+.studio-steps em{font-style:normal;font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:700;color:var(--paper);background:var(--ink);border-radius:8px;padding:5px 8px;flex:none}
+.studio-steps b{display:block;font-size:.92rem;margin-bottom:2px}
+.studio-steps span{font-size:.84rem;color:var(--ink3);line-height:1.5}
+.studio-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.studio-chips span{font-family:'JetBrains Mono',monospace;font-size:.66rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:7px 12px;border-radius:100px;border:1px solid var(--line2);color:var(--ink2);background:var(--card)}
+.real-link{position:absolute;inset:0;z-index:3;border-radius:inherit}
+.real-badge{position:absolute;top:12px;left:12px;z-index:3;font-family:'JetBrains Mono',monospace;font-size:.6rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;background:rgba(247,245,239,.94);color:var(--ink);padding:6px 10px;border-radius:100px;opacity:0;transform:translateY(-4px);transition:opacity .25s,transform .25s;pointer-events:none}
+.real-item:hover .real-badge,.real-link:focus-visible+.real-badge{opacity:1;transform:none}
+@media(hover:none){.real-badge{opacity:1;transform:none}}
+@media(max-width:1020px){.studio-grid{grid-template-columns:repeat(2,1fr)}.studio-steps{grid-template-columns:1fr}.st-vis{height:210px}}
+@media(max-width:560px){.studio-grid{gap:12px}.st-vis{height:160px;padding:14px}.st-tx{padding:12px 14px 14px}.st-tx b{font-size:.8rem}.st-tx>span:not(.st-go){display:none}.st-tile.fonce{min-height:0;padding:20px;grid-column:span 2}}
 </style>
 </head>
 <body>
@@ -666,12 +711,14 @@ a:focus-visible,button:focus-visible,.chip:focus-visible,input:focus-visible,sel
     <li><a href="/scandar/">Scandar</a></li>
     <li><a href="/tarifs/">Tarifs</a></li>
     <li><a href="#contact">Contact</a></li>
+    <li><a href="/conception/" class="nstudio"><i aria-hidden="true"></i>Design studio</a></li>
     <li><a href="#envoyer-demande" class="nbtn">Demander un devis</a></li>
   </ul>
   <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
 
 <div class="mmenu" id="mmenu">
+  <a href="/conception/" class="m-studio"><i aria-hidden="true"></i>Design studio<small>Créer en ligne</small></a>
   <a href="/medical/">Imprimés médicaux</a>
   <a href="#espaces">Nos espaces</a>
   <a href="/medical/?espace=labo">Laboratoires</a>
@@ -700,8 +747,9 @@ a:focus-visible,button:focus-visible,.chip:focus-visible,input:focus-visible,sel
       <p class="hero-sub reveal">Le savoir-faire de l'offset traditionnel allié aux QR codes dynamiques. Carnets, imprimés médicaux, papeterie — et des supports vivants, mesurables et mis à jour à distance.</p>
       <div class="hero-cta reveal">
         <a href="#envoyer-demande" class="btn btn-ink">Demander un devis <span class="ar">→</span></a>
-        <a href="#connecte" class="btn btn-line">Découvrir le QR connecté</a>
+        <a href="/conception/" class="btn btn-teal">Créer mon design <span class="ar">→</span></a>
       </div>
+      <a href="#connecte" class="hero-qr reveal">Découvrir le QR connecté <span class="ar">→</span></a>
       <div class="hero-specs reveal">
         <div><b>2h</b>délai de devis</div>
         <div><b>48h</b>délai moyen</div>
@@ -822,11 +870,11 @@ a:focus-visible,button:focus-visible,.chip:focus-visible,input:focus-visible,sel
     <a href="#estimer" class="btn btn-line reveal">Estimer un prix</a>
   </div>
   <div class="bento">
-    <a href="#estimer" class="card lg reveal">
+    <a href="/conception/?produit=carnets" class="card lg reveal">
       <div class="media-frame card-media"><img src="images/tc-43-ordonnancier.webp" width="1100" height="738" alt="Carnet d'ordonnances à souches posé sur un bureau de cabinet, feuillet bleu en dessous" loading="lazy" decoding="async"><span class="product-label">Carnet · matière</span></div><div class="ci"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7V5.5A1.5 1.5 0 0 1 8.5 4h9A1.5 1.5 0 0 1 19 5.5v11a1.5 1.5 0 0 1-1.5 1.5H16"/><rect x="5" y="7" width="11" height="13" rx="1.5"/><path d="M8 11h5M8 14h5M8 17h3"/></svg></div>
       <h3>Carnets autocopiants</h3>
       <p>Bons de commande, reçus, factures. 2, 3 ou 4 souches numérotées, perforées et reliées selon votre besoin.</p>
-      <span class="go">Estimer le prix <span class="ar">→</span></span>
+      <span class="go">Créer mon carnet dans le studio <span class="ar">→</span></span>
     </a>
     <a href="#connecte" class="card feat reveal">
       <div class="ci"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM20 14v3M14 20h3M20 20h1"/></svg></div>
@@ -835,24 +883,88 @@ a:focus-visible,button:focus-visible,.chip:focus-visible,input:focus-visible,sel
       <p>Chaque support relié à une page web dynamique via QR code : vidéos, fiches, promos, statistiques — modifiables à distance.</p>
       <span class="go">Voir la gamme connectée <span class="ar">→</span></span>
     </a>
-    <a href="/medical/" target="_blank" rel="noopener" class="card md reveal">
+    <a href="/conception/?produit=ordonnances&amp;metier=medical" class="card md reveal">
       <div class="ci"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8l1 4H7z"/><rect x="5" y="7" width="14" height="14" rx="2"/><path d="M12 11v6M9 14h6"/></svg></div>
       <div class="media-frame card-media"><img src="images/tc-23-ordonnance.webp" width="474" height="254" alt="Ordonnance imprimée posée sur un bureau avec stéthoscope et stylo — imprimés médicaux pour professionnels de santé" loading="lazy" decoding="async"><span class="product-label">Papeterie médicale</span></div>
       <h3>Imprimés médicaux</h3>
-      <p>Ordonnances, certificats, en-têtes, enveloppes pour les professionnels de santé.</p>
-      <span class="go">Voir les infos <span class="ar">→</span></span>
+      <p>Ordonnances, certificats, fiches patients, en-têtes, enveloppes pour les professionnels de santé.</p>
+      <span class="go">Créer mon ordonnance <span class="ar">→</span></span>
     </a>
-    <a href="#contact" class="card wide reveal">
+    <a href="/conception/?produit=cartes" class="card wide reveal">
       <div class="ci"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="9" rx="1.5"/><path d="M6 18h13a2 2 0 0 0 2-2V9"/><path d="M6 9h7M6 12h4"/></svg></div>
       <div class="media-frame card-media"><img src="images/tc-21-cartes-visite.webp" width="474" height="261" alt="Cartes de visite noires et blanches empilées, tranches couleur apparentes — papeterie professionnelle" loading="lazy" decoding="async"><span class="product-label">Papeterie · finition</span></div>
       <h3>Cartes de visite, papeterie &amp; supports</h3>
       <p>Cartes de visite, en-têtes, enveloppes, chemises à rabat, registres, dépliants, porte-documents, boîtes et emballages personnalisés.</p>
-      <span class="go">Demander un devis <span class="ar">→</span></span>
+      <span class="go">Créer ma carte de visite <span class="ar">→</span></span>
     </a>
   </div>
   <div class="seo-prose reveal">
     <p>Depuis Tunis, <strong>Technic Compo</strong> imprime en offset tous vos documents professionnels : <strong>carnets autocopiants</strong> et <strong>carnets à souches</strong> (2, 3 ou 4 feuillets), <strong>bons de commande</strong>, <strong>bons de livraison</strong>, <strong>bons de réception</strong>, <strong>carnets de facture</strong> et <strong>facturiers</strong>, <strong>carnets de reçu</strong> et <strong>carnets de bon de sortie</strong>. Tous numérotés, perforés et reliés selon votre besoin.</p>
     <p>Pour les professionnels de santé, nous réalisons <strong>ordonnances</strong>, <strong>ordonnanciers</strong>, <strong>certificats médicaux</strong>, <strong>feuilles de soins</strong> et <strong>en-têtes médicaux</strong>. Côté papeterie et communication : <strong>cartes de visite</strong>, <strong>papier en-tête</strong>, <strong>enveloppes imprimées</strong>, <strong>chemises à rabat</strong>, <strong>registres</strong>, <strong>blocs-notes</strong>, <strong>dépliants</strong> et <strong>flyers</strong>. Et avec l'<strong>impression connectée par QR code dynamique</strong>, chacun de ces supports peut devenir interactif et mesurable. Devis gratuit sous 2h.</p>
+  </div>
+</section>
+
+<!-- ============ DESIGN STUDIO ============ -->
+<section class="studio-sec" id="studio">
+  <div class="sec">
+    <div class="sec-head">
+      <div class="reveal">
+        <div class="eyebrow"><span class="reg"><u></u></span>Design studio</div>
+        <h2 class="sec-title reveal-print">Créez votre imprimé en ligne,<br>une seule identité partout.</h2>
+        <p class="sec-sub">Touchez un produit : il s’ouvre dans le studio, prêt à personnaliser. Vos textes et votre logo, saisis une seule fois, passent sur la carte, l’en-tête, l’enveloppe et tous vos imprimés.</p>
+        <div class="studio-chips"><span>215 modèles</span><span>Français · عربي</span><span>BAT avant impression</span><span>Prix affichés</span></div>
+      </div>
+      <a href="/conception/" class="btn btn-ink reveal">Ouvrir le Design studio <span class="ar">→</span></a>
+    </div>
+    <div class="studio-grid">
+      <a class="st-tile x2 reveal" href="/conception/?produit=cartes&amp;modele=074">
+        <div class="st-vis"><img src="images/studio/studio-cartes.webp" width="760" height="330" loading="lazy" decoding="async" alt="Cartes de visite — modèle à personnaliser dans le Design studio Technic Compo"><span class="st-num">N° 074</span></div>
+        <div class="st-tx"><b>Cartes de visite</b><span>Recto, verso, 350 g pelliculé.</span><span class="st-go">Personnaliser <span class="ar">→</span></span></div>
+      </a>
+      <a class="st-tile reveal" href="/conception/?produit=entetes&amp;modele=074">
+        <div class="st-vis"><img src="images/studio/studio-entetes.webp" width="559" height="760" loading="lazy" decoding="async" alt="En-têtes de lettre — modèle à personnaliser dans le Design studio Technic Compo"><span class="st-num">N° 074</span></div>
+        <div class="st-tx"><b>En-têtes de lettre</b><span>A4, fond blanc, couleurs discrètes.</span><span class="st-go">Personnaliser <span class="ar">→</span></span></div>
+      </a>
+      <a class="st-tile reveal" href="/conception/?produit=chemises&amp;modele=074">
+        <div class="st-vis"><img src="images/studio/studio-chemises.webp" width="545" height="760" loading="lazy" decoding="async" alt="Chemises à rabat — modèle à personnaliser dans le Design studio Technic Compo"><span class="st-num">N° 074</span></div>
+        <div class="st-tx"><b>Chemises à rabat</b><span>A4, face et dos, pelliculage mat ou brillant.</span><span class="st-go">Personnaliser <span class="ar">→</span></span></div>
+      </a>
+      <a class="st-tile x2 reveal" href="/conception/?produit=enveloppes&amp;modele=074">
+        <div class="st-vis"><img src="images/studio/studio-enveloppes.webp" width="760" height="412" loading="lazy" decoding="async" alt="Enveloppes — modèle à personnaliser dans le Design studio Technic Compo"><span class="st-num">N° 074</span></div>
+        <div class="st-tx"><b>Enveloppes</b><span>11×22, C5, C4 — zone d’adresse libre.</span><span class="st-go">Personnaliser <span class="ar">→</span></span></div>
+      </a>
+      <a class="st-tile reveal" href="/conception/?produit=blocs&amp;modele=074">
+        <div class="st-vis"><img src="images/studio/studio-blocs.webp" width="558" height="760" loading="lazy" decoding="async" alt="Blocs-notes — modèle à personnaliser dans le Design studio Technic Compo"><span class="st-num">N° 074</span></div>
+        <div class="st-tx"><b>Blocs-notes</b><span>A5 ou A6, 50 ou 100 feuilles.</span><span class="st-go">Personnaliser <span class="ar">→</span></span></div>
+      </a>
+      <a class="st-tile reveal" href="/conception/?produit=ordonnances&amp;metier=medical&amp;modele=151">
+        <div class="st-vis"><img src="images/studio/studio-ordonnances.webp" width="558" height="760" loading="lazy" decoding="async" alt="Ordonnances — modèle à personnaliser dans le Design studio Technic Compo"><span class="st-num">N° 151</span></div>
+        <div class="st-tx"><b>Ordonnances</b><span>Français et arabe, A5.</span><span class="st-go">Personnaliser <span class="ar">→</span></span></div>
+      </a>
+      <a class="st-tile reveal" href="/conception/?produit=certificats&amp;metier=medical&amp;modele=151">
+        <div class="st-vis"><img src="images/studio/studio-certificats.webp" width="558" height="760" loading="lazy" decoding="async" alt="Certificats médicaux — modèle à personnaliser dans le Design studio Technic Compo"><span class="st-num">N° 151</span></div>
+        <div class="st-tx"><b>Certificats médicaux</b><span>Texte bilingue prêt à remplir.</span><span class="st-go">Personnaliser <span class="ar">→</span></span></div>
+      </a>
+      <a class="st-tile reveal" href="/conception/?produit=fiches&amp;metier=medical&amp;modele=151">
+        <div class="st-vis"><img src="images/studio/studio-fiches.webp" width="562" height="760" loading="lazy" decoding="async" alt="Fiches patients — modèle à personnaliser dans le Design studio Technic Compo"><span class="st-num">N° 151</span></div>
+        <div class="st-tx"><b>Fiches patients</b><span>44×31 pliée, tableau d’observations.</span><span class="st-go">Personnaliser <span class="ar">→</span></span></div>
+      </a>
+      <a class="st-tile reveal" href="/conception/?produit=carnets">
+        <div class="st-vis"><img src="images/studio/studio-carnets.webp" width="558" height="760" loading="lazy" decoding="async" alt="Carnets autocopiants — modèle à personnaliser dans le Design studio Technic Compo"></div>
+        <div class="st-tx"><b>Carnets autocopiants</b><span>Factures, bons, reçus — 2 à 4 feuillets.</span><span class="st-go">Personnaliser <span class="ar">→</span></span></div>
+      </a>
+      <a class="st-tile fonce reveal" href="/conception/#designer">
+        <span class="ic" aria-hidden="true">✦</span>
+        <b>Parlez à notre designer</b>
+        <span>Un logo à créer, un imprimé à refaire depuis une photo : on vous aide à créer, avec proposition et tarif par e-mail.</span>
+        <span class="st-go">Écrire au designer <span class="ar">→</span></span>
+      </a>
+    </div>
+    <div class="studio-steps">
+      <div class="reveal"><em>01</em><p><b>Choisissez un modèle</b><span>Par métier et par style, du plus sobre au premium.</span></p></div>
+      <div class="reveal"><em>02</em><p><b>Ajoutez logo et textes</b><span>Une seule fois : ils suivent sur tous vos produits.</span></p></div>
+      <div class="reveal"><em>03</em><p><b>Commandez</b><span>Prix immédiat, BAT envoyé par e-mail avant impression.</span></p></div>
+    </div>
   </div>
 </section>
 
@@ -966,9 +1078,9 @@ a:focus-visible,button:focus-visible,.chip:focus-visible,input:focus-visible,sel
       <div class="reveal"><div class="eyebrow"><span class="reg"><u></u></span>Réalisations</div><h2 class="sec-title reveal-print">Le produit fini,<br>vu de près.</h2><p class="sec-sub">De l'atelier au produit fini : matières, formats, finitions — le savoir-faire de Technic Compo, vu de près.</p></div>
     </div>
     <div class="real-grid">
-      <figure class="real-item reveal"><img src="images/tc-09-carnet-ouvert.webp" width="466" height="556" alt="Carnet autocopiant ouvert, main soulevant le feuillet jaune pour découvrir la copie" loading="lazy" decoding="async"><figcaption class="real-cap"><strong>Carnet autocopiant</strong><span>feuillets · copie</span></figcaption></figure>
-      <figure class="real-item reveal"><img src="images/tc-41-enveloppes.webp" width="1000" height="667" alt="Enveloppes blanches imprimées avec le logo Technic Compo, posées sur un bureau" loading="lazy" decoding="async"><figcaption class="real-cap"><strong>Enveloppes imprimées</strong><span>façonnage · papier</span></figcaption></figure><figure class="real-item reveal"><img src="images/tc-24-flyers.webp" width="474" height="254" alt="Flyers et affiches imprimés en quadrichromie, couleurs saturées" loading="lazy" decoding="async"><figcaption class="real-cap"><strong>Flyers &amp; affiches</strong><span>quadri · grand aplat</span></figcaption></figure><figure class="real-item reveal"><img src="images/tc-25-rapport.webp" width="477" height="254" alt="Rapport d'activité relié, couverture imprimée en quadrichromie" loading="lazy" decoding="async"><figcaption class="real-cap"><strong>Rapport relié</strong><span>spirale · couverture</span></figcaption></figure><figure class="real-item reveal"><img src="images/tc-22-carnets-spirale.webp" width="477" height="261" alt="Carnets et bloc-notes à spirale imprimés en quadrichromie" loading="lazy" decoding="async"><figcaption class="real-cap"><strong>Carnets &amp; bloc-notes</strong><span>spirale · papier</span></figcaption></figure><figure class="real-item reveal"><img src="images/tc-34-presse.webp" width="477" height="261" alt="Feuilles imprimées en quadrichromie sortant de la presse offset" loading="lazy" decoding="async"><figcaption class="real-cap"><strong>Presse offset</strong><span>impression · couleur</span></figcaption></figure><figure class="real-item reveal"><img src="images/tc-35-massicot.webp" width="477" height="261" alt="Pile de feuilles imprimées sur la table de coupe, guide lumineux" loading="lazy" decoding="async"><figcaption class="real-cap"><strong>Massicotage</strong><span>coupe · précision</span></figcaption></figure><figure class="real-item reveal"><img src="images/tc-36-perforation.webp" width="477" height="261" alt="Feuillets perforés en sortie de façonnage" loading="lazy" decoding="async"><figcaption class="real-cap"><strong>Perforation</strong><span>façonnage · souches</span></figcaption></figure><figure class="real-item reveal"><img src="images/tc-37-faconnage.webp" width="477" height="253" alt="Documents assemblés et reliés, prêts pour la finition" loading="lazy" decoding="async"><figcaption class="real-cap"><strong>Reliure &amp; façonnage</strong><span>assemblage · finition</span></figcaption></figure>
-      <figure class="real-item reveal"><img src="images/tc-20-brochures.webp" width="474" height="261" alt="Brochures et catalogues imprimés en quadrichromie, reliure spirale" loading="lazy" decoding="async"><figcaption class="real-cap"><strong>Brochures &amp; catalogues</strong><span>reliure · quadri</span></figcaption></figure><figure class="real-item reveal"><img src="images/tc-42-porte-documents.webp" width="1000" height="667" alt="Porte-documents bleu nuit imprimés en quadrichromie, empilés en éventail sur un bureau" loading="lazy" decoding="async"><figcaption class="real-cap"><strong>Porte-documents à rabats</strong><span>gaufrage · vernis</span></figcaption></figure><figure class="real-item reveal"><img src="images/tc-40-calendrier.webp" width="312" height="168" alt="Calendrier de bureau à spirale personnalisé, posé sur un bureau" loading="lazy" decoding="async"><figcaption class="real-cap"><strong>Calendriers personnalisés</strong><span>spirale · quadri</span></figcaption></figure>
+      <figure class="real-item reveal"><img src="images/tc-09-carnet-ouvert.webp" width="466" height="556" alt="Carnet autocopiant ouvert, main soulevant le feuillet jaune pour découvrir la copie" loading="lazy" decoding="async"><a class="real-link" href="/conception/?produit=carnets" aria-label="Créer votre carnet dans le Design studio"></a><span class="real-badge">Créer le vôtre →</span><figcaption class="real-cap"><strong>Carnet autocopiant</strong><span>feuillets · copie</span></figcaption></figure>
+      <figure class="real-item reveal"><img src="images/tc-41-enveloppes.webp" width="1000" height="667" alt="Enveloppes blanches imprimées avec le logo Technic Compo, posées sur un bureau" loading="lazy" decoding="async"><a class="real-link" href="/conception/?produit=enveloppes" aria-label="Créer votre enveloppe dans le Design studio"></a><span class="real-badge">Créer le vôtre →</span><figcaption class="real-cap"><strong>Enveloppes imprimées</strong><span>façonnage · papier</span></figcaption></figure><figure class="real-item reveal"><img src="images/tc-24-flyers.webp" width="474" height="254" alt="Flyers et affiches imprimés en quadrichromie, couleurs saturées" loading="lazy" decoding="async"><figcaption class="real-cap"><strong>Flyers &amp; affiches</strong><span>quadri · grand aplat</span></figcaption></figure><figure class="real-item reveal"><img src="images/tc-25-rapport.webp" width="477" height="254" alt="Rapport d'activité relié, couverture imprimée en quadrichromie" loading="lazy" decoding="async"><figcaption class="real-cap"><strong>Rapport relié</strong><span>spirale · couverture</span></figcaption></figure><figure class="real-item reveal"><img src="images/tc-22-carnets-spirale.webp" width="477" height="261" alt="Carnets et bloc-notes à spirale imprimés en quadrichromie" loading="lazy" decoding="async"><a class="real-link" href="/conception/?produit=blocs" aria-label="Créer votre bloc-notes dans le Design studio"></a><span class="real-badge">Créer le vôtre →</span><figcaption class="real-cap"><strong>Carnets &amp; bloc-notes</strong><span>spirale · papier</span></figcaption></figure><figure class="real-item reveal"><img src="images/tc-34-presse.webp" width="477" height="261" alt="Feuilles imprimées en quadrichromie sortant de la presse offset" loading="lazy" decoding="async"><figcaption class="real-cap"><strong>Presse offset</strong><span>impression · couleur</span></figcaption></figure><figure class="real-item reveal"><img src="images/tc-35-massicot.webp" width="477" height="261" alt="Pile de feuilles imprimées sur la table de coupe, guide lumineux" loading="lazy" decoding="async"><figcaption class="real-cap"><strong>Massicotage</strong><span>coupe · précision</span></figcaption></figure><figure class="real-item reveal"><img src="images/tc-36-perforation.webp" width="477" height="261" alt="Feuillets perforés en sortie de façonnage" loading="lazy" decoding="async"><figcaption class="real-cap"><strong>Perforation</strong><span>façonnage · souches</span></figcaption></figure><figure class="real-item reveal"><img src="images/tc-37-faconnage.webp" width="477" height="253" alt="Documents assemblés et reliés, prêts pour la finition" loading="lazy" decoding="async"><figcaption class="real-cap"><strong>Reliure &amp; façonnage</strong><span>assemblage · finition</span></figcaption></figure>
+      <figure class="real-item reveal"><img src="images/tc-20-brochures.webp" width="474" height="261" alt="Brochures et catalogues imprimés en quadrichromie, reliure spirale" loading="lazy" decoding="async"><figcaption class="real-cap"><strong>Brochures &amp; catalogues</strong><span>reliure · quadri</span></figcaption></figure><figure class="real-item reveal"><img src="images/tc-42-porte-documents.webp" width="1000" height="667" alt="Porte-documents bleu nuit imprimés en quadrichromie, empilés en éventail sur un bureau" loading="lazy" decoding="async"><a class="real-link" href="/conception/?produit=chemises" aria-label="Créer votre chemise à rabat dans le Design studio"></a><span class="real-badge">Créer le vôtre →</span><figcaption class="real-cap"><strong>Porte-documents à rabats</strong><span>gaufrage · vernis</span></figcaption></figure><figure class="real-item reveal"><img src="images/tc-40-calendrier.webp" width="312" height="168" alt="Calendrier de bureau à spirale personnalisé, posé sur un bureau" loading="lazy" decoding="async"><figcaption class="real-cap"><strong>Calendriers personnalisés</strong><span>spirale · quadri</span></figcaption></figure>
       <figure class="real-item reveal"><img src="images/tc-31-echantillons.webp" width="474" height="251" alt="Échantillons de finitions : dépliants et chemises assortis d'une même identité visuelle" loading="lazy" decoding="async"><figcaption class="real-cap"><strong>Échantillons de finitions</strong><span>dépliants · chemises</span></figcaption></figure>
       <figure class="real-item reveal"><img src="images/tc-30-qr-carte.webp" width="476" height="254" alt="Carte imprimée avec QR code posée sur une table — accès direct aux informations de l'établissement" loading="lazy" decoding="async"><figcaption class="real-cap"><strong>Impression connectée</strong><span>QR · restaurant</span></figcaption></figure>
     </div>
