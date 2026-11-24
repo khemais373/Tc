@@ -2148,9 +2148,10 @@ const COLS_FICHE = [{fr:'Date', ar:'التاريخ'}, {fr:'Observations', ar:'ا
 const FICHES = ORDONNANCES.map(d => ({...d, id:'f'+d.id.slice(1)}));
 const PRIX_FICHES = {350:{500:363, 1000:625}, 170:{500:192.5, 1000:312.5}};   // 1 couleur, extérieur seul (0,726 / 0,625 et 0,385 / 0,3125 DT l'unité)
 /* ============ Blocs-notes A5 et A6 : la composition de l'en-tête A4, réduite (même proportion), avec des lignes ============ */
-const BLOC_FMT = {A5:{W:148, H:210, k:148/210, d:'14,8 × 21 cm'}, A6:{W:105, H:148, k:0.5, d:'10,5 × 14,8 cm'}};
+const BLOC_FMT = {A4:{W:210, H:297, k:1, d:'21 × 29,7 cm'}, A5:{W:148, H:210, k:148/210, d:'14,8 × 21 cm'}, A6:{W:105, H:148, k:0.5, d:'10,5 × 14,8 cm'}};
+const REGLES = {lignes:'lignes', pointilles:'pointillés', blanc:'sans lignes'};
 function pageBloc(cfg, fmt) {
-  return (f, c, a) => {
+  return (f, c, a, regle = 'lignes') => {
     const F = BLOC_FMT[fmt] || BLOC_FMT.A5, petit = F === BLOC_FMT.A6;
     const z = {h:0, g:0, d:0, b:0, ...(cfg.zone||{})}, x0 = PM + z.g, x1 = PW - PM - z.d, y0 = (cfg.y0 || 16) + z.h, t = cfg.tete || 'gauche';
     let s = fondA4() + (cfg.orn ? cfg.orn(c, a, f, {W:PW, H:PH, M:PM}) : '') + teteEntete(f, c, a, cfg, x0, x1, y0);
@@ -2166,12 +2167,14 @@ function pageBloc(cfg, fmt) {
       yB = (cfg.pied === 'bande' && cfg.piedH ? PH - cfg.piedH : PH - 12 - z.b - (cfg.pied === 'colonnes' ? 13 : 11)) - 8;
     }
     const pas = petit ? 12 : 9;
-    for (let y = yH + pas; y <= yB; y += pas) s += `<line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}" stroke="${c}" stroke-opacity=".2" stroke-width="${petit ? 0.6 : 0.4}"/>`;
+    if (regle === 'pointilles') for (let y = yH + pas; y <= yB; y += pas) s += `<line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}" stroke="${c}" stroke-opacity=".38" stroke-width="${petit ? 0.95 : 0.7}" stroke-linecap="round" stroke-dasharray="0.01 ${petit ? 2.6 : 2}"/>`;
+    else if (regle !== 'blanc') for (let y = yH + pas; y <= yB; y += pas) s += `<line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}" stroke="${c}" stroke-opacity=".2" stroke-width="${petit ? 0.6 : 0.4}"/>`;
     return `<rect width="${F.W}" height="${F.H}" fill="#fff"/><g transform="scale(${F.k})">${s}</g>`;
   };
 }
-const PRIX_BLOCS = {'A5':{50:{'mono':{50:140.0,100:250.0,200:460.0,500:1100.0},'quadri':{50:225.0,100:360.0,200:640.0,500:1450.0}},100:{'mono':{50:205.0,100:380.0,200:740.0,500:1800.0},'quadri':{50:320.0,100:550.0,200:1020.0,500:2400.0}}},'A6':{50:{'mono':{50:100.0,100:170.0,200:300.0,500:750.0},'quadri':{50:170.0,100:250.0,200:420.0,500:950.0}},100:{'mono':{50:135.0,100:240.0,200:460.0,500:1100.0},'quadri':{50:220.0,100:360.0,200:620.0,500:1450.0}}}};   // HT, coût de revient + 35 % (papier 65x89 au prorata, carton gris, encollage, assemblage), calculé le 24/11/2026
-const BLOCS = ENTETES.map(d => ({id:'b'+d.id.slice(1), nom:d.nom, style:d.style, metiers:d.metiers, cfg:d.cfg, pages:{A5:pageBloc(d.cfg, 'A5'), A6:pageBloc(d.cfg, 'A6')}}));
+const PRIX_BLOCS = {'A4':{50:{'mono':{50:220.0,100:410.0,200:780.0,500:1900.0},'quadri':{50:330.0,100:580.0,200:1060.0,500:2550.0}},100:{'mono':{50:340.0,100:660.0,200:1280.0,500:3150.0},'quadri':{50:510.0,100:940.0,200:1780.0,500:4350.0}}},'A5':{50:{'mono':{50:140.0,100:250.0,200:460.0,500:1100.0},'quadri':{50:225.0,100:360.0,200:640.0,500:1450.0}},100:{'mono':{50:205.0,100:380.0,200:740.0,500:1800.0},'quadri':{50:320.0,100:550.0,200:1020.0,500:2400.0}}},'A6':{50:{'mono':{50:100.0,100:170.0,200:300.0,500:750.0},'quadri':{50:170.0,100:250.0,200:420.0,500:950.0}},100:{'mono':{50:135.0,100:240.0,200:460.0,500:1100.0},'quadri':{50:220.0,100:360.0,200:620.0,500:1450.0}}}};   // HT, coût de revient + 35 % (papier 65x89 au prorata, carton gris, encollage, assemblage), calculé le 24/11/2026
+const BLOCS = ENTETES.map(d => ({id:'b'+d.id.slice(1), nom:d.nom, style:d.style, metiers:d.metiers, cfg:d.cfg, pages:{A4:pageBloc(d.cfg, 'A4'), A5:pageBloc(d.cfg, 'A5'), A6:pageBloc(d.cfg, 'A6')}}));
+const fmtBloc = (e) => BLOC_FMT[e.fmtBloc] ? e.fmtBloc : 'A5';
 const facesDe = (P, e) => typeof P.faces === 'function' ? P.faces(e) : P.faces;
 
 /* ============ 10 designs de carnets : en-tête + pied, le corps dépend du document ============ */
@@ -2329,9 +2332,9 @@ const PRODUITS = {
     quoi:(e) => `Fiches patients 44 × 31 cm pliées (22 × 31), couché mat ${e.papier || 350} g, 4 pages en ${e.encre === 'mono' ? '1 couleur' : 'quadri'}, tableau pages 2 et 3 : ${(e.cols || COLS_FICHE).map(k => [k.fr, k.ar].filter(Boolean).join(' / ') || '(sans titre)').join(' | ')} · modèle ${e.design.id.slice(1)} « ${e.design.nom} »`,
     icone:'<svg viewBox="0 0 44 44"><path d="M8 6h28v32H8z" fill="#fff" stroke="#12151A" stroke-width="1.6"/><rect x="18" y="9" width="8" height="5" rx="1" fill="#0BA894"/><rect x="14" y="17" width="16" height="1.8" fill="#12151A"/><rect x="11" y="22" width="22" height="10" rx="1" fill="none" stroke="#9AA0A8" stroke-width="1"/><rect x="13" y="25" width="18" height="0.9" fill="#9AA0A8"/><rect x="13" y="28.5" width="18" height="0.9" fill="#9AA0A8"/></svg>'},
   blocs: {nom:'Blocs-notes', unite:'blocs', parUnite:' / bloc', designs:BLOCS, duo:true, styles:STYLES, principal:'societe', champs:['societe','activite','adresse','tel','email','site','mf'],
-    quantites:() => [50,100,200,500], prix:(e,q) => ((PRIX_BLOCS[e.format === 'A6' ? 'A6' : 'A5'][e.feuilles || 50] || {})[e.encre === 'mono' ? 'mono' : 'quadri'] || {})[q] ?? null,
-    note:(e) => `${e.format === 'A6' ? 'A6' : 'A5'} (${(BLOC_FMT[e.format] || BLOC_FMT.A5).d}), offset 80 g, blocs de ${e.feuilles || 50} feuilles collés en tête avec carton au dos, ${e.encre === 'mono' ? '1 couleur' : 'quadri'}.`,
-    quoi:(e) => `Blocs-notes ${e.format === 'A6' ? 'A6' : 'A5'}, offset 80 g, ${e.feuilles || 50} feuilles par bloc, ${e.encre === 'mono' ? '1 couleur' : 'quadri'} · modèle ${e.design.id.slice(1)} « ${e.design.nom} »`,
+    quantites:() => [50,100,200,500], prix:(e,q) => ((PRIX_BLOCS[fmtBloc(e)][e.feuilles || 50] || {})[e.encre === 'mono' ? 'mono' : 'quadri'] || {})[q] ?? null,
+    note:(e) => `${fmtBloc(e)} (${BLOC_FMT[fmtBloc(e)].d}), offset 80 g, ${REGLES[e.regle] || 'lignes'}, blocs de ${e.feuilles || 50} feuilles collés en tête avec carton au dos, ${e.encre === 'mono' ? '1 couleur' : 'quadri'}.`,
+    quoi:(e) => `Blocs-notes ${fmtBloc(e)}, ${REGLES[e.regle] || 'lignes'}, offset 80 g, ${e.feuilles || 50} feuilles par bloc, ${e.encre === 'mono' ? '1 couleur' : 'quadri'} · modèle ${e.design.id.slice(1)} « ${e.design.nom} »`,
     icone:'<svg viewBox="0 0 44 44"><rect x="10" y="6" width="24" height="33" rx="1.5" fill="#fff" stroke="#12151A" stroke-width="1.6"/><rect x="10" y="6" width="24" height="4" fill="#12151A"/><rect x="13" y="13" width="5" height="4" rx="1" fill="#0BA894"/><rect x="20" y="14" width="10" height="1.6" fill="#12151A"/><rect x="13" y="21" width="18" height="0.9" fill="#C8CCD2"/><rect x="13" y="25" width="18" height="0.9" fill="#C8CCD2"/><rect x="13" y="29" width="18" height="0.9" fill="#C8CCD2"/><rect x="13" y="33" width="18" height="0.9" fill="#C8CCD2"/></svg>'},
   carnets: {nom:'Carnets autocopiants', unite:'carnets', parUnite:' / carnet', designs:CARNETS, principal:'societe', champs:['societe','activite','adresse','tel','email','mf'],
     quantites:(e) => Object.keys(PRIX_CARNETS[e.format][e.plis]).map(Number), prix:(e,q) => Math.round(PRIX_CARNETS[e.format][e.plis][q]*q*1000)/1000,
@@ -2353,7 +2356,7 @@ function dessin(prod, design, e, face){
   if (prod === 'entetes') { const [c,a] = e.couleur.split('|'); return {W:PW, H:PH, svg: design.page(f, c, a)}; }
   if (prod === 'chemises') { const [c,a] = e.couleur.split('|'), F = FMT_CHEMISE[e.format] || FMT_CHEMISE.A4; return {W:F.W, H:F.H, svg: faceChemise(design.cfg, (!face || face === 'recto') ? 'couverture' : face, F.nom, e.fond !== 'blanc')(f, c, a)}; }
   if (prod === 'enveloppes') { const [c,a] = e.couleur.split('|'); return {W:EW, H:EH, svg: design.env(f, c, a)}; }
-  if (prod === 'blocs') { const [c,a0] = e.couleur.split('|'), fm = e.format === 'A6' ? 'A6' : 'A5', F = BLOC_FMT[fm]; return {W:F.W, H:F.H, svg: design.pages[fm](f, c, e.encre === 'mono' ? c : a0)}; }
+  if (prod === 'blocs') { const [c,a0] = e.couleur.split('|'), fm = fmtBloc(e), F = BLOC_FMT[fm]; return {W:F.W, H:F.H, svg: design.pages[fm](f, c, e.encre === 'mono' ? c : a0, e.regle)}; }
   if (prod === 'fiches') { const [c,a0] = e.couleur.split('|'), a = e.encre === 'mono' ? c : a0, fc = (!face || face === 'recto') ? 'couverture' : face; return {W: fc === 'interieur' ? 2*FW : FW, H:FH, svg: faceFiche(design.cfg, fc, e.cols)(f, c, a)}; }
   if (prod === 'ordonnances' || prod === 'certificats') { const [c,a] = e.couleur.split('|'); return {W:OW, H:OH, svg: design.page(f, c, e.encre === 'mono' ? c : a)}; }
   return carnetSvg(design, e.doc, e.format, f, e.couleur, e.numero);
@@ -2455,7 +2458,7 @@ function ouvrirStudio(design, couleur, met){
   const e = {design, metier:met, couleur, verso:'assorti', doc, format:'A5', plis:'2', numero:'', quantite:null, champs:memo.champs, logo:memo.logo, extras:{}};
   if (prod === 'chemises') { e.format = 'A4'; e.pellic = 'mat'; e.fond = 'couleur'; }
   if (MEDICAL.includes(prod)) e.encre = 'quadri';
-  if (prod === 'blocs') { e.format = 'A5'; e.feuilles = 50; e.encre = 'quadri'; }
+  if (prod === 'blocs') { e.fmtBloc = 'A5'; e.regle = 'lignes'; e.feuilles = 50; e.encre = 'quadri'; }
   if (prod === 'fiches') { e.papier = 350; e.cols = memo.cols || (memo.cols = COLS_FICHE.map(k => ({...k}))); }
   if (TRIO.includes(prod)) trioDe(prod, met).filter(k => k !== prod).forEach(k => { if (assorti(k, design)) { const qs = PRODUITS[k].quantites({...e}); e.extras[k] = {actif:false, q: qs.includes(1000) ? 1000 : qs[1] || qs[0]}; } });
   let face = 'recto', ouvert = 0;
@@ -2536,11 +2539,12 @@ function ouvrirStudio(design, couleur, met){
   };
   const etapes = [
     {t:'Design', resume:()=> e.design.nom, corps:()=>[ el('div',{class:'choix'}, memeStyle().map(d => el('button',{type:'button','aria-pressed':String(d===e.design), onclick:(ev)=>{ e.design=d; ev.currentTarget.parentNode.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed', String(b===ev.currentTarget))); face='recto'; rendreFaces(); rendu(); rendreAutres(); majEtapes(); }}, d.nom))) ]},
-    ...(prod === 'blocs' ? [{t:'Format et impression', resume:()=> e.format + ' · ' + e.feuilles + ' feuilles · ' + (e.encre === 'mono' ? '1 couleur' : 'quadri'), corps:()=>[
-      choix([['A5','A5','14,8 × 21 cm'],['A6','A6','10,5 × 14,8 cm']], 'format', () => { rendreQte(); rendreExtras(); }),
+    ...(prod === 'blocs' ? [{t:'Format et impression', resume:()=> e.fmtBloc + ' · ' + REGLES[e.regle] + ' · ' + e.feuilles + ' feuilles · ' + (e.encre === 'mono' ? '1 couleur' : 'quadri'), corps:()=>[
+      choix([['A4','A4','21 × 29,7 cm'],['A5','A5','14,8 × 21 cm'],['A6','A6','10,5 × 14,8 cm']], 'fmtBloc', () => { rendreQte(); rendreExtras(); }),
+      el('div',{style:'height:10px'}), choix([['lignes','Lignes','Pour les notes'],['pointilles','Pointillés','Plus discret'],['blanc','Sans lignes','Page libre, pour une lettre']], 'regle'),
       el('div',{style:'height:10px'}), choix([[50,'50 feuilles par bloc'],[100,'100 feuilles par bloc']], 'feuilles', () => { rendreQte(); rendreExtras(); }),
       el('div',{style:'height:10px'}), choix([['quadri','Quadri','Toutes les couleurs du modèle'],['mono','1 couleur','La couleur principale seule']], 'encre', () => { rendreQte(); rendreExtras(); }),
-      el('p',{class:'note'}, 'Offset 80 g, lignes imprimées, collé en tête avec un carton au dos.')]}] : []),
+      el('p',{class:'note'}, 'Offset 80 g, collé en tête avec un carton au dos. En A4 sans lignes, le bloc sert aussi de papier à lettre.')]}] : []),
     ...(prod === 'fiches' ? [{t:'Papier et impression', resume:()=> e.papier + ' g · ' + (e.encre === 'mono' ? '1 couleur' : 'quadri'), corps:()=>[
       choix([[350,'Couché mat 350 g','Rainée et pliée'],[170,'Couché mat 170 g','Pliée']], 'papier', () => { rendreQte(); rendreExtras(); }),
       el('div',{style:'height:10px'}), choix([['quadri','Quadri','Toutes les couleurs du modèle'],['mono','1 couleur','La couleur principale seule']], 'encre', () => { rendreQte(); rendreExtras(); }),
