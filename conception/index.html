@@ -440,7 +440,7 @@ h1,h2,h3{letter-spacing:-.02em}
         <h1>Votre identité,<br><span class="t">imprimée</span>.</h1>
         <p class="hero-sub">Choisissez un modèle, ajoutez votre logo et vos textes une seule fois : ils passent sur la carte, l’en-tête, l’enveloppe et tous vos imprimés.</p>
         <div class="hero-cta"><a class="btn btn-ink" href="#catalogue">Choisir un modèle <span class="ar">→</span></a><a class="btn btn-line" href="#designer">Parler à notre designer</a></div>
-        <div class="hero-specs"><span><b>215</b>modèles</span><span><b>10</b>produits assortis</span><span><b>FR · ع</b>français et arabe</span><span><b>BAT</b>avant impression</span></div>
+        <div class="hero-specs"><span><b>219</b>modèles</span><span><b>10</b>produits assortis</span><span><b>FR · ع</b>français et arabe</span><span><b>BAT</b>avant impression</span></div>
       </div>
       <div class="vitrine" id="vitrine" aria-hidden="true"></div>
     </div>
@@ -1073,7 +1073,7 @@ const VERSOS = {
 };
 
 /* ---------- Bibliothèque complète, du plus simple au plus travaillé ---------- */
-const STYLES = {tous:'Tous', simple:'Simples', moderne:'Modernes', couleur:'Couleur', prestige:'Prestige', creatif:'Créatifs', signature:'Signature', sante:'Santé premium'};
+const STYLES = {tous:'Tous', eco:'Éco · 1 couleur', simple:'Simples', moderne:'Modernes', couleur:'Couleur', prestige:'Prestige', creatif:'Créatifs', signature:'Signature', sante:'Santé premium'};
 const versoSimple = (f,c) => fond(c) + logo(f, CW/2-9, CH/2-13, 18, c, c) + txt(CW/2, CH/2+13, f.societe, 3.4, {bold:true, anchor:'middle', fill:'#fff', ls:0.3, max:LU});
 /* ============ Série Signature : 50 designs premium, faisables en offset (aplats, filets ≥ 0,15 mm, deux tons) ============
    Chaque design = un motif dessiné (patrimoine tunisien, haute facture, géométrie, cartographie, métiers)
@@ -1801,6 +1801,84 @@ const versSig = ([nom, m, r, v, p, ff, metiers]) => ({nom, metiers, motif:m,
 const SANTE = SANTE_LISTE.map(versSig);
 const AVOCATS = AVOCAT_LISTE.map(versSig);
 
+/* ============ Gamme Éco : 1 seule encre en aplat 100 %, police au choix (français et arabe), prix au plus juste ============ */
+const ECO_COULEURS = ['#16181D','#1B2A4A','#1D4E9E','#0B6E79','#0B7F71','#2E6B30','#7A1F2B','#B3261E','#5B2A86','#8A5A14'];
+const ECO_FR = [['montserrat','Montserrat'],['poppins','Poppins'],['raleway','Raleway'],['josefin','Josefin'],['oswald','Oswald'],['playfair','Playfair'],['lora','Lora'],['baskerville','Baskerville'],['cormorant','Cormorant'],['cinzel','Cinzel']];
+const ECO_AR = [['cairo','Cairo'],['tajawal','Tajawal'],['almarai','Almarai'],['changa','Changa'],['kufi','Kufi'],['reemkufi','Reem Kufi'],['amiri','Amiri'],['messiri','El Messiri']];
+const ECO = {fr:'montserrat', ar:'cairo'};   // police choisie par le client (gardée avec ses textes)
+const ecoFF = () => POLICES[ECO.fr] || MS;
+const PRIX_ECO = {"cartes": {"r": {"1000": 36, "2000": 48, "3000": 61, "5000": 86}, "rv": {"1000": 53, "2000": 67, "3000": 81, "5000": 109}}, "entetes": {"1000": 56, "2000": 89, "3000": 123, "5000": 189}, "enveloppes": {"1000": 87, "2000": 158, "3000": 229, "5000": 371}, "ordonnances": {"1000": 50, "2000": 76, "3000": 103}, "chemises": {"1000": 1760, "2000": 3520, "3000": 5280}, "fiches": {"350": {"500": 232, "1000": 425}, "170": {"500": 138, "1000": 237}}, "blocs": {"A4": {"50": {"50": 180.0, "100": 330.0, "200": 640.0, "500": 1550.0}, "100": {"50": 280.0, "100": 540.0, "200": 1040.0, "500": 2600.0}}, "A5": {"50": {"50": 115.0, "100": 200.0, "200": 380.0, "500": 900.0}, "100": {"50": 170.0, "100": 310.0, "200": 600.0, "500": 1450.0}}, "A6": {"50": {"50": 80.0, "100": 140.0, "200": 260.0, "500": 600.0}, "100": {"50": 110.0, "100": 200.0, "200": 380.0, "500": 900.0}}}};   // HT, coût de revient + 10 % (outil de devis, papier au prorata), calculé le 24/11/2026
+const ECO_LISTE = [
+  {nom:'Éco · Classique', metiers:['medical','conseil','commerce','avocat','beaute','restaurant','transport','btp','auto','informatique','agriculture'],
+    recto:(f,c) => { const ff = ecoFF(); return logo(f, CW/2-5, 5.5, 10, c)
+      + tc(CW/2, 23.5, f.nom, 4.3, {ff, w:700, fill:c, anchor:'middle', max:CW-12}) + tc(CW/2, 27.6, maj(f.fonction), 1.7, {ff, w:600, ls:0.5, fill:c, anchor:'middle', max:CW-14})
+      + `<rect x="${CW/2-6}" y="30.4" width="12" height="0.3" fill="${c}"/>` + tc(CW/2, 36.6, f.societe, 2.3, {ff, w:600, fill:c, anchor:'middle', max:CW-14})
+      + tc(CW/2, 42.4, [f.tel, f.email].filter(Boolean).join('   ·   '), 1.8, {ff, fill:c, anchor:'middle', max:CW-10}) + tc(CW/2, 46, f.adresse, 1.7, {ff, fill:c, anchor:'middle', max:CW-10}); }},
+  {nom:'Éco · Filet', metiers:['conseil','avocat','medical','commerce','informatique','btp','transport','auto','beaute','restaurant','agriculture'],
+    recto:(f,c) => { const ff = ecoFF(); return logo(f, M, M, 9, c) + tc(CW-M, M+3.4, maj(f.societe), 1.7, {ff, w:700, ls:0.5, fill:c, anchor:'end', max:46})
+      + `<rect x="${M}" y="19" width="0.5" height="${CH-19-M}" fill="${c}"/>`
+      + tc(M+3.5, 23.5, f.nom, 4.3, {ff, w:700, fill:c, max:CW-2*M-6}) + tc(M+3.5, 27.6, maj(f.fonction), 1.65, {ff, w:600, ls:0.45, fill:c, max:CW-2*M-6})
+      + coord(f, M+3.5, 34.5, {lettre:c, fill:c, quoi:['tel','email','site','adresse'], taille:1.75, pas:3.55, max:CW-2*M-12}); }},
+  {nom:'Éco · Bandeau', metiers:['commerce','restaurant','transport','btp','auto','medical','conseil','avocat','beaute','informatique','agriculture'],
+    recto:(f,c) => { const ff = ecoFF(); return logo(f, M, M, 11, c) + tc(M+14, M+5, f.nom, 4.1, {ff, w:700, fill:c, max:CW-2*M-14}) + tc(M+14, M+9.4, maj(f.fonction), 1.6, {ff, w:600, ls:0.45, fill:c, max:CW-2*M-14})
+      + tc(M, 29.5, f.societe, 2.4, {ff, w:700, fill:c, max:CW-2*M}) + tc(M, 33.4, f.adresse, 1.7, {ff, fill:c, max:CW-2*M})
+      + `<rect y="${CH-12}" width="${CW}" height="12" fill="${c}"/>` + tc(CW/2, CH-5.3, [f.tel, f.email].filter(Boolean).join('   ·   '), 1.9, {ff, w:600, fill:'#ffffff', anchor:'middle', max:CW-10}); }},
+  {nom:'Éco · Bilingue', metiers:['medical','avocat','conseil','commerce','beaute','restaurant','transport','btp','auto','informatique','agriculture'],
+    recto:(f,c) => { const ff = ecoFF(), ffa = ECO.ar; return logo(f, CW/2-4.5, 4.5, 9, c) + `<rect x="${CW/2-0.15}" y="17" width="0.3" height="19" fill="${c}"/>`
+      + tc(M, 22, f.nom, 3.4, {ff, w:700, fill:c, max:CW/2-M-3}) + tc(M, 25.6, f.fonction, 1.9, {ff, fill:c, max:CW/2-M-3}) + tc(M, 30.6, f.societe, 1.8, {ff, w:600, fill:c, max:CW/2-M-3})
+      + ar(CW-M, 22.2, f.nom_ar, 3.9, {bold:true, fill:c, ffa, max:CW/2-M-3}) + ar(CW-M, 26.2, f.fonction_ar, 2.4, {fill:c, ffa, max:CW/2-M-3}) + ar(CW-M, 31, f.societe_ar, 2.2, {fill:c, ffa, max:CW/2-M-3})
+      + `<rect x="${M}" y="40" width="${CW-2*M}" height="0.3" fill="${c}"/>` + tc(CW/2, 45, [f.tel, f.email].filter(Boolean).join('   ·   '), 1.85, {ff, fill:c, anchor:'middle', max:CW-10})
+      + tc(CW/2, 48.6, f.adresse, 1.65, {ff, fill:c, anchor:'middle', max:CW-10}); }},
+];
+const versoEco = (f, c) => logo(f, CW/2-8, 11, 16, c) + tc(CW/2, 36, f.societe, 3, {ff:ecoFF(), w:700, fill:c, anchor:'middle', max:CW-14}) + tc(CW/2, 40.4, f.activite, 1.9, {ff:ecoFF(), fill:c, anchor:'middle', max:CW-14});
+const ECO_CARTES = ECO_LISTE.map(d => ({nom:d.nom, metiers:d.metiers, recto:(f,c) => d.recto(f, c), verso:(f,c) => versoEco(f, c)}));
+
+/* Logo en 1 couleur : on garde les parties foncées ou colorées du logo et on les imprime dans l'encre choisie */
+const MASQUES = {};
+function preparerMasque(src){
+  if (!src || MASQUES[src]) return Promise.resolve();
+  return new Promise(res => { const im = new Image(); im.onload = () => { try {
+      const k = 480 / Math.max(im.naturalWidth || 1, im.naturalHeight || 1), w = Math.max(1, Math.round((im.naturalWidth||1)*k)), h = Math.max(1, Math.round((im.naturalHeight||1)*k));
+      const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const x = cv.getContext('2d'); x.drawImage(im, 0, 0, w, h);
+      const d = x.getImageData(0, 0, w, h), p = d.data;
+      for (let i = 0; i < p.length; i += 4) { const r = p[i], g = p[i+1], b = p[i+2], l = (0.2126*r + 0.7152*g + 0.0722*b)/255, s = (Math.max(r,g,b) - Math.min(r,g,b))/255;
+        const v = Math.min(1, Math.max(0, (Math.max(1 - l, s) - 0.22) / 0.18)); p[i] = p[i+1] = p[i+2] = 0; p[i+3] = Math.round(p[i+3] * v); }
+      x.putImageData(d, 0, 0); MASQUES[src] = cv.toDataURL('image/png'); } catch(err) {} res(); };
+    im.onerror = () => res(); im.src = src; });
+}
+/* Ramène un dessin à une seule encre : tout passe dans la couleur choisie, les teintes claires disparaissent (pas de tramé) */
+function monochrome(svg, c){
+  const doc = new DOMParser().parseFromString(`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">${svg}</svg>`, 'image/svg+xml');
+  if (doc.querySelector('parsererror')) return svg;
+  const root = doc.documentElement, fid = 'eco' + uid();
+  const rgb = (v) => { v = v.trim().toLowerCase();
+    if (v[0] === '#') { let h = v.slice(1); if (h.length === 3 || h.length === 4) h = [...h.slice(0,3)].map(x => x+x).join(''); return [0,2,4].map(i => parseInt(h.slice(i, i+2), 16)); }
+    const m = v.match(/rgba?\(([^)]*)\)/); if (m) return m[1].split(',').slice(0,3).map(x => parseFloat(x));
+    if (v === 'white') return [255,255,255]; if (v === 'black') return [0,0,0]; return null; };
+  const conv = (v) => { if (!v) return v; const t = v.trim(); if (t === 'none' || t.startsWith('url(') || t === 'transparent' || t === 'currentColor') return v;
+    const x = rgb(t); if (!x) return v; const l = (0.2126*x[0] + 0.7152*x[1] + 0.0722*x[2])/255; if (l > 0.86) return '#ffffff';
+    const ts = [0,1,2].filter(i => 255 - C[i] > 25).map(i => (x[i] - C[i]) / (255 - C[i]));   // teinte claire de l'encre : on la laisse en blanc
+    if (ts.length && ts.every(t => t > 0.45)) return '#ffffff';
+    return c; };
+  const C = rgb(c) || [0,0,0];
+  let filtre = false;
+  for (const n of root.querySelectorAll('*')) {
+    for (const at of ['fill','stroke','stop-color','flood-color']) if (n.hasAttribute(at)) n.setAttribute(at, conv(n.getAttribute(at)));
+    if (n.hasAttribute('style')) n.setAttribute('style', n.getAttribute('style').replace(/(fill|stroke|stop-color|color|background)\s*:\s*([^;]+)/g, (m, k, v) => k + ':' + conv(v)));
+    const leger = {};
+    for (const at of ['opacity','fill-opacity','stroke-opacity']) if (n.hasAttribute(at)) { const v = parseFloat(n.getAttribute(at)); n.removeAttribute(at); if (v < 0.4) leger[at] = true; }
+    if (n.hasAttribute('stop-opacity')) n.removeAttribute('stop-opacity');
+    const trait = n.getAttribute('stroke') && n.getAttribute('stroke') !== 'none';
+    if (leger['stroke-opacity']) n.setAttribute('stroke-width', Math.max(0.12, parseFloat(n.getAttribute('stroke-width') || '0.3') * 0.5));
+    if (leger.opacity || (leger['fill-opacity'] && !trait)) n.setAttribute('display', 'none');
+    else if (leger['fill-opacity']) n.setAttribute('fill', 'none');
+    if (n.tagName === 'image') { const src = n.getAttribute('href') || n.getAttribute('xlink:href');
+      if (src && MASQUES[src]) { n.setAttribute('href', MASQUES[src]); n.setAttribute('filter', `url(#${fid})`); filtre = true; } }
+  }
+  const s = new XMLSerializer();
+  return (filtre ? `<defs><filter id="${fid}" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB"><feFlood flood-color="${c}"/><feComposite in2="SourceAlpha" operator="in"/></filter></defs>` : '')
+    + [...root.childNodes].map(x => s.serializeToString(x)).join('').replace(/ xmlns="http:\/\/www\.w3\.org\/2000\/svg"/g, '');
+}
 const CARTES = [
   ...SIMPLES.map(d => ({...d, style:'simple', verso: d.verso || versoSimple})),
   ...COMPOSES.map(d => ({...d, style:'moderne'})),
@@ -1810,6 +1888,7 @@ const CARTES = [
   ...SIGNATURE.map(d => ({...d, style:'signature'})),
   ...SANTE.map(d => ({...d, style:'sante'})),
   ...AVOCATS.map(d => ({...d, style:'signature'})),
+  ...ECO_CARTES.map(d => ({...d, style:'eco'})),
 ].map((d,i) => ({...d, id:'c'+String(i+1).padStart(3,'0')}));
 
 /* ============ En-têtes de lettre A4 : les 100 designs des cartes, version papier à lettres ============
@@ -1931,6 +2010,8 @@ const DECORS_A4 = [
   {zone:{d:16}, orn:(c,a,f,Z) => `<rect x="${Z.W-12}" width="12" height="${Z.H}" fill="${c}"/><rect x="${Z.W-12}" y="${Z.H-60}" width="12" height="60" fill="${a}"/>`},
 ];
 const MISES_A4 = [{tete:'gauche', pied:'ligne'}, {tete:'centre', pied:'ligne'}, {tete:'gauche', pied:'colonnes', ff:'poppins'}, {tete:'droite', pied:'ligne', ff:'playfair'}, {tete:'grand', pied:'colonnes', w:600}];
+SPEC_ENTETE.eco = {'Éco · Classique':{tete:'centre', pied:'ligne', ff:'montserrat'}, 'Éco · Filet':{tete:'gauche', pied:'ligne', ff:'montserrat'},
+  'Éco · Bandeau':{tete:'droite', pied:'colonnes', ff:'montserrat'}, 'Éco · Bilingue':{tete:'centre', pied:'ligne', ff:'montserrat'}};
 SPEC_ENTETE.signature = Object.fromEntries([...SIGNATURE, ...AVOCATS].map(d => [d.nom, d.a4]));
 SPEC_ENTETE.sante = Object.fromEntries(SANTE.map(d => [d.nom, d.a4]));
 const ENTETES = CARTES.map((d, i) => {
@@ -2038,7 +2119,7 @@ const OW = 148, OH = 210, OK = OW / PW;
 const AR_DE = {playfair:'amiri', cormorant:'amiri', lora:'amiri', baskerville:'amiri', dmserif:'amiri', cinzel:'amiri', montserrat:'tajawal', poppins:'tajawal', raleway:'tajawal', josefin:'tajawal', oswald:'changa'};
 function pageOrdonnance(cfg, doc) {
   return (f, c, a) => {
-    const z = {h:0, g:0, d:0, b:0, ...(cfg.zone||{})}, x0 = PM + z.g, x1 = PW - PM - z.d, ff = POLICES[cfg.ff] || MS, ffa = AR_DE[cfg.ff] || 'cairo', aT = lisible(a);
+    const z = {h:0, g:0, d:0, b:0, ...(cfg.zone||{})}, x0 = PM + z.g, x1 = PW - PM - z.d, ff = POLICES[cfg.ff] || MS, ffa = cfg.ffa || AR_DE[cfg.ff] || 'cairo', aT = lisible(a);
     const t = cfg.tete || 'gauche', bande = t === 'bande', aGauche = t === 'gauche' || bande;
     const blanc = bande ? '#fff' : null;
     let s = fondA4() + (cfg.orn ? cfg.orn(c, a, f, {W:PW, H:PH, M:PM}) : '');
@@ -2101,7 +2182,7 @@ const FW = 220, FH = 310;
 function faceFiche(cfg, face, cols) {
   return (f, c, a) => {
     if (face === 'dos') return faceChemise(cfg, 'dos', 'FICHE', false)(f, c, a);
-    const ff = POLICES[cfg.ff] || MS, ffa = AR_DE[cfg.ff] || 'cairo', aT = lisible(a), M = 20;
+    const ff = POLICES[cfg.ff] || MS, ffa = cfg.ffa || AR_DE[cfg.ff] || 'cairo', aT = lisible(a), M = 20;
     const pts = (xa, xb, y) => `<line x1="${xa}" y1="${y}" x2="${xb}" y2="${y}" stroke="#9a958a" stroke-width="0.3" stroke-dasharray="0.6 1.2"/>`;
     const champ = (x0, x1, y, fr, arb, wf, wa) => tc(x0, y, fr, 3.6, {fill:'#444'}) + pts(x0 + wf, x1 - wa, y + 0.4) + ar(x1, y, arb, 4.2, {fill:'#444', ffa});
     if (face === 'couverture') {
@@ -2293,46 +2374,46 @@ function carnetSvg(design, type, fmt, f, c, num) {
 const CHAMPS = {nom:'Nom et prénom', fonction:'Fonction', societe:'Société', tel:'Téléphone', email:'E-mail', site:'Site ou réseau', adresse:'Adresse', activite:'Activité', mf:'Matricule fiscal', nom_ar:'Nom en arabe', fonction_ar:'Fonction en arabe', societe_ar:'Société en arabe', adresse_ar:'Adresse en arabe', activite_ar:'Activité en arabe'};
 const PRODUITS = {
   cartes:  {nom:'Cartes de visite', unite:'cartes', parUnite:' / carte', designs:CARTES, duo:true, styles:STYLES, principal:'nom', champs:['nom','fonction','societe','activite','tel','email','site','adresse'],
-    quantites:() => Object.keys(PRIX_CARTES).map(Number), prix:(e,q) => PRIX_CARTES[q] - (e.verso==='blanc' ? 10*q/1000 : 0),
+    quantites:() => Object.keys(PRIX_CARTES).map(Number), prix:(e,q) => estEco(e) ? PRIX_ECO.cartes[e.verso === 'blanc' ? 'r' : 'rv'][q] : PRIX_CARTES[q] - (e.verso==='blanc' ? 10*q/1000 : 0),
     note:() => '350 g, quadri, pelliculage mat ou brillant compris.',
     quoi:(e) => `Cartes de visite 8,5 × 5,5 cm, 350 g, quadri, pelliculées · modèle ${e.design.id.slice(1)} « ${e.design.nom} » · verso « ${VERSOS[e.verso].nom} »`,
     icone:'<svg viewBox="0 0 44 44"><rect x="4" y="11" width="36" height="23" rx="2.5" fill="#fff" stroke="#12151A" stroke-width="1.6"/><rect x="8" y="16" width="8" height="8" rx="1.5" fill="#0BA894"/><rect x="19" y="17" width="15" height="2.2" rx="1" fill="#12151A"/><rect x="19" y="21.5" width="10" height="1.6" rx=".8" fill="#9AA0A8"/><rect x="8" y="28" width="22" height="1.6" rx=".8" fill="#9AA0A8"/></svg>'},
   entetes: {nom:'En-têtes de lettre', unite:'feuilles', parUnite:' / feuille', designs:ENTETES, duo:true, styles:STYLES, principal:'societe', champs:['societe','activite','adresse','tel','email','site','mf'],
-    quantites:() => [1000,2000,3000,5000], prix:(e,q) => ({1000:210,2000:378,3000:546,5000:875})[q],
+    quantites:() => [1000,2000,3000,5000], prix:(e,q) => estEco(e) ? PRIX_ECO.entetes[q] : ({1000:210,2000:378,3000:546,5000:875})[q],
     note:() => 'A4, papier offset 80 g, même prix en 1 couleur ou en quadri.',
     quoi:(e) => `En-têtes de lettre A4, offset 80 g · modèle ${e.design.id.slice(1)} « ${e.design.nom} »`,
     icone:'<svg viewBox="0 0 44 44"><rect x="9" y="4" width="26" height="36" rx="1.5" fill="#fff" stroke="#12151A" stroke-width="1.6"/><rect x="9" y="4" width="26" height="3" fill="#0BA894"/><rect x="12" y="10" width="5" height="5" rx="1" fill="#12151A"/><rect x="19" y="11" width="12" height="1.8" fill="#12151A"/><rect x="12" y="19" width="20" height="1.2" fill="#C8CCD2"/><rect x="12" y="22.5" width="20" height="1.2" fill="#C8CCD2"/><rect x="12" y="26" width="14" height="1.2" fill="#C8CCD2"/><rect x="12" y="35" width="20" height="1" fill="#9AA0A8"/></svg>'},
   enveloppes: {nom:'Enveloppes', unite:'enveloppes', parUnite:' / enveloppe', designs:ENVELOPPES, duo:true, styles:{...STYLES, bilingue:'Français + arabe'}, principal:'societe', champs:['societe','activite','adresse','tel','email'], ar:['societe_ar','activite_ar','adresse_ar'],
-    quantites:() => [1000,2000,3000,5000], prix:(e,q) => ({1000:200,2000:370,3000:540,5000:750})[q],
+    quantites:() => [1000,2000,3000,5000], prix:(e,q) => estEco(e) ? PRIX_ECO.enveloppes[q] : ({1000:200,2000:370,3000:540,5000:750})[q],
     note:() => '11 × 22 cm, blanches. Même prix quel que soit le nombre de couleurs.',
     quoi:(e) => `Enveloppes 11 × 22 cm · modèle ${e.design.id.slice(1)} « ${e.design.nom} »`,
     icone:'<svg viewBox="0 0 44 44"><rect x="3" y="11" width="38" height="22" rx="1.5" fill="#fff" stroke="#12151A" stroke-width="1.6"/><rect x="6" y="14" width="4" height="4" rx=".8" fill="#0BA894"/><rect x="12" y="14.5" width="10" height="1.4" fill="#12151A"/><rect x="12" y="17.5" width="7" height="1" fill="#9AA0A8"/><rect x="24" y="24" width="13" height="1.2" fill="#C8CCD2"/><rect x="24" y="27" width="10" height="1.2" fill="#C8CCD2"/></svg>'},
   chemises: {nom:'Chemises à rabat', unite:'chemises', parUnite:' / chemise', designs:CHEMISES, duo:true, styles:STYLES, principal:'societe', champs:['societe','activite','adresse','tel','email','site','mf'], faces:['couverture','dos'],
-    quantites:() => [1000,2000,3000], prix:(e,q) => PRIX_CHEMISES_A4[q],
+    quantites:() => [1000,2000,3000], prix:(e,q) => estEco(e) ? PRIX_ECO.chemises[q] : PRIX_CHEMISES_A4[q],
     note:(e) => 'Carton 300 g, quadri, pelliculage ' + (e.pellic === 'brillant' ? 'brillant' : 'mat') + ', découpe, pliage et collage compris. Intérieur et rabat non imprimés.',
     quoi:(e) => `Chemises à rabat ${FMT_CHEMISE[e.format] ? FMT_CHEMISE[e.format].nom : 'A4'} (${(FMT_CHEMISE[e.format]||FMT_CHEMISE.A4).d.toLowerCase()}), carton 300 g quadri, couverture ${e.fond === 'blanc' ? 'sur fond blanc' : 'en couleur'}, ${(e.pellic === 'brillant' ? 'pelliculage brillant' : 'pelliculage mat')} · modèle ${e.design.id.slice(1)} « ${e.design.nom} »`,
     icone:'<svg viewBox="0 0 44 44"><path d="M7 6h24l6 6v26H7z" fill="#fff" stroke="#12151A" stroke-width="1.6"/><path d="M7 26h30v12H7z" fill="#0BA894"/><path d="M7 26l4-4h22l4 4" fill="none" stroke="#12151A" stroke-width="1.2"/><rect x="12" y="11" width="9" height="2" fill="#12151A"/><rect x="12" y="15" width="6" height="1.4" fill="#9AA0A8"/></svg>'},
   ordonnances: {nom:'Ordonnances', unite:'ordonnances', parUnite:' / ordonnance', designs:ORDONNANCES, duo:true, styles:STYLES, principal:'nom', bilingue:true,
     champs:['nom','fonction','societe','adresse','tel','site'], ar:['nom_ar','fonction_ar','societe_ar','adresse_ar'],
-    quantites:() => [1000,2000,3000], prix:(e,q) => e.encre === 'mono' ? PRIX_ORDO_1C[q] : null,
+    quantites:() => [1000,2000,3000], prix:(e,q) => estEco(e) ? PRIX_ECO.ordonnances[q] : e.encre === 'mono' ? PRIX_ORDO_1C[q] : null,
     note:(e) => 'A5, offset 80 g, en blocs de 100 collés en tête. ' + (e.encre === 'mono' ? 'Impression 1 couleur.' : 'Quadri : prix confirmé par notre commercial avec le BAT.'),
     quoi:(e) => `Ordonnances A5 bilingues, offset 80 g, blocs de 100 collés, ${e.encre === 'mono' ? '1 couleur' : 'quadri'} · modèle ${e.design.id.slice(1)} « ${e.design.nom} »`,
     icone:'<svg viewBox="0 0 44 44"><rect x="10" y="4" width="24" height="36" rx="1.5" fill="#fff" stroke="#12151A" stroke-width="1.6"/><rect x="13" y="8" width="7" height="1.8" fill="#12151A"/><rect x="24" y="8" width="7" height="1.8" fill="#12151A"/><rect x="13" y="11.5" width="5" height="1.2" fill="#9AA0A8"/><rect x="26" y="11.5" width="5" height="1.2" fill="#9AA0A8"/><rect x="13" y="15" width="18" height="0.8" fill="#0BA894"/><path d="M15 21h3.2a2 2 0 0 1 0 4H15v-4zm0 4l4 4" fill="none" stroke="#0BA894" stroke-width="1.4"/><rect x="13" y="34" width="18" height="1" fill="#9AA0A8"/></svg>'},
   certificats: {nom:'Certificats médicaux', unite:'certificats', parUnite:' / certificat', designs:CERTIFICATS, duo:true, styles:STYLES, principal:'nom', bilingue:true,
     champs:['nom','fonction','societe','adresse','tel','site'], ar:['nom_ar','fonction_ar','societe_ar','adresse_ar'],
-    quantites:() => [1000,2000,3000], prix:(e,q) => e.encre === 'mono' ? PRIX_ORDO_1C[q] : null,
+    quantites:() => [1000,2000,3000], prix:(e,q) => estEco(e) ? PRIX_ECO.ordonnances[q] : e.encre === 'mono' ? PRIX_ORDO_1C[q] : null,
     note:(e) => 'A5, offset 80 g, en blocs de 100 collés en tête. ' + (e.encre === 'mono' ? 'Impression 1 couleur.' : 'Quadri : prix confirmé par notre commercial avec le BAT.'),
     quoi:(e) => `Certificats médicaux A5 bilingues, offset 80 g, blocs de 100 collés, ${e.encre === 'mono' ? '1 couleur' : 'quadri'} · modèle ${e.design.id.slice(1)} « ${e.design.nom} »`,
     icone:'<svg viewBox="0 0 44 44"><rect x="10" y="4" width="24" height="36" rx="1.5" fill="#fff" stroke="#12151A" stroke-width="1.6"/><rect x="13" y="8" width="7" height="1.8" fill="#12151A"/><rect x="24" y="8" width="7" height="1.8" fill="#12151A"/><rect x="15" y="15" width="14" height="1.6" fill="#0BA894"/><rect x="13" y="20" width="8" height="1" fill="#9AA0A8"/><rect x="23" y="20" width="8" height="1" fill="#9AA0A8"/><rect x="13" y="23.5" width="8" height="1" fill="#9AA0A8"/><rect x="23" y="23.5" width="8" height="1" fill="#9AA0A8"/><rect x="13" y="27" width="8" height="1" fill="#9AA0A8"/><rect x="23" y="27" width="8" height="1" fill="#9AA0A8"/><circle cx="27" cy="33.5" r="2.6" fill="none" stroke="#0BA894" stroke-width="1.2"/></svg>'},
   fiches: {nom:'Fiches patients', unite:'fiches', parUnite:' / fiche', designs:FICHES, duo:true, styles:STYLES, principal:'nom', bilingue:true,
     champs:['nom','fonction','societe','adresse','tel','site'], ar:['nom_ar','fonction_ar','societe_ar','adresse_ar'],
     faces:['couverture','dos','interieur'],
-    quantites:() => [500,1000], prix:(e,q) => e.encre === 'mono' ? PRIX_FICHES[e.papier || 350][q] : null,
+    quantites:() => [500,1000], prix:(e,q) => estEco(e) ? PRIX_ECO.fiches[e.papier || 350][q] : e.encre === 'mono' ? PRIX_FICHES[e.papier || 350][q] : null,
     note:(e) => `44 × 31 cm pliée en 22 × 31, couché mat ${e.papier || 350} g${(e.papier || 350) == 350 ? ', rainée et pliée' : ', pliée'}. ` + (e.encre === 'mono' ? '4 pages en 1 couleur.' : 'Quadri : prix confirmé par notre commercial avec le BAT.'),
     quoi:(e) => `Fiches patients 44 × 31 cm pliées (22 × 31), couché mat ${e.papier || 350} g, 4 pages en ${e.encre === 'mono' ? '1 couleur' : 'quadri'}, tableau pages 2 et 3 : ${(e.cols || COLS_FICHE).map(k => [k.fr, k.ar].filter(Boolean).join(' / ') || '(sans titre)').join(' | ')} · modèle ${e.design.id.slice(1)} « ${e.design.nom} »`,
     icone:'<svg viewBox="0 0 44 44"><path d="M8 6h28v32H8z" fill="#fff" stroke="#12151A" stroke-width="1.6"/><rect x="18" y="9" width="8" height="5" rx="1" fill="#0BA894"/><rect x="14" y="17" width="16" height="1.8" fill="#12151A"/><rect x="11" y="22" width="22" height="10" rx="1" fill="none" stroke="#9AA0A8" stroke-width="1"/><rect x="13" y="25" width="18" height="0.9" fill="#9AA0A8"/><rect x="13" y="28.5" width="18" height="0.9" fill="#9AA0A8"/></svg>'},
   blocs: {nom:'Blocs-notes', unite:'blocs', parUnite:' / bloc', designs:BLOCS, duo:true, styles:STYLES, principal:'societe', champs:['societe','activite','adresse','tel','email','site','mf'],
-    quantites:() => [50,100,200,500], prix:(e,q) => ((PRIX_BLOCS[fmtBloc(e)][e.feuilles || 50] || {})[e.encre === 'mono' ? 'mono' : 'quadri'] || {})[q] ?? null,
+    quantites:() => [50,100,200,500], prix:(e,q) => estEco(e) ? PRIX_ECO.blocs[fmtBloc(e)][e.feuilles || 50][q] : ((PRIX_BLOCS[fmtBloc(e)][e.feuilles || 50] || {})[e.encre === 'mono' ? 'mono' : 'quadri'] || {})[q] ?? null,
     note:(e) => `${fmtBloc(e)} (${BLOC_FMT[fmtBloc(e)].d}), offset 80 g, ${REGLES[e.regle] || 'lignes'}, blocs de ${e.feuilles || 50} feuilles collés en tête avec carton au dos, ${e.encre === 'mono' ? '1 couleur' : 'quadri'}.`,
     quoi:(e) => `Blocs-notes ${fmtBloc(e)}, ${REGLES[e.regle] || 'lignes'}, offset 80 g, ${e.feuilles || 50} feuilles par bloc, ${e.encre === 'mono' ? '1 couleur' : 'quadri'} · modèle ${e.design.id.slice(1)} « ${e.design.nom} »`,
     icone:'<svg viewBox="0 0 44 44"><rect x="10" y="6" width="24" height="33" rx="1.5" fill="#fff" stroke="#12151A" stroke-width="1.6"/><rect x="10" y="6" width="24" height="4" fill="#12151A"/><rect x="13" y="13" width="5" height="4" rx="1" fill="#0BA894"/><rect x="20" y="14" width="10" height="1.6" fill="#12151A"/><rect x="13" y="21" width="18" height="0.9" fill="#C8CCD2"/><rect x="13" y="25" width="18" height="0.9" fill="#C8CCD2"/><rect x="13" y="29" width="18" height="0.9" fill="#C8CCD2"/><rect x="13" y="33" width="18" height="0.9" fill="#C8CCD2"/></svg>'},
@@ -2342,6 +2423,20 @@ const PRODUITS = {
     quoi:(e) => `Carnets ${DOCS[e.doc]} ${e.format}, ${e.plis} feuillets, numérotés perforés${e.numero?' dès n° '+e.numero:''} · design « ${e.design.nom} »`,
     icone:'<svg viewBox="0 0 44 44"><rect x="12" y="5" width="24" height="32" rx="2" fill="#F4E28A"/><rect x="10" y="7" width="24" height="32" rx="2" fill="#9CC8F0"/><rect x="8" y="9" width="24" height="32" rx="2" fill="#fff" stroke="#12151A" stroke-width="1.6"/><rect x="11" y="13" width="18" height="3.6" rx="1" fill="#0BA894"/><rect x="11" y="20" width="18" height="1.4" fill="#9AA0A8"/><rect x="11" y="24" width="18" height="1.4" fill="#9AA0A8"/><rect x="11" y="28" width="18" height="1.4" fill="#9AA0A8"/></svg>'},
 };
+const nomPolice = (k, L) => (L.find(x => x[0] === k) || [k, k])[1];
+const NOTE_ECO = {
+  cartes:(e) => 'Gamme Éco : couché 350 g, 1 couleur, sans pelliculage. ' + (e.verso === 'blanc' ? 'Recto seul.' : 'Recto-verso.'),
+  entetes:() => 'Gamme Éco : A4, offset 80 g, 1 couleur.',
+  enveloppes:() => 'Gamme Éco : 11 × 22 cm blanches, 1 couleur, zone d’adresse laissée libre.',
+  chemises:() => 'Gamme Éco : A4, face et dos en 1 couleur, pelliculage mat ou brillant compris.',
+  blocs:(e) => `Gamme Éco : ${fmtBloc(e)}, offset 80 g, ${REGLES[e.regle] || 'lignes'}, ${e.feuilles || 50} feuilles, 1 couleur, collé en tête avec carton au dos.`,
+  ordonnances:() => 'Gamme Éco : A5, offset 80 g, 1 couleur, blocs de 100 collés en tête.',
+  certificats:() => 'Gamme Éco : A5, offset 80 g, 1 couleur, blocs de 100 collés en tête.',
+  fiches:(e) => `Gamme Éco : 44 × 31 cm pliée, 4 pages en 1 couleur, couché ${e.papier || 350} g.`,
+};
+for (const [k, P] of Object.entries(PRODUITS)) { if (!NOTE_ECO[k]) continue; const q0 = P.quoi, n0 = P.note;
+  P.note = (e) => estEco(e) ? NOTE_ECO[k](e) : n0(e);
+  P.quoi = (e) => estEco(e) ? q0(e).replace(/quadri, pelliculées|quadri/g, '1 couleur') + ` · gamme Éco, 1 encre ${String(e.couleur||'').split('|')[0]} · police ${nomPolice(ECO.fr, ECO_FR)} / ${nomPolice(ECO.ar, ECO_AR)}` : q0(e); }
 /* Textes affichés : ceux du client, sinon l'exemple du métier choisi */
 function textes(metier, champs, logoClient){
   const ex = (METIERS[metier] && METIERS[metier].exemple) || METIERS.transport.exemple;
@@ -2350,7 +2445,15 @@ function textes(metier, champs, logoClient){
   f.logo = logoClient || null;
   return f;
 }
+const estEco = (e) => !!(e && e.design && e.design.style === 'eco');
 function dessin(prod, design, e, face){
+  if (!design || design.style !== 'eco' || prod === 'carnets') return dessinBrut(prod, design, e, face);
+  const c = String(e.couleur || '').split('|')[0] || ECO_COULEURS[0];
+  for (const o of [SPEC_ENTETE.eco[design.nom], design.cfg]) if (o) { o.ff = ECO.fr; o.ffa = ECO.ar; }
+  const d = dessinBrut(prod, design, {...e, couleur: c + '|' + c, encre:'mono'}, face);
+  return {...d, svg: monochrome(d.svg, c)};
+}
+function dessinBrut(prod, design, e, face){
   const f = textes(MEDICAL.includes(prod) && e.metier !== 'medical' ? 'medical' : e.metier, e.champs, e.logo);
   if (prod === 'cartes') { const [c,a] = e.couleur.split('|'); return {W:CW, H:CH, svg: `<rect width="${CW}" height="${CH}" fill="#fff"/>` + (face === 'verso' ? VERSOS[e.verso].dessin(f, c, a, design) : design.recto(f, c, a))}; }
   if (prod === 'entetes') { const [c,a] = e.couleur.split('|'); return {W:PW, H:PH, svg: design.page(f, c, a)}; }
@@ -2369,10 +2472,10 @@ let produit = 'cartes', metier = 'tous', doc = 'facture', style = 'tous', affich
 /* Ce que le client a tapé (textes, logo, colonnes, coordonnées) : repris sur tous les produits et gardé sur l'appareil */
 const CLE_MEMO = 'tc-conception-v1';
 const memo = (() => { const m = {champs:{}, logo:null, logoFichier:null, cols:null, contact:{nom:'', email:'', telephone:''}};
-  try { const d = JSON.parse(localStorage.getItem(CLE_MEMO) || 'null'); if (d) { Object.assign(m.champs, d.champs || {}); m.logo = d.logo || null; m.cols = d.cols || null; Object.assign(m.contact, d.contact || {}); } } catch(err) {}
+  try { const d = JSON.parse(localStorage.getItem(CLE_MEMO) || 'null'); if (d) { Object.assign(m.champs, d.champs || {}); if (d.police) Object.assign(ECO, d.police); m.logo = d.logo || null; m.cols = d.cols || null; Object.assign(m.contact, d.contact || {}); } } catch(err) {}
   return m; })();
 function sauverMemo(){
-  const d = {champs:memo.champs, cols:memo.cols, contact:memo.contact, logo:memo.logo};
+  const d = {champs:memo.champs, cols:memo.cols, contact:memo.contact, logo:memo.logo, police:{...ECO}};
   try { localStorage.setItem(CLE_MEMO, JSON.stringify(d)); } catch(err) { try { localStorage.setItem(CLE_MEMO, JSON.stringify({...d, logo:null})); } catch(err2) {} }
   majRappel();
 }
@@ -2386,7 +2489,7 @@ function majRappel(){
     el('span',{class:'rappel-tx'}, el('b',{}, 'Vos informations sont enregistrées' + (qui ? ' · ' + qui : '')), el('small',{}, 'Textes et logo apparaissent déjà sur tous les modèles : carte, en-tête, enveloppe, chemise, bloc-notes…')),
     el('button',{type:'button', class:'rappel-x', onclick:()=>{ if (!confirm('Effacer vos textes et votre logo de cet appareil ?')) return; Object.keys(memo.champs).forEach(k => delete memo.champs[k]); memo.logo = null; memo.logoFichier = null; memo.cols = null; sauverMemo(); galerie(); vitrine(); }}, 'Effacer'));
 }
-function teinteDe(design){ const m = METIERS[metier !== 'tous' ? metier : design.metiers[0]]; return PRODUITS[produit].duo ? m.duo : m.couleur; }
+function teinteDe(design){ if (design.style === 'eco') return ECO_COULEURS[1] + '|' + ECO_COULEURS[1]; const m = METIERS[metier !== 'tous' ? metier : design.metiers[0]]; return PRODUITS[produit].duo ? m.duo : m.couleur; }
 const fondPastille = (v) => v.includes('|') ? `linear-gradient(135deg, ${v.split('|')[0]} 50%, ${v.split('|')[1]} 50%)` : v;
 function galerie(){
   $('#produits').replaceChildren(...Object.entries(PRODUITS).map(([k,p]) => { const b = el('button',{type:'button','aria-pressed':String(k===produit), onclick:()=>{ produit=k; style='tous'; affiches=24; galerie(); }}); b.innerHTML = p.icone; b.append(el('span',{}, el('b',{}, p.nom), el('small',{}, p.designs.length + ' modèles'))); return b; }));
@@ -2404,7 +2507,7 @@ function galerie(){
   const visibles = P.styles ? designs.slice(0, affiches) : designs;
   const tuiles = visibles.map(d => {
     const base = teinteDe(d);
-    const teintes = [base, ...(P.duo?DUOS:COULEURS).filter(c=>c!==base)].slice(0,4);
+    const teintes = [base, ...(d.style === 'eco' ? ECO_COULEURS.map(x => x+'|'+x) : P.duo?DUOS:COULEURS).filter(c=>c!==base)].slice(0,4);
     let couleur = base;
     const ap = el('div',{class:'ap '+produit});
     const maj = () => { const e = {metier: metier==='tous' ? d.metiers[0] : metier, couleur, verso:'assorti', doc, format:'A5', champs:memo.champs, logo:memo.logo, cols:memo.cols};
@@ -2458,6 +2561,7 @@ function ouvrirStudio(design, couleur, met){
   const e = {design, metier:met, couleur, verso:'assorti', doc, format:'A5', plis:'2', numero:'', quantite:null, champs:memo.champs, logo:memo.logo, extras:{}};
   if (prod === 'chemises') { e.format = 'A4'; e.pellic = 'mat'; e.fond = 'couleur'; }
   if (MEDICAL.includes(prod)) e.encre = 'quadri';
+  if (design.style === 'eco') { e.encre = 'mono'; if (!e.couleur.includes('|') || !ECO_COULEURS.includes(e.couleur.split('|')[0])) e.couleur = ECO_COULEURS[1] + '|' + ECO_COULEURS[1]; if (prod === 'cartes') e.verso = 'blanc'; }
   if (prod === 'blocs') { e.fmtBloc = 'A5'; e.regle = 'lignes'; e.feuilles = 50; e.encre = 'quadri'; }
   if (prod === 'fiches') { e.papier = 350; e.cols = memo.cols || (memo.cols = COLS_FICHE.map(k => ({...k}))); }
   if (TRIO.includes(prod)) trioDe(prod, met).filter(k => k !== prod).forEach(k => { if (assorti(k, design)) { const qs = PRODUITS[k].quantites({...e}); e.extras[k] = {actif:false, q: qs.includes(1000) ? 1000 : qs[1] || qs[0]}; } });
@@ -2484,18 +2588,21 @@ function ouvrirStudio(design, couleur, met){
     })));
   };
   const rendreFaces = () => faces.replaceChildren(...[].map(x => el('button',{type:'button','aria-pressed':String(face===x), onclick:()=>{ face=x; rendreFaces(); rendu(); }}, x==='recto'?'Recto':'Verso')));
+  const choixPolice = (liste, cle) => { const box = el('div',{class:'choix polices'}); const r = () => box.replaceChildren(...liste.map(([k,l]) => el('button',{type:'button', 'aria-pressed':String(ECO[cle]===k), style:'font-family:'+POLICES[k],
+      onclick:()=>{ ECO[cle] = k; r(); sauverMemo(); rendu(); rendreAutres(); majEtapes(); }}, cle === 'ar' ? 'الياسمين' : l, el('small',{style:'font-family:inherit'}, cle === 'ar' ? l : 'Aa 123')))); r(); return box; };
+  window.rerendreStudio = () => { rendu(); rendreAutres(); };
   const memeStyle = () => P.styles ? P.designs.filter(d => d.style===e.design.style) : P.designs;
   const rendreAutres = () => autres.replaceChildren(...memeStyle().map(d => { const b = el('button',{type:'button', title:d.nom, 'aria-pressed':String(d===e.design), onclick:()=>{ e.design=d; face='recto'; rendreAutres(); rendreFaces(); rendu(); }}); b.append(noeud(dessin(prod, d, e, 'recto'))); return b; }));
   const choix = (opts, cle, apres) => { const box = el('div',{class:'choix'}); const r = () => box.replaceChildren(...opts.map(([v,l,d]) => el('button',{type:'button','aria-pressed':String(e[cle]===v), onclick:()=>{ e[cle]=v; r(); apres && apres(); rendu(); rendreAutres(); majEtapes(); }}, l, d? el('small',{},d):null))); r(); return box; };
 
   /* Étapes du panneau */
   const teintes = el('div',{class:'teintes'});
-  const rendreTeintes = () => teintes.replaceChildren(...(P.duo?DUOS:COULEURS).map(v => el('button',{type:'button', 'aria-label':'Couleur', 'aria-pressed':String(e.couleur===v), style:'background:'+fondPastille(v), onclick:()=>{ e.couleur=v; rendreTeintes(); rendu(); rendreAutres(); }})));
+  const rendreTeintes = () => teintes.replaceChildren(...(estEco(e) ? ECO_COULEURS.map(x => x+'|'+x) : P.duo?DUOS:COULEURS).map(v => el('button',{type:'button', 'aria-label':'Couleur', 'aria-pressed':String(e.couleur===v), style:'background:'+fondPastille(v), onclick:()=>{ e.couleur=v; rendreTeintes(); rendu(); rendreAutres(); }})));
   rendreTeintes();
   const champ = (c, attrs={}) => el('label',{class:'champ'+(c==='adresse'||c==='adresse_ar'?' large':'')}, el('span',{}, CHAMPS[c]), el('input',{value:e.champs[c] ?? '', placeholder: textes(e.metier, {}, null)[c] || '', ...attrs, oninput:(ev)=>{ e.champs[c] = ev.target.value; rendu(); majEtapes(); }}));
   const vg = el('div',{class:'vg'}, e.logo ? el('img',{src:e.logo, alt:''}) : '＋');
   const inputLogo = el('input',{type:'file', accept:'image/*', 'aria-label':'Ajouter mon logo', onchange:(ev)=>{ const fi = ev.target.files[0]; if (!fi) return; const r = new FileReader();
-      r.onload = () => { e.logo = memo.logo = r.result; memo.logoFichier = fi; sauverMemo(); vg.replaceChildren(el('img',{src:r.result, alt:''})); txtLogo.textContent = 'Changer mon logo'; rendu(); rendreAutres(); }; r.readAsDataURL(fi); }});
+      r.onload = () => { e.logo = memo.logo = r.result; memo.logoFichier = fi; sauverMemo(); preparerMasque(r.result).then(() => { rendu(); rendreAutres(); }); vg.replaceChildren(el('img',{src:r.result, alt:''})); txtLogo.textContent = 'Changer mon logo'; rendu(); rendreAutres(); }; r.readAsDataURL(fi); }});
   const txtLogo = el('b',{}, e.logo ? 'Changer mon logo' : 'Ajouter mon logo');
   const zoneLogo = el('div',{class:'logo-zone'}, vg, el('div',{}, txtLogo, el('div',{class:'note', style:'margin:0'}, 'PNG, JPG ou photo de votre logo')), inputLogo);
   scene.onclick = () => { if (!e.logo) inputLogo.click(); };
@@ -2543,15 +2650,15 @@ function ouvrirStudio(design, couleur, met){
       choix([['A4','A4','21 × 29,7 cm'],['A5','A5','14,8 × 21 cm'],['A6','A6','10,5 × 14,8 cm']], 'fmtBloc', () => { rendreQte(); rendreExtras(); }),
       el('div',{style:'height:10px'}), choix([['lignes','Lignes','Pour les notes'],['pointilles','Pointillés','Plus discret'],['blanc','Sans lignes','Page libre, pour une lettre']], 'regle'),
       el('div',{style:'height:10px'}), choix([[50,'50 feuilles par bloc'],[100,'100 feuilles par bloc']], 'feuilles', () => { rendreQte(); rendreExtras(); }),
-      el('div',{style:'height:10px'}), choix([['quadri','Quadri','Toutes les couleurs du modèle'],['mono','1 couleur','La couleur principale seule']], 'encre', () => { rendreQte(); rendreExtras(); }),
+      el('div',{style:'height:10px'}), (estEco(e) ? el('p',{class:'note'}, 'Gamme Éco : impression 1 couleur, dans l’encre choisie.') : choix([['quadri','Quadri','Toutes les couleurs du modèle'],['mono','1 couleur','La couleur principale seule']], 'encre', () => { rendreQte(); rendreExtras(); })),
       el('p',{class:'note'}, 'Offset 80 g, collé en tête avec un carton au dos. En A4 sans lignes, le bloc sert aussi de papier à lettre.')]}] : []),
     ...(prod === 'fiches' ? [{t:'Papier et impression', resume:()=> e.papier + ' g · ' + (e.encre === 'mono' ? '1 couleur' : 'quadri'), corps:()=>[
       choix([[350,'Couché mat 350 g','Rainée et pliée'],[170,'Couché mat 170 g','Pliée']], 'papier', () => { rendreQte(); rendreExtras(); }),
-      el('div',{style:'height:10px'}), choix([['quadri','Quadri','Toutes les couleurs du modèle'],['mono','1 couleur','La couleur principale seule']], 'encre', () => { rendreQte(); rendreExtras(); }),
+      el('div',{style:'height:10px'}), (estEco(e) ? el('p',{class:'note'}, 'Gamme Éco : impression 1 couleur, dans l’encre choisie.') : choix([['quadri','Quadri','Toutes les couleurs du modèle'],['mono','1 couleur','La couleur principale seule']], 'encre', () => { rendreQte(); rendreExtras(); })),
       el('p',{class:'note'}, 'Format ouvert 44 × 31 cm, plié en 22 × 31 cm, sans rabat. 4 pages imprimées : la face (page 1), le grand tableau à l’intérieur (pages 2 et 3) et le dos (page 4).')]}] : []),
     ...(prod === 'fiches' ? [{t:'Tableau des pages 2 et 3', resume:()=> e.cols.map(k => k.fr || k.ar || '…').join(' · '), corps:()=>[ tableauCols ]}] : []),
     ...(MEDICAL.includes(prod) && prod !== 'fiches' ? [{t:'Impression', resume:()=> 'A5 · ' + (e.encre === 'mono' ? '1 couleur' : 'quadri'), corps:()=>[
-      choix([['quadri','Quadri','Toutes les couleurs du modèle'],['mono','1 couleur','La couleur principale seule']], 'encre', () => { rendreQte(); rendreExtras(); }),
+      (estEco(e) ? el('p',{class:'note'}, 'Gamme Éco : impression 1 couleur, dans l’encre choisie.') : choix([['quadri','Quadri','Toutes les couleurs du modèle'],['mono','1 couleur','La couleur principale seule']], 'encre', () => { rendreQte(); rendreExtras(); })),
       el('p',{class:'note'}, 'Format A5 (14,8 × 21 cm), offset 80 g, blocs de 100 feuilles collés en tête. Français à gauche, arabe à droite : remplissez les deux dans « Vos textes et logo ».')]}] : []),
     ...(prod === 'chemises' ? [{t:'Finition', resume:()=> 'A4 · ' + (e.fond === 'blanc' ? 'fond blanc' : 'couleur') + ' · ' + (e.pellic === 'brillant' ? 'pelliculage brillant' : 'pelliculage mat'), corps:()=>[
       choix([['couleur','Couverture en couleur'],['blanc','Couverture sur fond blanc']], 'fond'),
@@ -2562,7 +2669,10 @@ function ouvrirStudio(design, couleur, met){
       el('div',{style:'height:10px'}), choix([['A5','A5'],['A4','A4'],['A6','A6']], 'format', rendreQte),
       el('div',{style:'height:10px'}), choix([['2','2 feuillets'],['3','3 feuillets'],['4','4 feuillets']], 'plis', rendreQte),
       el('label',{class:'champ', style:'margin-top:10px'}, el('span',{},'N° de départ'), el('input',{inputmode:'numeric', placeholder:'0001', value:e.numero, oninput:(ev)=>{ e.numero=ev.target.value; rendu(); }}))]}] : []),
-    {t:'Couleur', resume:()=> '', pastille:true, corps:()=>[teintes]},
+    {t:'Couleur', resume:()=> estEco(e) ? '1 encre' : '', pastille:true, corps:()=>[teintes, estEco(e) ? el('p',{class:'note'}, 'Gamme Éco : tout le modèle, logo compris, est imprimé dans cette seule encre, en aplat.') : null]},
+    ...(estEco(e) ? [{t:'Police', resume:()=> nomPolice(ECO.fr, ECO_FR) + ' · ' + nomPolice(ECO.ar, ECO_AR), corps:()=>[
+      el('p',{class:'etiquette'}, 'Français'), choixPolice(ECO_FR, 'fr'), el('p',{class:'etiquette'}, 'Arabe'), choixPolice(ECO_AR, 'ar'),
+      el('p',{class:'note'}, 'La police choisie passe sur tous vos imprimés Éco : carte, en-tête, enveloppe, ordonnance…')]}] : []),
     {t:'Vos textes et logo', resume:()=> (e.champs[P.principal]||'').trim() || 'Exemple', corps:()=>[ el('p',{class:'partout'}, el('b',{},'Écrit une fois, repris partout.'), ' Vos textes et votre logo passent automatiquement sur la carte, l’en-tête, l’enveloppe et tous les autres imprimés.'), el('div',{class:'champs'}, P.champs.map(c => champ(c))), champsArEnv, zoneLogo ]},
     ...(prod === 'cartes' ? [{t:'Verso', resume:()=> VERSOS[e.verso].nom, corps:()=>[ choix(Object.entries(VERSOS).map(([v,x]) => [v, x.nom, v==='blanc'?'−10 DT / 1 000':null]), 'verso', () => { champsAr.hidden = e.verso!=='arabe'; }), champsAr ]}] : []),
     {t:'Quantité', resume:()=> { const T = totalCommande(prod, e); return e.quantite ? (T.L.length > 1 ? T.L.length+' produits · ' : nb(e.quantite)+' · ')+dt(T.total)+' HT' : ''; }, corps:()=>[ qte, el('p',{class:'note'}, P.note(e)), blocExtras ]},
@@ -2662,6 +2772,7 @@ function vitrine(){
   if (d) ouvrirStudio(d, teinteDe(d), metier === 'tous' ? d.metiers[0] : metier);
   else if (pr || me || st) requestAnimationFrame(() => $('#catalogue').scrollIntoView());
 })();
+if (memo.logo) preparerMasque(memo.logo).then(() => { if (studio.classList.contains('ouvert') && window.rerendreStudio) window.rerendreStudio(); else galerie(); });
 </script>
 </body>
 </html>

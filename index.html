@@ -675,6 +675,8 @@ a:focus-visible,button:focus-visible,.chip:focus-visible,input:focus-visible,sel
 .studio-steps b{display:block;font-size:.92rem;margin-bottom:2px}
 .studio-steps span{font-size:.84rem;color:var(--ink3);line-height:1.5}
 .studio-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.studio-chips .eco-chip{font-family:'JetBrains Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:7px 12px;border-radius:100px;background:var(--ink);color:var(--paper);border:1px solid var(--ink)}
+.studio-chips .eco-chip:hover{background:var(--teal);border-color:var(--teal);color:#04201C}
 .studio-chips span{font-family:'JetBrains Mono',monospace;font-size:.66rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:7px 12px;border-radius:100px;border:1px solid var(--line2);color:var(--ink2);background:var(--card)}
 .real-link{position:absolute;inset:0;z-index:3;border-radius:inherit}
 .real-badge{position:absolute;top:12px;left:12px;z-index:3;font-family:'JetBrains Mono',monospace;font-size:.6rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;background:rgba(247,245,239,.94);color:var(--ink);padding:6px 10px;border-radius:100px;opacity:0;transform:translateY(-4px);transition:opacity .25s,transform .25s;pointer-events:none}
@@ -912,7 +914,7 @@ a:focus-visible,button:focus-visible,.chip:focus-visible,input:focus-visible,sel
         <div class="eyebrow"><span class="reg"><u></u></span>Design studio</div>
         <h2 class="sec-title reveal-print">Créez votre imprimé en ligne,<br>une seule identité partout.</h2>
         <p class="sec-sub">Touchez un produit : il s’ouvre dans le studio, prêt à personnaliser. Vos textes et votre logo, saisis une seule fois, passent sur la carte, l’en-tête, l’enveloppe et tous vos imprimés.</p>
-        <div class="studio-chips"><span>215 modèles</span><span>Français · عربي</span><span>BAT avant impression</span><span>Prix affichés</span></div>
+        <div class="studio-chips"><a class="eco-chip" href="/conception/?style=eco">Gamme Éco 1 couleur · prix mini →</a><span>219 modèles</span><span>Français · عربي</span><span>BAT avant impression</span><span>Prix affichés</span></div>
       </div>
       <a href="/conception/" class="btn btn-ink reveal">Ouvrir le Design studio <span class="ar">→</span></a>
     </div>
