@@ -30,6 +30,8 @@ const FORMULAIRES = [
   'commande-societes'  => [EMAIL_TC,      'Commande sociétés'],
   'devis-libre'        => [EMAIL_TC,      'Devis hors catalogue'],
   'devenir-partenaire' => [EMAIL_TC,      'Candidature partenaire'],
+  'conception'         => [EMAIL_TC,      'Commande Design studio'],
+  'demande-designer'   => [EMAIL_TC,      'Demande au designer'],
   'demande-scandar'    => [EMAIL_SCANDAR, 'Demande Scandar'],
   'commande-scandar'   => [EMAIL_SCANDAR, 'Commande Scandar'],
 ];
@@ -91,7 +93,7 @@ $texte = $sujet . "\n" . str_repeat('-', 40) . "\n\n" . implode("\n", $lignes)
 /* Pièces jointes : images et PDF uniquement */
 $fichiers = [];
 $total = 0;
-$types_ok = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif', 'application/pdf'];
+$types_ok = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif', 'image/svg+xml', 'application/pdf'];
 foreach ($_FILES as $champ) {
   $noms = (array)$champ['name']; $tmps = (array)$champ['tmp_name'];
   $errs = (array)$champ['error']; $tailles = (array)$champ['size'];
